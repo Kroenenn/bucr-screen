@@ -1,0 +1,26 @@
+# Systemd *user* unit — restarts Chromium automatically if it crashes.
+# Alternative to bucr-screen-kiosk.desktop; see deploy/raspberry-pi/README.md
+# for which one to pick and how to install this one.
+#
+# Adjust ExecStart's path if this repo isn't cloned to /home/pi/bucr-screen.
+# Most desktop sessions (X11 or Wayland/labwc) export DISPLAY /
+# WAYLAND_DISPLAY into the user systemd environment automatically on
+# Raspberry Pi OS Bookworm; if Chromium fails to start under this unit but
+# works when launched manually, uncomment and adjust the Environment= lines
+# below to match `echo $DISPLAY` / `echo $WAYLAND_DISPLAY` from a terminal
+# inside the graphical session.
+
+[Unit]
+Description=bucr-screen kiosk (Chromium)
+After=graphical-session.target docker.service
+Wants=graphical-session.target
+
+[Service]
+# Environment=DISPLAY=:0
+# Environment=WAYLAND_DISPLAY=wayland-0
+ExecStart=/home/pi/bucr-screen/deploy/raspberry-pi/kiosk.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

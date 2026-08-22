@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=bucr-screen kiosk
+Exec=/home/pi/bucr-screen/deploy/raspberry-pi/kiosk.sh
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

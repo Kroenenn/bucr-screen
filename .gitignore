@@ -1,0 +1,11 @@
+node_modules/
+.nuxt/
+.output/
+.data/
+dist/
+*.log
+npm-debug.log*
+.env
+.env.local
+.DS_Store
+coverage/

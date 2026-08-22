@@ -1,0 +1,13 @@
+services:
+  bucr-screen:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '${HOST_PORT:-3000}:3000'
+    volumes:
+      - gtfs-cache:/app/.data/gtfs-cache
+
+volumes:
+  gtfs-cache:

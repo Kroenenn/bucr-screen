@@ -1,0 +1,78 @@
+/*
+ * Brand tokens: blue primary (bUCR logo blue, route_color 005DA4 in the
+ * bUCR GTFS feed), amber reserved for "live/attention" accents only —
+ * matches the decision already made in infobus-web (feat/bucr-coming-soon).
+ * Dark by default: this is a kiosk board meant to be read from across a
+ * room, not a website with a light-mode default — but a sun/moon toggle
+ * (useKioskTheme) lets a viewer switch to light, e.g. for testing or a
+ * brightly lit venue. Resets to dark on reload, same rationale as
+ * infobus-web's feat/bucr-static-site useKioskTheme: a kiosk power-cycling
+ * should always come back dark, not remember a stale choice.
+ *
+ * --color-amber-500 is only ever used as a small solid-fill dot/chip, so it
+ * stays constant across themes. --color-accent-text is the amber used for
+ * actual text ("LLEGANDO"/"PRÓXIMO" state, "SALIENDO") — #ffd24e reads fine
+ * on the dark background but is nearly invisible as text on white, so light
+ * mode gets a darker amber instead. Same reasoning for --color-error and
+ * --color-ok (green — the "EN VIVO" badge specifically; amber stays
+ * reserved for "attention" states like the HORARIO fallback badge).
+ */
+:root {
+  --color-bg: #0b0f14;
+  --color-surface: #121820;
+  --color-surface-2: #1a2230;
+  --color-border: rgba(255, 255, 255, 0.08);
+
+  --color-ink: #f4f6f8;
+  --color-ink-muted: rgba(244, 246, 248, 0.6);
+  --color-ink-faint: rgba(244, 246, 248, 0.35);
+
+  --color-blue-400: #5ca1d6;
+  --color-blue-500: #2ba4de;
+  --color-blue-600: #0b5ca8;
+  --color-blue-700: #084680;
+
+  --color-amber-500: #ffc107;
+  --color-accent-text: #ffd24e;
+
+  --color-ok: #35c98c;
+  --color-error: #ff6b6b;
+
+  --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, system-ui, sans-serif;
+  --font-mono: 'Consolas', 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+:root[data-theme='light'] {
+  --color-bg: #f3f6f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #fafaf9;
+  --color-border: rgba(0, 0, 0, 0.08);
+
+  --color-ink: #0e1116;
+  --color-ink-muted: rgba(14, 17, 22, 0.6);
+  --color-ink-faint: rgba(14, 17, 22, 0.35);
+
+  --color-accent-text: #8c6600;
+  --color-error: #c0392b;
+  --color-ok: #1b8a5a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#__nuxt {
+  height: 100%;
+}
