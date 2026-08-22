@@ -9,3 +9,6 @@ npm-debug.log*
 .env.local
 .DS_Store
 coverage/
+
+# Internal decision log — not meant to be published.
+PLAN.md
