@@ -5,21 +5,24 @@ const props = defineProps<{
   source: ArrivalSource
 }>()
 
-// Public-facing copy is deliberately simpler than the underlying data:
-// "EN VIVO" covers both genuinely-live and the automatic schedule fallback
-// (Oscar's explicit call — the fallback badge read as alarming/broken to a
-// general audience). The real distinction isn't hidden, just moved: the
-// API response still reports source/realtimeFallback honestly, and
-// index.vue renders a small "*" next to the refresh caption when a
-// fallback is active, for anyone actually looking for it. Demo is the one
-// state that must stay visibly distinct — see PLAN.md.
+// "EN VIVO" covers both genuinely-live data and the automatic schedule
+// fallback: a distinct fallback badge reads as alarming to a general
+// audience. The distinction isn't hidden, just moved — the API response
+// still reports source/realtimeFallback, and index.vue marks an active
+// fallback next to the refresh caption. Demo must stay visibly distinct.
 const label = computed(() => (props.source === 'demo' ? 'DEMO' : 'EN VIVO'))
 const tone = computed(() => (props.source === 'demo' ? 'demo' : 'live'))
 </script>
 
 <template>
-  <span class="mode-badge" :class="`mode-badge--${tone}`">
-    <span v-if="tone === 'live'" class="mode-badge__dot" />
+  <span
+    class="mode-badge"
+    :class="`mode-badge--${tone}`"
+  >
+    <span
+      v-if="tone === 'live'"
+      class="mode-badge__dot"
+    />
     {{ label }}
   </span>
 </template>

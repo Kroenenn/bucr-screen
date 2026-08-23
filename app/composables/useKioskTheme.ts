@@ -14,7 +14,7 @@ export function useKioskTheme() {
   const theme = useState<'dark' | 'light'>('kiosk-theme', () => 'dark')
 
   useHead({
-    htmlAttrs: { 'data-theme': theme },
+    htmlAttrs: { 'data-theme': theme }
   })
 
   function toggle() {

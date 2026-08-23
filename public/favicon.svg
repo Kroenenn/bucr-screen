@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="bUCR">
+  <!--
+    Static tab icon. Unlike the on-screen route badge (whose color comes from
+    routes.txt at runtime), a favicon is a build-time asset and can't be fed
+    from the feed — so bUCR's route_color is written literally here. If the
+    feed's route_color ever changes, this is the one place that needs a
+    manual follow-up.
+  -->
+  <rect width="64" height="64" rx="14" fill="#005DA4"/>
+  <text
+    x="32" y="45"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    font-size="38" font-weight="700"
+    text-anchor="middle" fill="#FFFFFF">b</text>
+</svg>

@@ -4,8 +4,8 @@ Turns a Pi 5 + display into an unattended `bucr-screen` kiosk: the app runs
 in Docker, Chromium displays it full-screen, both restart automatically on
 crash or reboot. **None of this has been validated on the actual hardware**
 — written from standard Raspberry Pi OS / Docker / Chromium kiosk practice,
-not tested on-device. Budget time to debug it before the event, and do the
-burn-in test from PLAN.md's final checklist.
+not tested on-device. Budget time to debug it, and run the burn-in test in
+section 5.
 
 ## 1. Flash the OS
 
@@ -41,13 +41,29 @@ cd bucr-screen
 cp .env.example .env
 nano .env   # set NUXT_OPERATION_MODE, NUXT_STOP_ID, NUXT_DATABUS_BASE_URL, etc.
 docker compose up -d --build
+curl http://localhost:3000/api/health     # {"status":"ok",...}
 curl http://localhost:3000/api/arrivals   # should return JSON, not an error
+docker compose ps                         # STATUS should reach "healthy"
 ```
 
+The `--build` step runs a full Nuxt/Vite build on the Pi. On the 8 GB Pi 5
+this is comfortable — no swap tuning or cross-building needed; it's just
+slow the first time (subsequent `docker compose up -d` without `--build`
+reuses the image). If you ever run this on a 4 GB or smaller board, build
+the image elsewhere with
+`docker buildx build --platform linux/arm64` instead, since Vite's build
+step is the memory-hungry part.
+
 Confirm `docker compose up -d` also runs cleanly after a reboot — `restart:
-unless-stopped` in `docker-compose.yml` handles the container itself, but
+unless-stopped` in `compose.yml` handles the container itself, but
 Docker's daemon needs to be enabled at boot too (it is, by default, after
 the install script above — verify with `systemctl is-enabled docker`).
+
+`compose.yml` also sets a healthcheck (so a *wedged* app — one that stopped
+responding without crashing — is visible in `docker compose ps` rather than
+silently serving nothing) and caps container logs at 3 × 10 MB. That log cap
+matters more than it looks: unbounded json-file logs are a classic way to
+wear out or fill a microSD card during a multi-day unattended run.
 
 ## 4. Kiosk mode (Chromium, autostart, no screen blanking)
 
@@ -110,6 +126,13 @@ Chromium's own memory creep (kiosk Chromium sessions are known to grow over
 very long uptimes — a periodic Chromium restart, e.g. nightly via cron, is a
 reasonable mitigation if this becomes an issue during burn-in).
 
+For reference, measured on the dev machine (x86, so indicative rather than
+exact for ARM): the Node server settles around **~86 MB RSS** after sustained
+polling, the whole `.output` build is **2.8 MB**, and the GTFS feed is
+**25 KB zipped / ~2,200 lines** — so parsing it every 6 hours is negligible.
+The app is not what loads a Pi 5; **Chromium is**. If burn-in shows trouble,
+look at the browser before the server.
+
 ## Recovery on event day
 
 - Screen frozen / blank: `sudo systemctl --user restart kiosk.service`
@@ -117,6 +140,7 @@ reasonable mitigation if this becomes an issue during burn-in).
   unless-stopped` bring everything back on boot).
 - Wrong/no data: `docker compose logs -f` on the Pi to see whether it's
   `real` mode failing over to schedule (expected, and fine) or something
-  else. `docker compose restart` to force a clean reconnect.
+  else. `docker compose ps` shows the healthcheck status. `docker compose
+  restart` to force a clean reconnect.
 - If Databús itself is unreliable at the venue: edit `.env`, set
   `NUXT_OPERATION_MODE=fake`, `docker compose up -d` (no rebuild needed).

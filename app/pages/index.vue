@@ -1,23 +1,47 @@
 <script setup lang="ts">
 const { public: publicConfig } = useRuntimeConfig()
 const { data, error, lastSuccessAt } = useArrivals()
-const { time, date } = useKioskClock()
+const { now, time, date } = useKioskClock()
 
+// Depends on `now` (the 1s clock tick), not a bare Date.now(): a plain
+// Date.now() call isn't a reactive dependency, so this computed would only
+// re-evaluate at the moment a poll succeeded — exactly when the delta is
+// ~0 — and the hint would never appear, however long the feed was down.
 const isStale = computed(() => {
   if (!lastSuccessAt.value) return false
   const staleAfterMs = publicConfig.refreshIntervalSeconds * 1000 * 3
-  return Date.now() - lastSuccessAt.value > staleAfterMs
+  return now.value.getTime() - lastSuccessAt.value > staleAfterMs
 })
 
 const hasEverLoaded = computed(() => data.value !== null)
+
+// Strips "https://" and a trailing slash for display — agency_url from the
+// feed is "https://bus.ucr.ac.cr/", the footer just wants "bus.ucr.ac.cr".
+const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') ?? '')
 </script>
 
 <template>
   <div class="screen">
     <header class="screen__header">
       <div class="screen__route">
-        <span class="screen__route-badge">bUCR</span>
-        <h1 class="screen__stop-name">{{ data?.stopName ?? 'Cargando parada…' }}</h1>
+        <!--
+          Two raster variants rather than one recolored in CSS. Both stay in
+          the DOM with CSS picking per theme; swapping `src` reactively would
+          re-request an image on every toggle.
+        -->
+        <img
+          class="screen__route-logo screen__route-logo--dark"
+          src="/logo-bucr-blanco.png"
+          :alt="data?.routeShortName || 'bUCR'"
+        >
+        <img
+          class="screen__route-logo screen__route-logo--light"
+          src="/logo-bucr.png"
+          :alt="data?.routeShortName || 'bUCR'"
+        >
+        <h1 class="screen__stop-name">
+          {{ data?.stopName ?? 'Cargando parada…' }}
+        </h1>
       </div>
 
       <div class="screen__clock-block">
@@ -31,7 +55,10 @@ const hasEverLoaded = computed(() => data.value !== null)
             <span class="screen__clock-refresh">
               <span class="screen__clock-refresh-dot" />
               Actualizaciones cada minuto
-              <span v-if="data?.realtimeFallback" class="screen__clock-refresh-dot" />
+              <span
+                v-if="data?.realtimeFallback"
+                class="screen__clock-refresh-dot"
+              />
             </span>
           </div>
         </ClientOnly>
@@ -39,27 +66,55 @@ const hasEverLoaded = computed(() => data.value !== null)
     </header>
 
     <div class="screen__status-bar">
-      <ModeBadge v-if="data" :source="data.source" />
-      <span v-if="isStale" class="screen__stale-hint">actualizando…</span>
+      <ModeBadge
+        v-if="data"
+        :source="data.source"
+      />
+      <span
+        v-if="isStale"
+        class="screen__stale-hint"
+      >actualizando…</span>
     </div>
 
     <main class="screen__board">
-      <TransitionGroup v-if="data && data.arrivals.length > 0" tag="div" name="arrival-list" class="arrival-list">
-        <ArrivalRow v-for="arrival in data.arrivals" :key="arrival.tripId" :arrival="arrival" />
+      <TransitionGroup
+        v-if="data && data.arrivals.length > 0"
+        tag="div"
+        name="arrival-list"
+        class="arrival-list"
+      >
+        <ArrivalRow
+          v-for="arrival in data.arrivals"
+          :key="arrival.tripId"
+          :arrival="arrival"
+        />
       </TransitionGroup>
 
-      <p v-else-if="data && data.arrivals.length === 0" class="screen__empty">
+      <p
+        v-else-if="data && data.arrivals.length === 0"
+        class="screen__empty"
+      >
         No hay más salidas programadas por hoy.
       </p>
 
-      <p v-else-if="error && !hasEverLoaded" class="screen__empty screen__empty--error">
+      <p
+        v-else-if="error && !hasEverLoaded"
+        class="screen__empty screen__empty--error"
+      >
         No se pudo cargar la información de salidas.
       </p>
 
-      <p v-else class="screen__empty">Cargando información de salidas…</p>
+      <p
+        v-else
+        class="screen__empty"
+      >
+        Cargando información de salidas…
+      </p>
     </main>
 
-    <footer class="screen__footer">Bus interno de la Universidad de Costa Rica — bus.ucr.ac.cr</footer>
+    <footer class="screen__footer">
+      {{ data?.routeLongName || 'Bus interno de la Universidad de Costa Rica' }} — {{ agencyUrlDisplay || 'bus.ucr.ac.cr' }}
+    </footer>
   </div>
 </template>
 
@@ -87,18 +142,27 @@ const hasEverLoaded = computed(() => data.value !== null)
   gap: 1rem;
 }
 
-.screen__route-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  font-size: clamp(1rem, 1.8vw, 1.4rem);
-  letter-spacing: 0.04em;
-  padding: 0.4em 0.9em;
-  border-radius: 0.6em;
-  background: var(--color-blue-600);
-  color: #fff;
+/* The real bUCR mark, shared with infobus-web. Only one variant is ever
+   displayed; `display: none` (rather than opacity/visibility) means assistive
+   tech ignores the hidden one, so the visible logo's alt text is the only one
+   announced. Dark is the kiosk default, so the white variant shows unless the
+   viewer explicitly toggles light. */
+.screen__route-logo {
+  height: clamp(2.6rem, 5vw, 4.2rem);
+  width: auto;
+  flex-shrink: 0;
+}
+
+.screen__route-logo--light {
+  display: none;
+}
+
+:root[data-theme='light'] .screen__route-logo--dark {
+  display: none;
+}
+
+:root[data-theme='light'] .screen__route-logo--light {
+  display: block;
 }
 
 .screen__stop-name {

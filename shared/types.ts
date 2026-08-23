@@ -46,4 +46,20 @@ export interface ArrivalsResponse {
   realtimeFallback: boolean
   arrivals: Arrival[]
   generatedAt: number
+  /**
+   * Branding read from the GTFS feed (routes.txt/agency.txt) rather than
+   * hardcoded, so it follows the feed without a redeploy. Values fall back
+   * only when the feed genuinely has none, e.g. a cold start before the
+   * first successful fetch.
+   *
+   * `routeShortName` is the logo's accessible name; `routeLongName` and
+   * `agencyUrl` render the footer. `routeColor`/`routeTextColor` (hex, no
+   * leading "#") are exposed but unused by the current UI.
+   */
+  routeShortName: string
+  routeLongName: string
+  routeColor: string
+  routeTextColor: string
+  agencyName: string
+  agencyUrl: string
 }

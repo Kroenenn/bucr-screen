@@ -1,0 +1,10 @@
+# Build scripts we explicitly decline to run on install. Same mechanism the
+# lab's other Nuxt apps use (databus/frontend, infobus/frontend) — declaring
+# them here is what stops pnpm's "Ignored build scripts" warning on every
+# install and makes the decision reproducible instead of per-developer.
+#
+# Both of these ship prebuilt binaries for linux/arm64 (the Pi 5's arch) and
+# don't need their postinstall to run for our build to work.
+ignoredBuiltDependencies:
+  - esbuild
+  - unrs-resolver

@@ -1,0 +1,50 @@
+name: bucr-screen
+
+# Single-service stack, so unlike databus/infobus (which split
+# compose.dev.yml / compose.prod.yml across many services) this stays one
+# file named `compose.yml` — the modern canonical name Docker auto-detects,
+# so the Pi can run a bare `docker compose up -d --build` with no -f flag.
+
+services:
+  bucr-screen:
+    build:
+      context: .
+      target: run
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '${HOST_PORT:-3000}:3000'
+    volumes:
+      - gtfs-cache:/app/.data/gtfs-cache
+
+    security_opt:
+      - no-new-privileges:true
+
+    # Catches a *wedged* app, which `restart: unless-stopped` alone cannot —
+    # that only reacts to the process actually exiting. Hits /api/health,
+    # which deliberately never touches Databús (see that handler for why).
+    # `node -e` rather than curl: the runtime image is node:22-bookworm-slim,
+    # which ships no curl/wget.
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+    # The Pi boots off a microSD card, and unbounded json-file logs are one
+    # of the classic ways to wear one out (and to silently fill the card
+    # during a multi-day unattended run). Caps total log footprint at 30 MB.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  gtfs-cache:

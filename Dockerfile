@@ -2,14 +2,20 @@
 # (Raspberry Pi 5 is aarch64), so this builds natively on-device or via
 # `docker buildx build --platform linux/arm64` from another machine.
 
-FROM node:22-bookworm-slim AS build
+FROM node:22-bookworm-slim AS base
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm install
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
+
+# ---------------------------------------------------------------------------
+
+FROM base AS build
+
+COPY pnpm-lock.yaml package.json ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN pnpm build
 
 # ---------------------------------------------------------------------------
 

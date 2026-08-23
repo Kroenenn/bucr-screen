@@ -6,11 +6,9 @@ const props = defineProps<{
 }>()
 
 const state = computed(() => {
-  // "ABORDANDO" (boarding), not "arriving" — this screen only ever shows
-  // boardable departures (see the direction_id filtering in PLAN.md), so
-  // "arriving" reads as if a bus were arriving *at* Educación, which is
-  // exactly what was deliberately excluded. MBTA's own "Boarding"/BRD is
-  // the same concept: the vehicle is at the stop right now.
+  // "ABORDANDO" (boarding), not "arriving": this screen only shows boardable
+  // departures, so "arriving" would read as a bus pulling *into* the stop —
+  // exactly the trips filtered out. etaMinutes === 0 means it's here now.
   if (props.arrival.etaMinutes === 0) return { label: 'ABORDANDO', tone: 'now' }
   if (props.arrival.etaMinutes <= 3) return { label: 'PRÓXIMO', tone: 'soon' }
   return { label: '', tone: 'later' }
@@ -18,18 +16,30 @@ const state = computed(() => {
 </script>
 
 <template>
-  <div class="arrival-row" :class="arrival.departing ? 'arrival-row--departing' : `arrival-row--${state.tone}`">
+  <div
+    class="arrival-row"
+    :class="arrival.departing ? 'arrival-row--departing' : `arrival-row--${state.tone}`"
+  >
     <div class="arrival-row__destination">
       <span class="arrival-row__headsign">{{ arrival.headsign }}</span>
-      <span v-if="arrival.viaMilla" class="arrival-row__badge">con milla</span>
+      <span
+        v-if="arrival.viaMilla"
+        class="arrival-row__badge"
+      >con milla</span>
     </div>
 
-    <span v-if="arrival.departing" class="arrival-row__departing">
+    <span
+      v-if="arrival.departing"
+      class="arrival-row__departing"
+    >
       <span class="arrival-row__departing-dot" />
       SALIENDO
     </span>
     <template v-else>
-      <span v-if="state.label" class="arrival-row__state">{{ state.label }}</span>
+      <span
+        v-if="state.label"
+        class="arrival-row__state"
+      >{{ state.label }}</span>
       <span class="arrival-row__eta">
         <template v-if="arrival.etaMinutes === 0">ahora</template>
         <template v-else>

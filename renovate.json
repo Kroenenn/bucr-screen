@@ -1,0 +1,7 @@
+{
+  "extends": ["github>nuxt/renovate-config-nuxt"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "postUpdateOptions": ["pnpmDedupe"]
+}

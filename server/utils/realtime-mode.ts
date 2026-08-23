@@ -1,7 +1,6 @@
 /**
- * "real" mode: poll Databus's GTFS-RT `trip_updates.json` feed directly
- * (no WebSocket — see PLAN.md's "Research notes" for why) and derive
- * arrivals for one stop.
+ * "real" mode: poll Databus's GTFS-RT `trip_updates.json` feed over plain
+ * HTTP (Databus exposes no WebSocket for it) and derive arrivals for one stop.
  *
  * Deliberately never throws: any failure (network, timeout, stale feed, or
  * simply no matching stop_time_update entries) resolves to
@@ -18,12 +17,12 @@ export interface DatabusTripUpdateFeed {
     id: string
     trip_update?: {
       timestamp?: number
-      trip: { trip_id: string; route_id: string; direction_id?: number }
+      trip: { trip_id: string, route_id: string, direction_id?: number }
       stop_time_update?: Array<{
         stop_sequence?: number
         stop_id: string
-        arrival?: { time?: number; uncertainty?: number }
-        departure?: { time?: number; uncertainty?: number }
+        arrival?: { time?: number, uncertainty?: number }
+        departure?: { time?: number, uncertainty?: number }
       }>
     }
   }>
@@ -45,7 +44,6 @@ export function deriveArrivalsFromFeed(
   feed: DatabusTripUpdateFeed,
   gtfs: GtfsData,
   stopId: string,
-  stopDirectionId: number,
   nowEpochSeconds: number,
   limit: number,
   staleThresholdSeconds: number
@@ -56,16 +54,20 @@ export function deriveArrivalsFromFeed(
     return { healthy: false, arrivals: [] }
   }
 
+  // Trips that, per the *static* schedule, aren't boarding opportunities at
+  // this stop (last stop of the trip, or pickup_type forbids it — see
+  // GtfsStopTime.isBoardable). A live trip_id absent from the static
+  // schedule (e.g. an ADDED trip) is allowed through rather than guessed
+  // at — failing open beats hiding real data.
+  const nonBoardableTripIds = new Set(
+    (gtfs.stopTimesByStop.get(stopId) ?? []).filter(st => !st.isBoardable).map(st => st.tripId)
+  )
+
   const candidates: Arrival[] = []
   for (const entity of feed.entity ?? []) {
     const tu = entity.trip_update
     if (!tu) continue
-    // A trip running the *other* direction only touches this stop_id as a
-    // terminus (e.g. bUCR's Educación stop has trips ending there with
-    // trip_headsign "Educación" itself) — not a boarding opportunity. A
-    // trip_update with no direction_id at all is let through (fail open —
-    // it's an optional field on Databús's TripDescriptor).
-    if (tu.trip.direction_id !== undefined && tu.trip.direction_id !== stopDirectionId) continue
+    if (nonBoardableTripIds.has(tu.trip.trip_id)) continue
 
     for (const stu of tu.stop_time_update ?? []) {
       if (stu.stop_id !== stopId) continue
@@ -84,13 +86,13 @@ export function deriveArrivalsFromFeed(
         // trip_id convention (same one gtfs.ts uses) rather than assuming
         // "not milla" for a trip the static schedule doesn't know about.
         viaMilla: trip?.isMilla ?? tu.trip.trip_id.includes('con_milla'),
-        uncertaintySeconds: stu.arrival?.uncertainty ?? stu.departure?.uncertainty,
+        uncertaintySeconds: stu.arrival?.uncertainty ?? stu.departure?.uncertainty
       })
     }
   }
 
   candidates.sort((a, b) => a.eta - b.eta)
-  const upcoming = candidates.filter((c) => c.eta >= nowEpochSeconds - DEPARTURE_GRACE_SECONDS)
+  const upcoming = candidates.filter(c => c.eta >= nowEpochSeconds - DEPARTURE_GRACE_SECONDS)
 
   // No matching entries is treated as unhealthy (not "no service today") so
   // the caller falls back to the schedule, which can always show the next
@@ -109,7 +111,6 @@ export interface FetchRealtimeOptions {
 export async function fetchRealtimeArrivals(
   gtfs: GtfsData,
   stopId: string,
-  stopDirectionId: number,
   nowEpochSeconds: number,
   limit: number,
   options: FetchRealtimeOptions
@@ -132,5 +133,5 @@ export async function fetchRealtimeArrivals(
     return { healthy: false, arrivals: [] }
   }
 
-  return deriveArrivalsFromFeed(feed, gtfs, stopId, stopDirectionId, nowEpochSeconds, limit, options.staleThresholdSeconds)
+  return deriveArrivalsFromFeed(feed, gtfs, stopId, nowEpochSeconds, limit, options.staleThresholdSeconds)
 }
