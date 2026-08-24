@@ -86,6 +86,13 @@ the scheduled time. A slot with no matched inbound arrival (a pull-out with
 no feeder, or one beyond the feed's horizon) keeps its plain scheduled time,
 exactly like today.
 
+**Late-feeder handling:** if a bus is late enough that its scheduled slot has
+already scrolled off the board, it can still appear as a delayed departure
+when the inbound feeder's predicted arrival + boarding buffer is still in the
+future (the bus is boarding). Once the bus actually leaves, the slot drops.
+This is controlled by `NUXT_TERMINUS_DEPARTURE_LOOKBACK_SECONDS` (default 20
+minutes, enough to cover observed irregular layovers).
+
 Only active when `NUXT_OPERATION_MODE=real`, `NUXT_TERMINUS_PREDICTION=true`,
 and `NUXT_STOP_ID` is itself a departure terminus (a trip's first boardable
 stop *and* another trip's terminal stop). See
@@ -146,6 +153,7 @@ documented in [`.env.example`](./.env.example).
 | `NUXT_TERMINUS_BOARDING_BUFFER_SECONDS` | `60` | Fixed buffer added to a matched inbound feeder's predicted terminus arrival before it counts as the estimated departure |
 | `NUXT_TERMINUS_MAX_LAYOVER_SECONDS` | `1200` | Upper bound on how much later than a slot's scheduled time a candidate feeder's predicted arrival may be and still match that slot |
 | `NUXT_TERMINUS_MAX_EARLY_SECONDS` | `300` | Upper bound on how much earlier than a slot's scheduled time a candidate feeder's predicted arrival may be and still match that slot |
+| `NUXT_TERMINUS_DEPARTURE_LOOKBACK_SECONDS` | `1200` | Lookback window (seconds) for recently-passed outbound slots. A slot scheduled in the past can still appear if its inbound feeder's predicted arrival + buffer is still in the future (bus is late and boarding). Default 20 minutes covers observed irregular layovers. |
 | `NUXT_DEMO_CYCLE_SECONDS` | `900` | Real seconds for one full compressed replay |
 | `NUXT_DEMO_DEPARTING_GRACE_SECONDS` | `180` | How long a departed trip shows `SALIENDO` in `demo` (schedule-equivalent seconds) |
 | `NUXT_PUBLIC_REFRESH_INTERVAL_SECONDS` | `15` | Page poll interval in `real`/`fake` |

@@ -1,0 +1,35 @@
+{
+  "header": {
+    "gtfs_realtime_version": "2.0",
+    "incrementality": "FULL_DATASET",
+    "timestamp": 1787591088
+  },
+  "entity": [
+    {
+      "id": "299-922",
+      "vehicle": {
+        "trip": {
+          "trip_id": "desde_educacion_a_odontologia_sin_milla_entresemana_10:45",
+          "route_id": "bUCR",
+          "direction_id": 0,
+          "schedule_relationship": "SCHEDULED"
+        },
+        "vehicle": {
+          "id": "299-922",
+          "label": "299-922",
+          "license_plate": "299-922"
+        },
+        "position": {
+          "latitude": 9.9355749,
+          "longitude": -84.0490466,
+          "speed": 0,
+          "odometer": 116683000
+        },
+        "timestamp": 1787591081,
+        "current_stop_sequence": 1,
+        "stop_id": "bUCR_0_05",
+        "current_status": "STOPPED_AT"
+      }
+    }
+  ]
+}

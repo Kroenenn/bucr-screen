@@ -65,6 +65,11 @@ export default defineNuxtConfig({
     // candidate feeder's predicted arrival may be and still match that slot
     // (an arrival much earlier more likely feeds an earlier slot, §6).
     terminusMaxEarlySeconds: 300,
+    // Lookback window for recently-passed outbound slots, in seconds. A slot
+    // scheduled in the past can still appear if its inbound feeder's
+    // predicted arrival + buffer is still in the future (bus is late and
+    // boarding). Default 20 minutes covers observed irregular layovers.
+    terminusDepartureLookbackSeconds: 1200,
     // "demo" mode: real seconds for one full compressed replay of the
     // represented day's real schedule (see demo-mode.ts).
     demoCycleSeconds: 900,

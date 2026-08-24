@@ -102,7 +102,8 @@ export default defineEventHandler(async (event): Promise<ArrivalsResponse> => {
         boardingBufferS: config.terminusBoardingBufferSeconds,
         maxLayoverS: config.terminusMaxLayoverSeconds,
         maxEarlyS: config.terminusMaxEarlySeconds
-      }
+      },
+      config.terminusDepartureLookbackSeconds
     )
 
     if (terminusArrivals.length > 0) {

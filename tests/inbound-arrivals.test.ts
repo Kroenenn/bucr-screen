@@ -162,6 +162,15 @@ describe('extractInboundArrivals', () => {
     expect(result).toEqual([{ vehicleId: 'v1', tripId: 't1', predictedArrival: NOW + 200, uncertaintySeconds: undefined }])
   })
 
+  it('keeps a feeder that has already arrived (boarding) — past-side predictions are not dropped', () => {
+    // Feeder arrived 30 seconds ago and is boarding at the terminus.
+    // extractInboundArrivals must return it; the terminus-mode post-filter
+    // (estimatedDeparture > now) is the real cutoff.
+    const feed = feedWithEntity([{ stop_sequence: 9, stop_id: STOP_ID, arrival: { time: NOW - 30, uncertainty: 120 } }], 't1')
+    const result = extractInboundArrivals(feed, gtfsWithTerminalTrip('t1', STOP_ID), STOP_ID, NOW)
+    expect(result).toEqual([{ vehicleId: 'v1', tripId: 't1', predictedArrival: NOW - 30, uncertaintySeconds: 120 }])
+  })
+
   it('is pure and never throws on a malformed/empty feed', () => {
     expect(() => extractInboundArrivals({}, emptyGtfs(), STOP_ID, NOW)).not.toThrow()
     expect(extractInboundArrivals({}, emptyGtfs(), STOP_ID, NOW)).toEqual([])

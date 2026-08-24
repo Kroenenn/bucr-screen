@@ -142,7 +142,7 @@ export function extractInboundArrivals(
   feed: DatabusTripUpdateFeed,
   gtfs: GtfsData,
   stopId: string,
-  nowEpochSeconds: number
+  _nowEpochSeconds: number
 ): InboundArrival[] {
   const arrivals: InboundArrival[] = []
   for (const entity of feed.entity ?? []) {
@@ -168,10 +168,6 @@ export function extractInboundArrivals(
 
     const etaEpoch = terminusUpdate.arrival?.time ?? terminusUpdate.departure?.time
     if (etaEpoch == null) continue
-    // Predictions well in the past are stale/no longer relevant to this
-    // cycle; keep the tiny departure-grace window symmetric with
-    // deriveArrivalsFromFeed so a fresh poll doesn't drop a bus mid-arrival.
-    if (etaEpoch < nowEpochSeconds - DEPARTURE_GRACE_SECONDS) continue
 
     arrivals.push({
       vehicleId: entity.id,

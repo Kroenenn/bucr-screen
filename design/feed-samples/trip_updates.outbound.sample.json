@@ -1,0 +1,100 @@
+{
+  "header": {
+    "gtfs_realtime_version": "2.0",
+    "incrementality": "FULL_DATASET",
+    "timestamp": 1787591088
+  },
+  "entity": [
+    {
+      "id": "299-922",
+      "trip_update": {
+        "timestamp": 1787591081,
+        "trip": {
+          "trip_id": "desde_educacion_a_odontologia_sin_milla_entresemana_10:45",
+          "route_id": "bUCR",
+          "direction_id": 0,
+          "schedule_relationship": "SCHEDULED"
+        },
+        "vehicle": {
+          "id": "299-922",
+          "label": "299-922",
+          "license_plate": "299-922"
+        },
+        "stop_time_update": [
+          {
+            "stop_sequence": 2,
+            "stop_id": "bUCR_0_06",
+            "arrival": {
+              "time": 1787591478,
+              "uncertainty": 120
+            },
+            "departure": {
+              "time": 1787591478,
+              "uncertainty": 120
+            }
+          },
+          {
+            "stop_sequence": 3,
+            "stop_id": "bUCR_0_07",
+            "arrival": {
+              "time": 1787591541,
+              "uncertainty": 120
+            },
+            "departure": {
+              "time": 1787591541,
+              "uncertainty": 120
+            }
+          },
+          {
+            "stop_sequence": 4,
+            "stop_id": "bUCR_0_08",
+            "arrival": {
+              "time": 1787591658,
+              "uncertainty": 120
+            },
+            "departure": {
+              "time": 1787591658,
+              "uncertainty": 120
+            }
+          },
+          {
+            "stop_sequence": 5,
+            "stop_id": "bUCR_0_09",
+            "arrival": {
+              "time": 1787591704,
+              "uncertainty": 120
+            },
+            "departure": {
+              "time": 1787591704,
+              "uncertainty": 120
+            }
+          },
+          {
+            "stop_sequence": 7,
+            "stop_id": "bUCR_0_10",
+            "arrival": {
+              "time": 1787591969,
+              "uncertainty": 120
+            },
+            "departure": {
+              "time": 1787591969,
+              "uncertainty": 120
+            }
+          },
+          {
+            "stop_sequence": 8,
+            "stop_id": "bUCR_0_11",
+            "arrival": {
+              "time": 1787592053,
+              "uncertainty": 120
+            },
+            "departure": {
+              "time": 1787592053,
+              "uncertainty": 120
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
