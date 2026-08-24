@@ -60,7 +60,7 @@ export default defineNuxtConfig({
       // real second, so it needs faster polling than real/fake to read
       // smoothly instead of jumping in large steps.
       demoRefreshIntervalSeconds: 3,
-      maxArrivals: 5
+      maxArrivals: 4
     }
   },
 

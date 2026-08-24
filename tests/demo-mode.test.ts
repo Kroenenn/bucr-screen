@@ -80,19 +80,27 @@ describe('nextDemoDepartures', () => {
 
   it('stops showing "departing" once the grace window (schedule-equivalent seconds) has elapsed', () => {
     const shortGrace = { cycleSeconds: 420, departingGraceSeconds: 10 }
-    // 50 schedule-seconds since r1 departed > 10s grace.
-    const result = nextDemoDepartures(REAL_SCHEDULE_GTFS, STOP_ID, 5, 4, shortGrace)
+    // 50 schedule-seconds since r1 departed > 10s grace. limit=3 matches
+    // exactly today's remaining trips, so the padding from the next lap
+    // (see below) doesn't kick in and this test stays focused on the grace
+    // cutoff alone.
+    const result = nextDemoDepartures(REAL_SCHEDULE_GTFS, STOP_ID, 5, 3, shortGrace)
     expect(result.some(a => a.departing)).toBe(false)
     expect(result.map(a => a.tripId)).toEqual(['r2', 'r3', 'r4'])
   })
 
-  it('tapers off near the end of the represented day instead of padding with fabricated rows', () => {
+  it('pads with the next lap of the schedule instead of tapering off near the end of the day', () => {
     // Push simulatedNow just past r4 (last departure) and outside its grace
     // window: secondsIntoCycle must land past 4200 (r4 offset) + grace.
     // realEpochSeconds * 10 mod 4200 == 4199 -> simulatedNow = 22800+4199 = 26999...
     // easier: pick realEpochSeconds so secondsIntoCycle = 4199 (just before wrap).
     const result = nextDemoDepartures(REAL_SCHEDULE_GTFS, STOP_ID, 419.9, 4, OPTIONS)
-    expect(result.length).toBeLessThan(4)
+    expect(result).toHaveLength(4)
+    expect(result.every(a => !a.departing)).toBe(true)
+    // Departures keep advancing (r4 today, then r2/r3/r4 from tomorrow's
+    // lap) rather than repeating or going backwards.
+    const etas = result.map(a => a.etaMinutes)
+    expect(etas).toEqual([...etas].sort((a, b) => a - b))
   })
 
   it('wraps back to the first departure once the compressed clock completes a full cycle', () => {

@@ -30,6 +30,12 @@
      GTFS feed itself (routes.txt) via an inline style, not this stylesheet. */
   --color-blue-400: #5ca1d6;
 
+  /* Same brand gradient as infobus-web's header (blue-900 → blue-600). Kept
+     out of the light-theme override below on purpose: it's a fixed brand
+     element, not something that should flip with the kiosk's day/night toggle. */
+  --color-blue-600: #0b5ca8;
+  --color-blue-900: #04233f;
+
   --color-amber-500: #ffc107;
   --color-accent-text: #ffd24e;
 

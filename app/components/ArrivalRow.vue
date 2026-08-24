@@ -13,6 +13,15 @@ const state = computed(() => {
   if (props.arrival.etaMinutes <= 3) return { label: 'PRÓXIMO', tone: 'soon' }
   return { label: '', tone: 'later' }
 })
+
+// MBTA's Real-Time Display Guidelines (see demo-mode.ts): once a countdown
+// reaches 60 minutes, switch from a raw minute count to hours + minutes —
+// "104 min" is harder to read at a glance than "1 h 44 min".
+const etaDisplay = computed(() => {
+  const m = props.arrival.etaMinutes
+  if (m < 60) return { hours: 0, minutes: m }
+  return { hours: Math.floor(m / 60), minutes: m % 60 }
+})
 </script>
 
 <template>
@@ -42,8 +51,11 @@ const state = computed(() => {
       >{{ state.label }}</span>
       <span class="arrival-row__eta">
         <template v-if="arrival.etaMinutes === 0">ahora</template>
+        <template v-else-if="etaDisplay.hours === 0">
+          {{ etaDisplay.minutes }}<span class="arrival-row__eta-unit">min</span>
+        </template>
         <template v-else>
-          {{ arrival.etaMinutes }}<span class="arrival-row__eta-unit">min</span>
+          {{ etaDisplay.hours }}<span class="arrival-row__eta-unit">h</span><template v-if="etaDisplay.minutes > 0">{{ ' ' }}{{ etaDisplay.minutes }}<span class="arrival-row__eta-unit">min</span></template>
         </template>
       </span>
     </template>
@@ -51,17 +63,29 @@ const state = computed(() => {
 </template>
 
 <style scoped>
+/* Sized in cqh/cqi (query-container units, set on .screen__board in
+   index.vue) rather than vh/vw: the board's height already accounts for
+   whatever the header/footer/status-bar chrome took, so rows scaling off
+   it — not the raw viewport — is what keeps `maxArrivals` rows filling the
+   board with no scroll and no clipped last row. */
 .arrival-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: baseline;
-  gap: clamp(1rem, 2vw, 2rem);
-  padding: clamp(0.9rem, 1.8vw, 1.6rem) 0;
+  gap: clamp(1rem, 3cqi, 2rem);
+  padding: clamp(0.5rem, 4cqh, 2.1rem) 0;
   border-bottom: 1px solid var(--color-border);
 }
 
 .arrival-row:last-child {
   border-bottom: none;
+}
+
+/* The whole row blinks during the departing grace period — not just the
+   small dot next to "SALIENDO" — so the row's imminent removal from the
+   list reads as a warned countdown, not a sudden disappearance. */
+.arrival-row--departing {
+  animation: arrival-row-pulse 1.6s ease-in-out infinite;
 }
 
 .arrival-row__destination {
@@ -73,7 +97,7 @@ const state = computed(() => {
 }
 
 .arrival-row__headsign {
-  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  font-size: clamp(1.6rem, 9.5cqh, 4.6rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--color-ink);
@@ -84,7 +108,7 @@ const state = computed(() => {
    infobus-web's own "con milla" badge treatment. */
 .arrival-row__badge {
   font-family: var(--font-mono);
-  font-size: clamp(0.75rem, 1.1vw, 1rem);
+  font-size: clamp(0.75rem, 2.2cqh, 1rem);
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--color-ink-muted);
@@ -96,7 +120,7 @@ const state = computed(() => {
 
 .arrival-row__state {
   font-family: var(--font-mono);
-  font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+  font-size: clamp(0.85rem, 3.4cqh, 1.6rem);
   font-weight: 700;
   letter-spacing: 0.14em;
   color: var(--color-accent-text);
@@ -109,7 +133,7 @@ const state = computed(() => {
 .arrival-row__eta {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: clamp(2.2rem, 4.4vw, 3.6rem);
+  font-size: clamp(2.2rem, 12cqh, 6rem);
   font-weight: 800;
   color: var(--color-ink);
   white-space: nowrap;
@@ -132,7 +156,7 @@ const state = computed(() => {
   gap: 0.6em;
   font-family: var(--font-mono);
   font-weight: 800;
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-size: clamp(1.3rem, 6.5cqh, 3rem);
   letter-spacing: 0.1em;
   color: var(--color-accent-text);
 }

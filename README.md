@@ -101,7 +101,7 @@ documented in [`.env.example`](./.env.example).
 | `NUXT_DEMO_DEPARTING_GRACE_SECONDS` | `180` | How long a departed trip shows `SALIENDO` in `demo` (schedule-equivalent seconds) |
 | `NUXT_PUBLIC_REFRESH_INTERVAL_SECONDS` | `15` | Page poll interval in `real`/`fake` |
 | `NUXT_PUBLIC_DEMO_REFRESH_INTERVAL_SECONDS` | `3` | Page poll interval in `demo` |
-| `NUXT_PUBLIC_MAX_ARRIVALS` | `5` | Max rows on screen |
+| `NUXT_PUBLIC_MAX_ARRIVALS` | `4` | Max rows on screen |
 | `HOST_PORT` | `3000` | `compose.yml` only — host-side port |
 
 ### Exercising `real` mode locally

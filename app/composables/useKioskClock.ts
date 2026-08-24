@@ -16,7 +16,7 @@ export function useKioskClock() {
   }
 
   const time = computed(() =>
-    now.value.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
+    now.value.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })
   )
   // Keyed on the calendar day, not on `now` directly: the displayed date
   // changes once a day, so depending on the raw tick would re-run

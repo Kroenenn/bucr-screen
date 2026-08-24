@@ -12,9 +12,13 @@
  * real-world visibility depends on `cycleSeconds`: heavier compression makes
  * the "departing" state flash by faster.
  *
- * Near the end of the represented day the board runs low on rows and can show
- * the "no hay más salidas" empty state before the clock wraps. That's
- * intentional — it's how the real schedule looks at close of service.
+ * The represented day loops: once the last trip of the schedule has come and
+ * gone, upcoming departures are drawn from the *next* lap of the same
+ * schedule (see the `dayOffset` loop below) instead of the board tapering off
+ * to fewer and fewer rows near "end of service". A demo kiosk display is
+ * meant to be watched continuously — an empty-looking board once every
+ * `cycleSeconds` would read as broken, not as a realistic close of service.
+ * `limit` rows are shown at (very close to) all times.
  *
  * The "departing" state is demo-only: MBTA's Real-Time Display Guidelines say
  * to drop a prediction once it goes negative, so "real"/"fake" remove a trip
@@ -129,19 +133,35 @@ export function nextDemoDepartures(
     }
   }
 
-  for (const t of trips) {
-    if (result.length >= limit) break
-    if (t.departureSeconds < simulatedNow) continue
-    const secondsUntil = t.departureSeconds - simulatedNow
-    result.push({
-      tripId: t.tripId,
-      routeId: t.routeId,
-      headsign: t.headsign,
-      viaMilla: t.viaMilla,
-      eta: realEpochSeconds + secondsUntil / speedMultiplier,
-      etaMinutes: Math.max(0, Math.floor(secondsUntil / 60)),
-      departing: false
-    })
+  // `dayOffset` walks virtual laps of the same schedule (0 = today, 1 =
+  // today's trips repeating "tomorrow", ...) so the board keeps filling up
+  // to `limit` instead of running dry near the end of a lap — see the file
+  // header. `lastEffectiveDeparture` enforces strictly-increasing departure
+  // times across that seam: since `spanSeconds` is defined as exactly
+  // `last.departureSeconds - first.departureSeconds`, lap N's last trip and
+  // lap N+1's first trip land on the exact same instant, and without this
+  // check that instant would be pushed twice.
+  let lastEffectiveDeparture = -Infinity
+  let dayOffset = 0
+  while (result.length < limit && dayOffset < 1000) {
+    for (const t of trips) {
+      const effectiveDeparture = t.departureSeconds + dayOffset * spanSeconds
+      if (effectiveDeparture < simulatedNow) continue
+      if (effectiveDeparture <= lastEffectiveDeparture) continue
+      const secondsUntil = effectiveDeparture - simulatedNow
+      result.push({
+        tripId: t.tripId,
+        routeId: t.routeId,
+        headsign: t.headsign,
+        viaMilla: t.viaMilla,
+        eta: realEpochSeconds + secondsUntil / speedMultiplier,
+        etaMinutes: Math.max(0, Math.floor(secondsUntil / 60)),
+        departing: false
+      })
+      lastEffectiveDeparture = effectiveDeparture
+      if (result.length >= limit) break
+    }
+    dayOffset++
   }
 
   return result
