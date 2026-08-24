@@ -22,6 +22,19 @@ const etaDisplay = computed(() => {
   if (m < 60) return { hours: 0, minutes: m }
   return { hours: Math.floor(m / 60), minutes: m % 60 }
 })
+
+// Only worth showing "08:00 → ~08:07" when there's an actual gap to explain
+// (a matched-but-on-time feeder leaves scheduledEta === eta, where the
+// arrow would just repeat the same clock time for no reason) — and only
+// once the row is already flagged `estimated`, per §11's "floor at
+// schedule, never earlier than timetable" rule (scheduledEta is always
+// <= eta, so this never reads as an early departure).
+const scheduledTimeDisplay = computed(() => {
+  if (!props.arrival.estimated) return null
+  const { scheduledEta, eta } = props.arrival
+  if (scheduledEta == null || scheduledEta === eta) return null
+  return new Date(scheduledEta * 1000).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })
+})
 </script>
 
 <template>
@@ -35,6 +48,13 @@ const etaDisplay = computed(() => {
         v-if="arrival.viaMilla"
         class="arrival-row__badge"
       >con milla</span>
+      <span
+        v-if="arrival.estimated"
+        class="arrival-row__badge arrival-row__badge--estimated"
+      >
+        <span class="arrival-row__badge-dot" />
+        estimado
+      </span>
     </div>
 
     <span
@@ -50,6 +70,10 @@ const etaDisplay = computed(() => {
         class="arrival-row__state"
       >{{ state.label }}</span>
       <span class="arrival-row__eta">
+        <span
+          v-if="scheduledTimeDisplay"
+          class="arrival-row__scheduled"
+        >{{ scheduledTimeDisplay }} →</span>
         <template v-if="arrival.etaMinutes === 0">ahora</template>
         <template v-else-if="etaDisplay.hours === 0">
           {{ etaDisplay.minutes }}<span class="arrival-row__eta-unit">min</span>
@@ -118,12 +142,48 @@ const etaDisplay = computed(() => {
   white-space: nowrap;
 }
 
+/* Green like ModeBadge's "EN VIVO" pill (--color-ok) — this row's eta came
+   from a real-time terminus prediction, not the static timetable, so it
+   borrows the same "live" color language rather than inventing a new one.
+   Distinct from the neutral "con milla" badge above it, and from the
+   amber "PRÓXIMO"/"SALIENDO" attention language, which means something
+   different (urgency, not data provenance). */
+.arrival-row__badge--estimated {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--color-ok);
+  border-color: rgba(53, 201, 140, 0.35);
+  background: rgba(53, 201, 140, 0.08);
+}
+
+.arrival-row__badge-dot {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--color-ok);
+  animation: arrival-row-pulse 1.6s ease-in-out infinite;
+}
+
 .arrival-row__state {
   font-family: var(--font-mono);
   font-size: clamp(0.85rem, 3.4cqh, 1.6rem);
   font-weight: 700;
   letter-spacing: 0.14em;
   color: var(--color-accent-text);
+}
+
+/* Sits inside the eta cell, before the number — small and muted so the
+   estimated time (the number people actually need) stays the visual
+   focus. Never earlier than this scheduled time (§11), so the arrow only
+   ever reads as "pushed later", matching the SALIENDO/late framing
+   elsewhere on the board. */
+.arrival-row__scheduled {
+  font-size: 0.32em;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  margin-right: 0.35em;
+  white-space: nowrap;
 }
 
 .arrival-row--now .arrival-row__eta {

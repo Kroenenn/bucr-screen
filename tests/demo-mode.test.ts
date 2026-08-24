@@ -22,7 +22,20 @@ function buildGtfs(trips: GtfsTrip[], stopTimes: GtfsStopTime[]): GtfsData {
     if (list) list.push(st)
     else stopTimesByStop.set(st.stopId, [st])
   }
-  return { agency: null, routes: new Map(), feedInfo: null, stops: new Map(), trips: tripsMap, stopTimesByStop, calendars: [], calendarExceptions: [], loadedAt: Date.now() }
+  return {
+    agency: null,
+    routes: new Map(),
+    feedInfo: null,
+    stops: new Map(),
+    trips: tripsMap,
+    stopTimesByStop,
+    calendars: [],
+    calendarExceptions: [],
+    loadedAt: Date.now(),
+    terminalStopIdByTrip: new Map(),
+    firstBoardableStopIdByTrip: new Map(),
+    departureTerminusStopIds: new Set()
+  }
 }
 
 // Real-looking, unevenly-spaced departures (like bUCR's actual schedule):

@@ -36,6 +36,23 @@ export interface Arrival {
   departing?: boolean
   /** Only present for realtime arrivals — seconds of GTFS-RT uncertainty. */
   uncertaintySeconds?: number
+  /**
+   * True when `eta` was derived from a real-time terminus prediction
+   * (an inbound feeder bus's predicted arrival, see
+   * design/realtime-terminus-prediction.md §5) rather than pure schedule.
+   * A predicted board is still `source: 'realtime'` — this flag is
+   * per-arrival, not per-board, since some slots (e.g. no matched feeder)
+   * fall back to schedule even while others on the same board are
+   * predicted. Absent/false renders identically to today's schedule-only
+   * row.
+   */
+  estimated?: boolean
+  /**
+   * Unix seconds — the original scheduled departure, present alongside
+   * `estimated` so the UI can show "08:00 → ~08:07". Per §11's "floor at
+   * schedule" rule, `eta` is never earlier than `scheduledEta`.
+   */
+  scheduledEta?: number
 }
 
 export interface ArrivalsResponse {

@@ -1,8 +1,10 @@
 import type { ArrivalsResponse } from '../../shared/types'
 import type { GtfsData } from '../utils/gtfs'
 import { nextDemoDepartures } from '../utils/demo-mode'
-import { fetchRealtimeArrivals } from '../utils/realtime-mode'
+import { deriveArrivalsFromFeed, fetchTripUpdateFeed, isFeedFresh, type FetchRealtimeOptions } from '../utils/realtime-mode'
 import { nextDepartures } from '../utils/schedule-mode'
+import { deriveTerminusArrivals } from '../utils/terminus-mode'
+import { isDepartureTerminus } from '../utils/terminus-prediction'
 
 /** Real branding straight from routes.txt/agency.txt — see ArrivalsResponse. */
 function brandingMeta(gtfs: GtfsData, routeId: string | undefined) {
@@ -67,12 +69,58 @@ export default defineEventHandler(async (event): Promise<ArrivalsResponse> => {
   }
 
   // "real" mode: try live data first, falling back to the schedule when
-  // Databus is unreachable or stale.
-  const realtime = await fetchRealtimeArrivals(gtfs, config.stopId, nowEpochSeconds, config.public.maxArrivals, {
+  // Databus is unreachable or stale. Fetch trip_updates exactly once — both
+  // the plain realtime path below and the (opt-in) terminus-prediction path
+  // read from the same fetched feed rather than each fetching it themselves.
+  const realtimeOptions: FetchRealtimeOptions = {
     databusBaseUrl: config.databusBaseUrl,
     fetchTimeoutMs: config.realtimeFetchTimeoutMs,
     staleThresholdSeconds: config.realtimeStaleThresholdSeconds
-  })
+  }
+  const tripUpdateFeed = await fetchTripUpdateFeed(realtimeOptions)
+
+  // Terminus-gated prediction (see design/realtime-terminus-prediction.md
+  // §8 WS-C): only when explicitly opted in, the configured stop is
+  // auto-detected as a departure terminus, and the feed is fresh. Any
+  // failure inside deriveTerminusArrivals degrades to an empty array, so
+  // this simply falls through to the plain realtime/schedule chain below —
+  // never a regression versus today's behavior.
+  if (
+    tripUpdateFeed
+    && config.terminusPrediction
+    && isDepartureTerminus(gtfs, config.stopId)
+    && isFeedFresh(tripUpdateFeed, nowEpochSeconds, config.realtimeStaleThresholdSeconds)
+  ) {
+    const terminusArrivals = deriveTerminusArrivals(
+      tripUpdateFeed,
+      gtfs,
+      config.stopId,
+      timeZone,
+      nowEpochSeconds,
+      config.public.maxArrivals,
+      {
+        boardingBufferS: config.terminusBoardingBufferSeconds,
+        maxLayoverS: config.terminusMaxLayoverSeconds,
+        maxEarlyS: config.terminusMaxEarlySeconds
+      }
+    )
+
+    if (terminusArrivals.length > 0) {
+      return {
+        stopId: config.stopId,
+        stopName,
+        source: 'realtime',
+        realtimeFallback: false,
+        arrivals: terminusArrivals,
+        generatedAt: nowEpochSeconds,
+        ...brandingMeta(gtfs, terminusArrivals[0]?.routeId)
+      }
+    }
+  }
+
+  const realtime = tripUpdateFeed
+    ? deriveArrivalsFromFeed(tripUpdateFeed, gtfs, config.stopId, nowEpochSeconds, config.public.maxArrivals, config.realtimeStaleThresholdSeconds)
+    : { healthy: false, arrivals: [] }
 
   if (realtime.healthy) {
     return {

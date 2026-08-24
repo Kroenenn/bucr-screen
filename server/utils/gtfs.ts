@@ -120,6 +120,29 @@ export interface GtfsData {
   calendars: GtfsCalendar[]
   calendarExceptions: GtfsCalendarException[]
   loadedAt: number
+  /**
+   * Each trip's terminal stop_id (the stop at its max stop_sequence) — the
+   * stop it ends at, never a boarding opportunity there (see
+   * `GtfsStopTime.isBoardable`). Lets a terminus-prediction consumer ask
+   * "is this trip an inbound feeder for stop S?" via a lookup instead of
+   * rescanning stop_times.txt. See design/realtime-terminus-prediction.md §4.
+   */
+  terminalStopIdByTrip: Map<string, string>
+  /**
+   * Each trip's first *boardable* stop_id (min stop_sequence among
+   * stop_times where `isBoardable` is true). Lets a consumer ask "does this
+   * trip depart from stop S?" via a lookup. Same source doc as above.
+   */
+  firstBoardableStopIdByTrip: Map<string, string>
+  /**
+   * stop_ids that are a **departure terminus**: some trip's first-boardable
+   * stop AND some (other) trip's terminal stop — precomputed once here
+   * (rather than re-derived per request) so `isDepartureTerminus` in
+   * terminus-prediction.ts, called on every /api/arrivals request, is a
+   * trivial Set lookup instead of a linear scan of both trip maps. See
+   * design/realtime-terminus-prediction.md §8 WS-C.
+   */
+  departureTerminusStopIds: Set<string>
 }
 
 function parseGtfsTime(value: string): number {
@@ -209,6 +232,9 @@ function parseZipBuffer(buffer: Buffer): GtfsData {
   }
 
   const stopTimesByStop = new Map<string, GtfsStopTime[]>()
+  const terminalStopIdByTrip = new Map<string, string>()
+  const firstBoardableStopIdByTrip = new Map<string, string>()
+  const minBoardableStopSequenceByTrip = new Map<string, number>()
   for (const row of stopTimeRows) {
     const tripId = requiredField(row, 'trip_id', 'stop_times.txt')
     const stopSequence = Number(requiredField(row, 'stop_sequence', 'stop_times.txt'))
@@ -228,6 +254,16 @@ function parseZipBuffer(buffer: Buffer): GtfsData {
     const list = stopTimesByStop.get(stopTime.stopId)
     if (list) list.push(stopTime)
     else stopTimesByStop.set(stopTime.stopId, [stopTime])
+
+    if (isLastStop) terminalStopIdByTrip.set(tripId, stopTime.stopId)
+
+    if (stopTime.isBoardable) {
+      const currentMin = minBoardableStopSequenceByTrip.get(tripId)
+      if (currentMin === undefined || stopSequence < currentMin) {
+        minBoardableStopSequenceByTrip.set(tripId, stopSequence)
+        firstBoardableStopIdByTrip.set(tripId, stopTime.stopId)
+      }
+    }
   }
 
   const calendars: GtfsCalendar[] = parseCsv(zip, 'calendar.txt').map(row => ({
@@ -249,7 +285,25 @@ function parseZipBuffer(buffer: Buffer): GtfsData {
     exceptionType: Number(row.exception_type) === 1 ? 1 : 2
   }))
 
-  return { agency, routes, feedInfo, stops, trips, stopTimesByStop, calendars, calendarExceptions, loadedAt: Date.now() }
+  const outboundDepartureStopIds = new Set(firstBoardableStopIdByTrip.values())
+  const departureTerminusStopIds = new Set(
+    [...new Set(terminalStopIdByTrip.values())].filter(stopId => outboundDepartureStopIds.has(stopId))
+  )
+
+  return {
+    agency,
+    routes,
+    feedInfo,
+    stops,
+    trips,
+    stopTimesByStop,
+    calendars,
+    calendarExceptions,
+    loadedAt: Date.now(),
+    terminalStopIdByTrip,
+    firstBoardableStopIdByTrip,
+    departureTerminusStopIds
+  }
 }
 
 /** Service ids active on a given GTFS date (YYYYMMDD), per calendar.txt + calendar_dates.txt exceptions. */

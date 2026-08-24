@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { GtfsData } from '../server/utils/gtfs'
-import { deriveArrivalsFromFeed, type DatabusTripUpdateFeed } from '../server/utils/realtime-mode'
+import { deriveArrivalsFromFeed, isFeedFresh, type DatabusTripUpdateFeed } from '../server/utils/realtime-mode'
 
 const STOP_ID = 'bUCR_0_01'
 const NOW = 1_800_000_000
@@ -14,7 +14,20 @@ interface StopTimeUpdateEntry {
 }
 
 function emptyGtfs(): GtfsData {
-  return { agency: null, routes: new Map(), feedInfo: null, stops: new Map(), trips: new Map(), stopTimesByStop: new Map(), calendars: [], calendarExceptions: [], loadedAt: Date.now() }
+  return {
+    agency: null,
+    routes: new Map(),
+    feedInfo: null,
+    stops: new Map(),
+    trips: new Map(),
+    stopTimesByStop: new Map(),
+    calendars: [],
+    calendarExceptions: [],
+    loadedAt: Date.now(),
+    terminalStopIdByTrip: new Map(),
+    firstBoardableStopIdByTrip: new Map(),
+    departureTerminusStopIds: new Set()
+  }
 }
 
 function gtfsWithHeadsign(tripId: string, headsign: string, isMilla = false): GtfsData {
@@ -115,5 +128,23 @@ describe('deriveArrivalsFromFeed', () => {
     const feed = feedWithEntity([{ stop_id: STOP_ID, arrival: { time: NOW + 120 } }], NOW, 'desde_educacion_a_odontologia_con_milla_entresemana_19:30')
     const result = deriveArrivalsFromFeed(feed, emptyGtfs(), STOP_ID, NOW, 5, STALE_THRESHOLD)
     expect(result.arrivals[0]?.viaMilla).toBe(true)
+  })
+})
+
+describe('isFeedFresh', () => {
+  it('is fresh when the header timestamp is within the stale threshold', () => {
+    expect(isFeedFresh({ header: { timestamp: NOW - 30 } }, NOW, STALE_THRESHOLD)).toBe(true)
+  })
+
+  it('is fresh exactly at the stale threshold boundary (inclusive)', () => {
+    expect(isFeedFresh({ header: { timestamp: NOW - STALE_THRESHOLD } }, NOW, STALE_THRESHOLD)).toBe(true)
+  })
+
+  it('is stale one second past the threshold', () => {
+    expect(isFeedFresh({ header: { timestamp: NOW - STALE_THRESHOLD - 1 } }, NOW, STALE_THRESHOLD)).toBe(false)
+  })
+
+  it('treats a missing header timestamp as maximally stale (epoch 0), never throwing', () => {
+    expect(isFeedFresh({}, NOW, STALE_THRESHOLD)).toBe(false)
   })
 })

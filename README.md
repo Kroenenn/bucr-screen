@@ -47,13 +47,58 @@ next departures. Three operation modes, selected with `NUXT_OPERATION_MODE`:
 All three share the same static-GTFS layer (stop name, headsigns, schedule
 computation, branding).
 
-**`fake` is the default because `real` has nothing to show today**: Databús
-has no implemented path for a run to reach `runs:in_progress`, so its feed is
-always empty. Beyond that, real-time predictions add little at a *departure
-terminus* like Educación — a trip that hasn't started has no vehicle
-telemetry, and an observed bus can't be matched to a scheduled trip from
-position alone (bUCR's `trips.txt` has no `block_id`). Switch to `real` when
-there is a reachable Databús and the board points at a mid-route stop.
+**`fake` is the default** so a fresh checkout or an unconfigured deployment
+never depends on a reachable Databús. Switch to `real` once
+`NUXT_DATABUS_BASE_URL` points at a live feed.
+
+### Terminus departure prediction
+
+At a plain mid-route stop, `real` mode's predictions are the ordinary
+GTFS-RT case: read the trip's own `trip_updates` arrival at that stop.
+
+A *departure terminus* like Educación (`bUCR_0_01`) is different: the
+outbound trip (`direction_id=0`, →Odontología) only produces GTFS-RT once its
+run is `in_progress`, which requires the bus to already be moving away from
+the stop — i.e. exactly in the window a waiting rider wants a prediction,
+there is no realtime for that trip yet, only the static timetable (which
+drifts, since a driver can't start the next run until physically back at the
+terminus).
+
+Setting `NUXT_TERMINUS_PREDICTION=true` closes that gap by chaining runs: the
+same physical bus is very likely already visible on the *inbound* feeder trip
+(`direction_id=1`, terminal stop `bUCR_0_01`) that is driving toward the
+terminus to become that outbound trip. That inbound run **is** `in_progress`
+and telemetering, so its `trip_updates` entry carries a real,
+position-anchored predicted arrival time at the terminus (Databús does the
+map-matching and delay propagation server-side; the board just reads
+`arrival.time`). The board matches each upcoming scheduled outbound slot to
+the nearest plausible inbound arrival (within
+`NUXT_TERMINUS_MAX_EARLY_SECONDS` / `NUXT_TERMINUS_MAX_LAYOVER_SECONDS` of the
+slot's scheduled time) and shows:
+
+```
+estimated_departure = max(scheduled_departure, predicted_arrival + NUXT_TERMINUS_BOARDING_BUFFER_SECONDS)
+```
+
+— i.e. the displayed departure is **never earlier than the timetable**; a
+late feeder bus pushes the shown time out, an on-time or early one just shows
+the scheduled time. A slot with no matched inbound arrival (a pull-out with
+no feeder, or one beyond the feed's horizon) keeps its plain scheduled time,
+exactly like today.
+
+Only active when `NUXT_OPERATION_MODE=real`, `NUXT_TERMINUS_PREDICTION=true`,
+and `NUXT_STOP_ID` is itself a departure terminus (a trip's first boardable
+stop *and* another trip's terminal stop). See
+[`design/realtime-terminus-prediction.md`](./design/realtime-terminus-prediction.md)
+for the full design.
+
+**Honest caveat:** this only helps when inbound feeder runs are actually
+dispatched and telemetering. If the real deployment doesn't start every
+inbound run (dispatcher "begin run" + the vehicle sending position pings),
+`runs:in_progress` is empty for those trips, no inbound prediction exists to
+match against, and the board correctly falls back to the same (drifting)
+schedule it shows today. This is an operational precondition, not something
+the screen code can fix on its own.
 
 ### Boardable departures
 
@@ -94,9 +139,13 @@ documented in [`.env.example`](./.env.example).
 | `NUXT_GTFS_FEED_URL` | `feeds.simovi.org/bucr/schedule/gtfs.zip` | Static GTFS Schedule |
 | `NUXT_GTFS_REFRESH_INTERVAL_SECONDS` | `21600` | Feed refresh window (refreshes in the background; never blocks a request) |
 | `NUXT_GTFS_FETCH_TIMEOUT_MS` | `15000` | Deadline for the feed download |
-| `NUXT_DATABUS_BASE_URL` | `https://databus.bucr.digital` | Databús base URL. **Does not currently resolve** — confirm before using `real`. The app appends `/feed/realtime/trip_updates.json`. |
+| `NUXT_DATABUS_BASE_URL` | `https://databus.bucr.digital` | Databús base URL. **Does not currently resolve** — confirm before using `real`. The app appends `/feed/realtime/trip_updates.json` (used for both plain realtime arrivals and, as shipped, terminus prediction — `vehicle_positions.json` is not fetched in v1). The validated live host as of this writing is `https://app.167.233.130.36.sslip.io`; confirm it's still current, and whether a stable DNS name has replaced this IP-encoded sslip.io host, before production use. |
 | `NUXT_REALTIME_STALE_THRESHOLD_SECONDS` | `90` | Feed age (or emptiness) beyond which `real` falls back |
 | `NUXT_REALTIME_FETCH_TIMEOUT_MS` | `5000` | Per-request timeout against Databús |
+| `NUXT_TERMINUS_PREDICTION` | `false` | Opt-in: at a departure terminus, estimate departures from the inbound feeder run's real-time predicted arrival instead of the static schedule alone. Only takes effect in `real` mode, and only when `NUXT_STOP_ID` is itself a departure terminus. See "How it works" below. |
+| `NUXT_TERMINUS_BOARDING_BUFFER_SECONDS` | `60` | Fixed buffer added to a matched inbound feeder's predicted terminus arrival before it counts as the estimated departure |
+| `NUXT_TERMINUS_MAX_LAYOVER_SECONDS` | `1200` | Upper bound on how much later than a slot's scheduled time a candidate feeder's predicted arrival may be and still match that slot |
+| `NUXT_TERMINUS_MAX_EARLY_SECONDS` | `300` | Upper bound on how much earlier than a slot's scheduled time a candidate feeder's predicted arrival may be and still match that slot |
 | `NUXT_DEMO_CYCLE_SECONDS` | `900` | Real seconds for one full compressed replay |
 | `NUXT_DEMO_DEPARTING_GRACE_SECONDS` | `180` | How long a departed trip shows `SALIENDO` in `demo` (schedule-equivalent seconds) |
 | `NUXT_PUBLIC_REFRESH_INTERVAL_SECONDS` | `15` | Page poll interval in `real`/`fake` |

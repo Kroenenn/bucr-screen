@@ -39,7 +39,10 @@ function buildGtfs(opts: { trips: GtfsTrip[], stopTimes: GtfsStopTime[], calenda
     stopTimesByStop,
     calendars: opts.calendars,
     calendarExceptions: opts.exceptions ?? [],
-    loadedAt: Date.now()
+    loadedAt: Date.now(),
+    terminalStopIdByTrip: new Map(),
+    firstBoardableStopIdByTrip: new Map(),
+    departureTerminusStopIds: new Set()
   }
 }
 

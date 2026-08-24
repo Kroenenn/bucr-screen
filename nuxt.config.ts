@@ -45,6 +45,26 @@ export default defineNuxtConfig({
     realtimeStaleThresholdSeconds: 90,
     realtimeFetchTimeoutMs: 5000,
     gtfsCacheDir: '.data/gtfs-cache',
+    // Opt-in terminus-departure prediction (see
+    // design/realtime-terminus-prediction.md) -- default OFF so a
+    // deployment at a non-terminus stop, or one that hasn't verified this
+    // feature, is unaffected. Only takes effect in "real" mode, and only
+    // when NUXT_STOP_ID is itself a departure terminus (auto-detected, see
+    // terminus-prediction.ts's isDepartureTerminus) and the trip_updates
+    // feed is healthy -- otherwise behavior is identical to today.
+    terminusPrediction: false,
+    // Fixed buffer added to a matched inbound feeder's predicted terminus
+    // arrival before it can count as the estimated departure time -- "boards
+    // and departs immediately" plus a small safety margin (§3).
+    terminusBoardingBufferSeconds: 60,
+    // Upper bound on how much later than a slot's scheduled time a
+    // candidate feeder's predicted arrival may be and still match that slot
+    // (covers the observed ~18min irregular-layover case, §6).
+    terminusMaxLayoverSeconds: 1200,
+    // Upper bound on how much earlier than a slot's scheduled time a
+    // candidate feeder's predicted arrival may be and still match that slot
+    // (an arrival much earlier more likely feeds an earlier slot, §6).
+    terminusMaxEarlySeconds: 300,
     // "demo" mode: real seconds for one full compressed replay of the
     // represented day's real schedule (see demo-mode.ts).
     demoCycleSeconds: 900,

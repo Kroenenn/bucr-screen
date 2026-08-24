@@ -102,10 +102,136 @@ export function deriveArrivalsFromFeed(
   return { healthy: true, arrivals: upcoming.slice(0, limit) }
 }
 
+export interface InboundArrival {
+  /** entity.id — the run's vehicle id. */
+  vehicleId: string
+  tripId: string
+  /** Unix seconds — arrival.time at the terminus (falls back to departure.time). */
+  predictedArrival: number
+  /** arrival.uncertainty, when present. */
+  uncertaintySeconds?: number
+}
+
+/**
+ * Pure: picks out inbound-feeder predictions for a departure terminus (see
+ * design/realtime-terminus-prediction.md §5) — entities whose trip_update
+ * carries a stop_time_update at `stopId` that is that trip's *terminal*
+ * stop, not just any stop it happens to pass. Never throws.
+ *
+ * Terminal-stop determination:
+ *  - known trip (present in the static schedule): look up
+ *    `gtfs.terminalStopIdByTrip.get(tripId)` (the trip's max-stop_sequence
+ *    stop, computed once in gtfs.ts) and compare to `stopId`. This is the
+ *    correct terminus definition. It is deliberately NOT the same
+ *    `!isBoardable` signal `deriveArrivalsFromFeed` uses for
+ *    "non-boardable" filtering: `isBoardable` is also false for a mid-route
+ *    stop_time with `pickup_type=1`, which is not a terminus — reusing that
+ *    signal here would misclassify a mid-route no-pickup stop as an inbound
+ *    feeder's terminus. (`isInboundFeeder` in terminus-prediction.ts does
+ *    the same `terminalStopIdByTrip` lookup; it isn't imported here to
+ *    avoid a module cycle — terminus-prediction.ts already imports
+ *    `InboundArrival` from this file.)
+ *  - unknown/ADDED trip (fail open per §5): the static schedule has no
+ *    opinion, so terminal-ness is judged from the entity's own
+ *    stop_time_update array — `stopId`'s entry counts as terminal iff its
+ *    stop_sequence is the max stop_sequence present in that same array.
+ *    Matched by stop_sequence value, never array position (stop_sequence is
+ *    non-contiguous on this feed).
+ */
+export function extractInboundArrivals(
+  feed: DatabusTripUpdateFeed,
+  gtfs: GtfsData,
+  stopId: string,
+  nowEpochSeconds: number
+): InboundArrival[] {
+  const arrivals: InboundArrival[] = []
+  for (const entity of feed.entity ?? []) {
+    const tu = entity.trip_update
+    if (!tu) continue
+
+    const stopTimeUpdates = tu.stop_time_update ?? []
+    const terminusUpdate = stopTimeUpdates.find(stu => stu.stop_id === stopId)
+    if (!terminusUpdate) continue
+
+    if (gtfs.trips.has(tu.trip.trip_id)) {
+      // stopId is this trip's terminus iff it's the trip's max-stop_sequence
+      // stop — NOT merely a non-boardable one (pickup_type=1 mid-route stops
+      // are also non-boardable but aren't termini). See the doc comment above.
+      if (gtfs.terminalStopIdByTrip.get(tu.trip.trip_id) !== stopId) continue
+    } else {
+      // Fail open: judge terminal-ness from this entity's own update array.
+      const maxSequenceInEntity = Math.max(
+        ...stopTimeUpdates.map(stu => stu.stop_sequence ?? Number.NEGATIVE_INFINITY)
+      )
+      if ((terminusUpdate.stop_sequence ?? Number.NEGATIVE_INFINITY) !== maxSequenceInEntity) continue
+    }
+
+    const etaEpoch = terminusUpdate.arrival?.time ?? terminusUpdate.departure?.time
+    if (etaEpoch == null) continue
+    // Predictions well in the past are stale/no longer relevant to this
+    // cycle; keep the tiny departure-grace window symmetric with
+    // deriveArrivalsFromFeed so a fresh poll doesn't drop a bus mid-arrival.
+    if (etaEpoch < nowEpochSeconds - DEPARTURE_GRACE_SECONDS) continue
+
+    arrivals.push({
+      vehicleId: entity.id,
+      tripId: tu.trip.trip_id,
+      predictedArrival: etaEpoch,
+      uncertaintySeconds: terminusUpdate.arrival?.uncertainty
+    })
+  }
+
+  return arrivals
+}
+
 export interface FetchRealtimeOptions {
   databusBaseUrl: string
   fetchTimeoutMs: number
   staleThresholdSeconds: number
+}
+
+/**
+ * Fetches and parses `trip_updates.json` over plain HTTP. Never throws:
+ * network failure, timeout, non-2xx response, or unparseable JSON all
+ * resolve to `null`, letting callers fall back without special-casing
+ * errors — same never-throw posture as the rest of this module.
+ *
+ * Split out from `fetchRealtimeArrivals` so a caller that needs the raw
+ * feed for more than one purpose (e.g. server/api/arrivals.get.ts's
+ * terminus-prediction path, which both health-checks the feed and passes
+ * it to `extractInboundArrivals`) can fetch it exactly once per request
+ * instead of duplicating the network call.
+ */
+export async function fetchTripUpdateFeed(options: FetchRealtimeOptions): Promise<DatabusTripUpdateFeed | null> {
+  const url = `${options.databusBaseUrl.replace(/\/$/, '')}/feed/realtime/trip_updates.json`
+
+  try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), options.fetchTimeoutMs)
+    try {
+      const response = await fetch(url, { signal: controller.signal })
+      if (!response.ok) throw new Error(`trip_updates fetch failed: ${response.status} ${response.statusText}`)
+      return (await response.json()) as DatabusTripUpdateFeed
+    } finally {
+      clearTimeout(timeout)
+    }
+  } catch (err) {
+    console.warn('[realtime] feed fetch failed:', err)
+    return null
+  }
+}
+
+/**
+ * Freshness-only health check on an already-fetched feed (no stop-specific
+ * matching) — for a caller like the terminus-prediction path that doesn't
+ * need `deriveArrivalsFromFeed`'s "has entries at this exact stop" notion of
+ * health, since it reads inbound-feeder predictions at the terminus instead
+ * of direct stop_time_update matches. Same staleness rule as
+ * `deriveArrivalsFromFeed`. Never throws.
+ */
+export function isFeedFresh(feed: DatabusTripUpdateFeed, nowEpochSeconds: number, staleThresholdSeconds: number): boolean {
+  const feedAgeSeconds = nowEpochSeconds - (feed.header?.timestamp ?? 0)
+  return feedAgeSeconds <= staleThresholdSeconds
 }
 
 export async function fetchRealtimeArrivals(
@@ -115,23 +241,8 @@ export async function fetchRealtimeArrivals(
   limit: number,
   options: FetchRealtimeOptions
 ): Promise<RealtimeResult> {
-  const url = `${options.databusBaseUrl.replace(/\/$/, '')}/feed/realtime/trip_updates.json`
-
-  let feed: DatabusTripUpdateFeed
-  try {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), options.fetchTimeoutMs)
-    try {
-      const response = await fetch(url, { signal: controller.signal })
-      if (!response.ok) throw new Error(`trip_updates fetch failed: ${response.status} ${response.statusText}`)
-      feed = (await response.json()) as DatabusTripUpdateFeed
-    } finally {
-      clearTimeout(timeout)
-    }
-  } catch (err) {
-    console.warn('[realtime] feed fetch failed:', err)
-    return { healthy: false, arrivals: [] }
-  }
+  const feed = await fetchTripUpdateFeed(options)
+  if (!feed) return { healthy: false, arrivals: [] }
 
   return deriveArrivalsFromFeed(feed, gtfs, stopId, nowEpochSeconds, limit, options.staleThresholdSeconds)
 }
