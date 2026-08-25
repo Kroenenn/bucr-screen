@@ -1,7 +1,12 @@
 <script setup lang="ts">
 const { public: publicConfig } = useRuntimeConfig()
 const { data, error, lastSuccessAt } = useArrivals()
-const { now, time, date } = useKioskClock()
+const { now, time, date, seconds, dateParts } = useKioskClock()
+const { isSynth7Zebra } = useBoardVariant()
+
+// label-plural: "Próximas salidas" only under the synth7-zebra variant — the
+// default board keeps the existing singular "Próxima salida" untouched.
+const arrivalsColumnLabel = computed(() => (isSynth7Zebra.value ? 'Próximas salidas' : 'Próxima salida'))
 
 // Depends on `now` (the 1s clock tick), not a bare Date.now(): a plain
 // Date.now() call isn't a reactive dependency, so this computed would only
@@ -68,9 +73,24 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
         popped in and resized right after hydration on every refresh.
       -->
       <div class="screen__clock">
-        <span class="screen__clock-time">{{ time }}</span>
+        <span class="screen__clock-time">
+          {{ time }}<span
+            v-if="isSynth7Zebra"
+            class="screen__clock-seconds"
+          >:{{ seconds }}</span>
+        </span>
         <div class="screen__clock-meta">
-          <span class="screen__clock-date">{{ date }}</span>
+          <span
+            v-if="isSynth7Zebra"
+            class="screen__clock-date"
+          >
+            <span class="screen__clock-date-weekday">{{ dateParts.weekday }}</span>
+            <span class="screen__clock-date-rest">{{ dateParts.rest }}</span>
+          </span>
+          <span
+            v-else
+            class="screen__clock-date"
+          >{{ date }}</span>
           <span class="screen__clock-refresh">
             <span class="screen__clock-refresh-dot" />
             Actualizaciones cada minuto
@@ -112,7 +132,7 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
           class="screen__board-header"
         >
           <span>Destino</span>
-          <span>Próxima salida</span>
+          <span>{{ arrivalsColumnLabel }}</span>
         </div>
 
         <div
@@ -237,6 +257,30 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
   color: var(--color-ink-muted);
   font-size: clamp(0.75rem, 1vw, 0.95rem);
   line-height: 1.1;
+}
+
+/* clock-secs-gray: only ever rendered when isSynth7Zebra is true, so no
+   data-board gating needed here — the element simply doesn't exist on the
+   default board. */
+.screen__clock-seconds {
+  font-size: 0.4em;
+  font-weight: 800;
+  color: var(--color-ink-faint);
+  margin-left: 2px;
+}
+
+/* date-weekday-emphasis: weekday reads at full ink/weight, the "23 de
+   agosto" remainder stays muted — same split as .screen__clock-date already
+   uses for the whole string, just applied per-part. */
+.screen__clock-date-weekday {
+  display: block;
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.screen__clock-date-rest {
+  display: block;
+  color: var(--color-ink-muted);
 }
 
 .screen__clock-refresh {

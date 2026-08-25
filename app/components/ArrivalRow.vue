@@ -5,6 +5,8 @@ const props = defineProps<{
   arrival: Arrival
 }>()
 
+const { isSynth7Zebra } = useBoardVariant()
+
 const state = computed(() => {
   // "ABORDANDO" (boarding), not "arriving": this screen only shows boardable
   // departures, so "arriving" would read as a bus pulling *into* the stop —
@@ -30,11 +32,26 @@ const etaDisplay = computed(() => {
 // schedule, never earlier than timetable" rule (scheduledEta is always
 // <= eta, so this never reads as an early departure).
 const scheduledTimeDisplay = computed(() => {
+  // est-badge-only: under the synth7-zebra variant the green "estimado" pill
+  // is the only estimated marker — suppress the "HH:MM →" prefix rather than
+  // showing both.
+  if (isSynth7Zebra.value) return null
   if (!props.arrival.estimated) return null
   const { scheduledEta, eta } = props.arrival
   if (scheduledEta == null || scheduledEta === eta) return null
   return new Date(scheduledEta * 1000).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })
 })
+
+// 🕐 scheduled-minutes glyph: non-estimated countdown rows with a numeric
+// minutes value (not departing, not "ahora"/boarding, not estimated) get a
+// small clock glyph before the number — estimated rows show the green pill
+// instead, so the two markers never coexist on the same row.
+const showSchedGlyph = computed(() =>
+  isSynth7Zebra.value
+  && !props.arrival.departing
+  && !props.arrival.estimated
+  && props.arrival.etaMinutes > 0
+)
 </script>
 
 <template>
@@ -74,6 +91,10 @@ const scheduledTimeDisplay = computed(() => {
           v-if="scheduledTimeDisplay"
           class="arrival-row__scheduled"
         >{{ scheduledTimeDisplay }} →</span>
+        <span
+          v-if="showSchedGlyph"
+          class="arrival-row__sched-glyph"
+        >🕐</span>
         <template v-if="arrival.etaMinutes === 0">ahora</template>
         <template v-else-if="etaDisplay.hours === 0">
           {{ etaDisplay.minutes }}<span class="arrival-row__eta-unit">min</span>
@@ -188,6 +209,16 @@ const scheduledTimeDisplay = computed(() => {
 
 .arrival-row--now .arrival-row__eta {
   color: var(--color-accent-text);
+}
+
+/* scheduled-minutes glyph: only ever rendered when showSchedGlyph is true
+   (synth7-zebra variant, non-estimated countdown row), so no data-board
+   gating needed — the element doesn't exist on the default board. */
+.arrival-row__sched-glyph {
+  font-size: 0.5em;
+  margin-right: 0.35em;
+  opacity: 0.8;
+  font-family: var(--font-sans);
 }
 
 .arrival-row__eta {

@@ -80,3 +80,92 @@ body {
 #__nuxt {
   height: 100%;
 }
+
+/*
+ * synth7-zebra board variant — opt-in only via `?board=synth7-zebra`
+ * (useBoardVariant sets `data-board` on <html>). Everything in this block is
+ * scoped under that attribute selector, so with no query param the default
+ * kiosk board is completely untouched.
+ *
+ * Kept here rather than as scoped styles in index.vue/ArrivalRow.vue so one
+ * selector can reach both the header and the row list without fighting
+ * Vue's scoped-style boundaries — see final-synth-7-zebra.html (the design
+ * source of truth) for the look this reproduces.
+ *
+ * Matches .screen__board-card's own horizontal padding (index.vue) — used
+ * below to make the zebra stripes full-bleed edge-to-edge.
+ */
+:root[data-board='synth7-zebra'] {
+  --board-card-pad: clamp(1rem, 2vw, 2rem);
+}
+
+/* type-headsign-mono */
+:root[data-board='synth7-zebra'] .arrival-row__headsign {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+/* row-lead-accent-hairline + state-weight-ladder: the lead row's headsign
+   reads heaviest, matching the amber accent bar drawing the eye to it. */
+:root[data-board='synth7-zebra'] .arrival-row:first-child .arrival-row__headsign {
+  font-weight: 800;
+}
+
+/* HOMOGENEOUS ZEBRA — every row the same height, full-bleed stripes:
+   - `align-items: center` (grid + destination flex) replaces baseline
+     alignment so badges/tags/chips center instead of sitting low.
+   - `flex-wrap: nowrap` on the destination keeps a "con milla" + "estimado"
+     row exactly as tall as a plain one — nothing wraps to a second line.
+   - negative margin + matching padding cancels .screen__board-card's own
+     padding so each row's background fills the full card width, not just
+     the content column.
+   - border-bottom removed: zebra striping carries the row separation, a
+     hairline on top of it would read as a doubled divider. */
+:root[data-board='synth7-zebra'] .arrival-row {
+  align-items: center;
+  flex-wrap: nowrap;
+  margin: 0 calc(-1 * var(--board-card-pad));
+  padding: clamp(0.5rem, 4cqh, 2.1rem) var(--board-card-pad);
+  border-bottom: none;
+}
+
+:root[data-board='synth7-zebra'] .arrival-row__destination {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* Lead row (first child) stays the base surface — the amber accent bar is
+   what marks it as next up, not a stripe — then alternation starts on the
+   second row, same parity as final-synth-7-zebra.html. */
+:root[data-board='synth7-zebra'] .arrival-row:nth-child(even) {
+  background: var(--color-surface-2);
+}
+
+/* row-lead-accent-hairline: thin amber left bar on the lead row, left
+   padding reduced by the border width so content doesn't shift. */
+:root[data-board='synth7-zebra'] .arrival-row:first-child {
+  border-left: 4px solid var(--color-amber-500);
+  padding-left: calc(var(--board-card-pad) - 4px);
+}
+
+/* state-weight-ladder: heaviest (boarding) -> lightest (further out),
+   differentiated by weight only — no new colors. */
+:root[data-board='synth7-zebra'] .arrival-row--now .arrival-row__state {
+  font-weight: 700;
+}
+
+:root[data-board='synth7-zebra'] .arrival-row--soon .arrival-row__state {
+  font-weight: 500;
+}
+
+:root[data-board='synth7-zebra'] .arrival-row--soon .arrival-row__eta {
+  font-weight: 600;
+}
+
+:root[data-board='synth7-zebra'] .arrival-row--later .arrival-row__eta {
+  font-weight: 500;
+  color: var(--color-ink-muted);
+}
+
+/* label-plural's column header text swap happens in index.vue's template
+   (arrivalsColumnLabel computed) — no CSS needed here. */
