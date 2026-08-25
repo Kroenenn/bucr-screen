@@ -1,0 +1,16 @@
+{
+  "tag": "label-sale-en",
+  "category": "labels",
+  "title": "Sale en",
+  "description": "Rótulo verbal que anticipa la cuenta regresiva de minutos.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span (derecho)",
+      "detail": "Cambio de texto plano: hoy es «Próxima salida» → «Sale en»."
+    }
+  ],
+  "composes": []
+}

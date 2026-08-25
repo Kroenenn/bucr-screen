@@ -1,0 +1,34 @@
+{
+  "tag": "eta-now-variants",
+  "category": "eta",
+  "title": "Frontera «ahora» / «< 1 min» / «0 min»",
+  "description": "Tratamiento explícito del límite: la fila ABORDANDO muestra «< 1 min» en vez de «ahora», distinguiendo partida inminente de buses ya salidos.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Diferenciar 0 exacto de sub-minuto",
+      "detail": "if (etaSeconds > 0 && etaSeconds < 60) return '< 1 min'; if (etaMinutes === 0) return 'ahora'; // basado en segundos restantes de arrival.eta"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "Marcar el comparador en tamaño menor",
+      "detail": "<span class=\"arrival-row__eta\"><span class=\"u-bound\">&lt;</span> 1 <span class=\"u-bound\">min</span></span>"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".u-bound",
+      "declarations": {
+        "font-size": "0.5em",
+        "color": "var(--color-ink-muted)",
+        "font-weight": "700"
+      }
+    }
+  ],
+  "composes": [
+    "eta-clock-under"
+  ]
+}

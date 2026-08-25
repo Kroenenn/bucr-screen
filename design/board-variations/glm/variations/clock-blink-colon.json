@@ -1,0 +1,40 @@
+{
+  "tag": "clock-blink-colon",
+  "category": "clock",
+  "title": "Dos puntos parpadeantes",
+  "description": "El separador HH:MM parpadea a 1 Hz, estilo tablero de estación.",
+  "baseline_ref": "app/composables/useKioskClock.ts + app/assets/css/main.css",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Envolver los dos puntos en un span animable",
+      "detail": "<span class=\"screen__clock-time\">22<span class=\"screen__clock-colon\">:</span>40</span>; requiere separar horas y minutos en el composable."
+    },
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "intent": "Exponer hh y mm por separado",
+      "detail": "Devolver hh/mm derivados del mismo Date para poder insertar el span del colon en el template."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-colon",
+      "declarations": {
+        "display": "inline-block",
+        "animation": "blink-colon 2s step-end infinite"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": "@keyframes blink-colon",
+      "declarations": {
+        "0%, 100%": "opacity: 1",
+        "50%": "opacity: 0.25"
+      }
+    }
+  ],
+  "composes": []
+}

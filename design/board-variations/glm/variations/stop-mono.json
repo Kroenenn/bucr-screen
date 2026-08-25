@@ -1,0 +1,19 @@
+{
+  "tag": "stop-mono",
+  "category": "typography",
+  "title": "Parada en mono alineada con reloj y ETA",
+  "description": "El nombre de la parada adopta la monoespaciada del reloj y los ETA; los destinos siguen en sans, invirtiendo la familia respecto a dest-mono.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "letter-spacing": "0"
+      }
+    }
+  ],
+  "composes": []
+}

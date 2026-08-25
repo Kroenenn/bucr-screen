@@ -1,0 +1,19 @@
+{
+  "tag": "palette-accent-mint",
+  "category": "palette",
+  "title": "Acento mint (especulativo)",
+  "description": "ESPECULATIVO — el default es mantener colores fijos. Cambia --color-accent-text de #ffd24e a #4ed9ab, un mint que rima con --color-ok.",
+  "baseline_ref": "app/assets/css/main.css",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "token",
+      "selector": ":root",
+      "declarations": {
+        "--color-accent-text": "#4ed9ab"
+      },
+      "detail": "Única categoría donde se permite proponer un matiz nuevo; marcado como especulativo."
+    }
+  ],
+  "composes": []
+}

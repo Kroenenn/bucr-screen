@@ -1,0 +1,51 @@
+{
+  "tag": "error-retry",
+  "category": "degraded",
+  "title": "Error con reintento automático",
+  "description": "Mensaje de error en --color-error centrado con línea secundaria «Reintentando automáticamente…» que reduce la ansiedad al no exigir acción.",
+  "baseline_ref": "app/pages/index.vue (.screen__empty--error)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Estructurar el mensaje de error en dos niveles",
+      "detail": ".screen__empty--error con <span class='screen__empty-primary'>No se pudo cargar la información de salidas.</span> y <span class='screen__empty-secondary'>Reintentando automáticamente…</span>."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty--error",
+      "declarations": {
+        "padding": "44px 16px",
+        "gap": "8px"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty--error .screen__empty-primary",
+      "declarations": {
+        "font-size": "1.15rem",
+        "font-weight": "700",
+        "color": "var(--color-error)"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty--error .screen__empty-secondary",
+      "declarations": {
+        "font-size": "0.85rem",
+        "font-weight": "400",
+        "color": "var(--color-ink-muted)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "logic",
+      "intent": "Reintento automático",
+      "detail": "Al fallar la carga, programar reintento con backoff (p. ej. 5s, 10s, 30s) y mantener la leyenda secundaria visible mientras haya reintentos pendientes."
+    }
+  ],
+  "composes": []
+}

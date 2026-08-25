@@ -1,0 +1,32 @@
+{
+  "tag": "eta-bare-number",
+  "category": "eta",
+  "title": "Número desnudo, unidad en cabecera",
+  "description": "Elimina la unidad por fila y la promueve a la cabecera «PRÓXIMA SALIDA (MIN)»; ≥60 se aplana a 64 min total.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Unidad promovida a la cabecera de columna",
+      "detail": "<span>Próxima salida (min)</span>"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "ETA siempre en minutos totales sin unidad",
+      "detail": "const total = h*60+m; etaText = etaMinutes===0?'0':String(total) // >=60 => 64"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta-unit",
+      "declarations": {
+        "display": "none"
+      }
+    }
+  ],
+  "composes": [
+    "eta-clock-under"
+  ]
+}

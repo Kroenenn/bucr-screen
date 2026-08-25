@@ -1,0 +1,18 @@
+{
+  "tag": "dest-weight-500",
+  "category": "typography",
+  "title": "Destinos en peso 500",
+  "description": "Reduce los destinos a peso medio (500) para maximizar el contraste con la cabecera 800; útil si las filas compiten visualmente con la parada.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "font-weight": "500"
+      }
+    }
+  ],
+  "composes": []
+}

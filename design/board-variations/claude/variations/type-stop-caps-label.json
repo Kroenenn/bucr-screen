@@ -1,0 +1,24 @@
+{
+  "tag": "type-stop-caps-label",
+  "category": "typography",
+  "title": "Stop name as uppercase label",
+  "description": "Stop name is uppercased with wide letter-spacing and reduced size, reading as a small label the way the board-header (Destino / Próxima salida) already does; destination headsigns stay plain sentence-case at normal size. Flips which tier carries the caps/label treatment, so the header recedes into a category tag and the destinations become the visually dominant content.",
+  "baseline_ref": "app/pages/index.vue .screen__stop-name (currently sentence-case, clamp(2.4rem,5vw,4.2rem)/800); app/components/ArrivalRow.vue .arrival-row__headsign (unchanged)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Treat the stop name as a small uppercase label rather than a large display heading, echoing the mono board-header labels.",
+      "declarations": { "text-transform": "uppercase", "letter-spacing": "0.08em", "font-size": "clamp(1.4rem,2.6vw,2.1rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Leave destinations in plain sentence case at full weight so they become the primary readable content once the header is demoted to a label.",
+      "declarations": { "text-transform": "none", "font-weight": "700" }
+    }
+  ],
+  "composes": []
+}

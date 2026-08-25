@@ -1,0 +1,45 @@
+{
+  "tag": "clock-secs-grey",
+  "category": "clock",
+  "title": "Faint seconds subscript",
+  "description": "Adds seconds after HH:MM as a small, faint subscript baseline-aligned to sit below the minutes digits, like a quiet precision detail rather than a competing value.",
+  "baseline_ref": ".screen__clock-time (no seconds today)",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "useKioskClock",
+      "intent": "Expose seconds so the template can render them without re-deriving from a Date elsewhere.",
+      "detail": "Add a `seconds` ref/computed alongside the existing time string, updated on the same ticking interval, via now.value.toLocaleTimeString('es-CR', { second: '2-digit' }) (or slicing the existing formatter output) and returned from the composable."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-time",
+      "intent": "Render seconds as a trailing subscript inside the clock time element.",
+      "detail": "Add `<span class=\"screen__clock-seconds\">{{ seconds }}</span>` immediately after the HH:MM text node inside .screen__clock-time, e.g. `22:40<span class=\"screen__clock-seconds\">:07</span>`."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "intent": "Turn the clock-time element into a baseline-aligned flex row so the seconds span can be pinned to the flex-end (subscript) position.",
+      "declarations": { "display": "inline-flex", "align-items": "baseline" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-seconds",
+      "intent": "Shrink and mute the seconds relative to HH:MM, dropped to the visual baseline as a subscript.",
+      "declarations": {
+        "font-size": "0.42em",
+        "font-weight": "800",
+        "color": "var(--color-ink-faint)",
+        "align-self": "flex-end",
+        "margin-left": "1px",
+        "line-height": "1"
+      }
+    }
+  ],
+  "composes": []
+}

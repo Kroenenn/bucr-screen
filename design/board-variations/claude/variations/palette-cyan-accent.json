@@ -1,0 +1,18 @@
+{
+  "tag": "palette-cyan-accent",
+  "category": "palette",
+  "title": "Cyan attention accent (speculative)",
+  "description": "SPECULATIVE — not recommended over the current palette; default remains to keep the existing amber. Re-defines the attention hue (--color-accent-text / --color-amber-500) as a restrained cyan instead of amber. Shown for comparison only: cyan sits close to the existing blue-400 (#5ca1d6) brand/demo hue on the color wheel, so it risks blurring the \"attention vs. brand/demo\" distinction the COLOR RULE is meant to preserve (amber = attention, blue = demo/brand). Included as an exploration, not a suggestion.",
+  "baseline_ref": "app/assets/css/main.css :root --color-accent-text (#ffd24e) and --color-amber-500 (#ffc107)",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "token",
+      "selector": ":root",
+      "intent": "Explore a cyan attention accent as an alternative to amber; flagged as competing with the existing blue brand/demo hue.",
+      "declarations": { "--color-accent-text": "#5fd8e0", "--color-amber-500": "#33b8c2" },
+      "detail": "Dark theme values shown above (kiosk default). For light theme, --color-accent-text would need a darker cyan such as #0e7d85 to stay legible on white per the existing light-theme override pattern. Speculative and NOT recommended: risks visual confusion with the blue-400 demo badge / brand color already on screen. Default is to keep current amber (#ffd24e / #ffc107)."
+    }
+  ],
+  "composes": []
+}

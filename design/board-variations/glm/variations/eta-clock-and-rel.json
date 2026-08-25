@@ -1,0 +1,43 @@
+{
+  "tag": "eta-clock-and-rel",
+  "category": "eta",
+  "title": "Hora programada + relativo inline",
+  "description": "Muestra ambos: HH:MM seguido de «· N min», estándar en señalética de tránsito; permite detectar retrasos de un vistazo.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Derivar HH:MM y mantener el relativo",
+      "detail": "const sched = new Date(arrival.eta).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',hour12:false}); rel = etaMinutes===0?'ahora':etaMinutes>=60?`${h} h ${m} min`:`${etaMinutes} min`"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "Ambos valores en la celda derecha",
+      "detail": "<span class=\"arrival-row__sched\">{{sched}}</span> <span class=\"arrival-row__eta\">{{rel}}</span>"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-variant-numeric": "tabular-nums",
+        "font-size": "1.35rem",
+        "font-weight": "700",
+        "color": "var(--color-ink-muted)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched::after",
+      "declarations": {
+        "content": "\" ·\"",
+        "color": "var(--color-ink-faint)"
+      }
+    }
+  ],
+  "composes": []
+}

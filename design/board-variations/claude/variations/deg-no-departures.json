@@ -1,0 +1,45 @@
+{
+  "tag": "deg-no-departures",
+  "category": "degraded",
+  "title": "No more departures today",
+  "description": "Service has ended for the day: the row list is replaced by a centered message, with a quiet secondary line hinting at tomorrow's first departure so the board doesn't read as broken.",
+  "baseline_ref": "app/pages/index.vue .screen__empty",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__empty",
+      "intent": "Replace the arrival list with an empty-state message when there are no more scheduled departures today.",
+      "detail": "Render `.screen__empty` in place of `.arrival-list` containing a primary paragraph 'No hay más salidas programadas por hoy.' and a second, quieter paragraph showing the first departure time tomorrow, e.g. 'Primer bus mañana a las 5:00'."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty",
+      "intent": "Center the empty-state message vertically in the card with generous padding so it reads as an intentional state, not missing content.",
+      "declarations": {
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "gap": "6px",
+        "padding": "30px 0",
+        "color": "var(--color-ink-muted)",
+        "font-size": "15px",
+        "text-align": "center"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty-hint",
+      "intent": "Show the next-departure hint as a de-emphasized secondary line so it doesn't compete with the primary message.",
+      "declarations": {
+        "margin": "0",
+        "color": "var(--color-ink-faint)",
+        "font-size": "11px",
+        "text-align": "center"
+      }
+    }
+  ],
+  "composes": []
+}

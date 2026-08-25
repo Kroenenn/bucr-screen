@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Board — synth-weekday-est</title>
+<style>
+/* ===== TOKENS (dark default = kiosk default) ===== */
+:root {
+  --color-bg: #0b0f14;
+  --color-surface: #121820;
+  --color-surface-2: #1a2230;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-ink: #f4f6f8;
+  --color-ink-muted: rgba(244, 246, 248, 0.6);
+  --color-ink-faint: rgba(244, 246, 248, 0.35);
+  --color-blue-400: #5ca1d6;
+  --color-blue-600: #0b5ca8;
+  --color-blue-900: #04233f;
+  --color-amber-500: #ffc107;
+  --color-accent-text: #ffd24e;
+  --color-ok: #35c98c;
+  --color-error: #ff6b6b;
+  --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, system-ui, sans-serif;
+  --font-mono: 'Consolas', 'IBM Plex Mono', ui-monospace, monospace;
+}
+:root[data-theme='light'] {
+  --color-bg: #f3f6f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #fafaf9;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-ink: #0e1116;
+  --color-ink-muted: rgba(14, 17, 22, 0.6);
+  --color-ink-faint: rgba(14, 17, 22, 0.35);
+  --color-accent-text: #8c6600;
+  --color-error: #c0392b;
+  --color-ok: #1b8a5a;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--color-bg);
+}
+body {
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@keyframes mb-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ===== FULL-SIZE KIOSK BOARD (.mb) ===== */
+.mb {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.4vh, 1.5rem);
+  padding: clamp(1.25rem, 2.4vh, 2.75rem) clamp(1.5rem, 2.8vw, 3.5rem) 0;
+  overflow: hidden;
+}
+
+/* header: route | clock | toggle */
+.mb-header { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: clamp(0.75rem, 1.6vw, 2rem); }
+.mb-route { display: flex; align-items: center; gap: clamp(0.6rem, 1vw, 1.1rem); min-width: 0; }
+.mb-logo {
+  height: clamp(2.6rem, 3.4vw, 4rem); width: clamp(2.6rem, 3.4vw, 4rem); flex-shrink: 0; border-radius: 50%;
+  background: var(--color-blue-600); color: #fff; font-weight: 800;
+  display: grid; place-items: center; font-size: clamp(1.3rem, 1.7vw, 2rem); font-family: var(--font-sans);
+}
+.mb-stop {
+  font-size: clamp(1.7rem, 2.4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mb-clock { display: flex; align-items: center; gap: clamp(0.5rem, 1vw, 0.9rem); }
+.mb-clock-time {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: clamp(2.4rem, 3.6vw, 4.6rem); font-weight: 800; line-height: 1; color: var(--color-ink);
+  display: inline-flex; align-items: baseline;
+}
+.mb-clock-seconds {
+  display: inline-block; font-size: 0.4em; font-weight: 800; color: var(--color-ink-faint);
+  align-self: flex-end; margin-left: 2px; line-height: 1;
+}
+.mb-clock-meta { display: flex; flex-direction: column; gap: 0.2em; }
+.mb-clock-date { display: flex; flex-direction: column; gap: 1px; color: var(--color-ink-muted); line-height: 1.15; }
+.mb-clock-date-weekday { color: var(--color-ink); font-weight: 700; font-size: clamp(0.95rem, 1.05vw, 1.25rem); line-height: 1.1; }
+.mb-clock-date-rest { color: var(--color-ink-muted); font-size: clamp(0.75rem, 0.8vw, 0.95rem); line-height: 1.1; }
+.mb-clock-refresh {
+  display: flex; align-items: center; gap: 6px; color: var(--color-ink-faint);
+  font-size: clamp(0.65rem, 0.7vw, 0.8rem); line-height: 1.1;
+}
+.mb-clock-refresh-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--color-ink-faint);
+  animation: mb-pulse 1.6s ease-in-out infinite; flex-shrink: 0;
+}
+.mb-toggle {
+  font-size: clamp(0.85rem, 1vw, 1.15rem); color: var(--color-ink-faint); justify-self: end;
+  opacity: 0.55; transform: scale(0.9); transform-origin: right center;
+  cursor: pointer; background: none; border: none; font-family: inherit; padding: 0.4em;
+}
+
+/* status bar */
+.mb-status { display: flex; align-items: center; gap: clamp(0.5rem, 0.9vw, 0.9rem); }
+.mb-badge {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono);
+  font-weight: 600; letter-spacing: 0.12em; font-size: clamp(0.7rem, 0.75vw, 0.85rem); padding: 0.3em 0.85em;
+  border-radius: 999px; border: 1px solid var(--color-border);
+}
+.mb-badge--live { color: var(--color-ok); border-color: rgba(53,201,140,0.35); background: rgba(53,201,140,0.08); }
+.mb-badge--demo { color: var(--color-blue-400); border-color: rgba(92,161,214,0.4); background: rgba(92,161,214,0.1); }
+.mb-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-ok); animation: mb-pulse 1.6s ease-in-out infinite; }
+
+/* card */
+.mb-card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: clamp(10px, 0.9vw, 16px); padding: 0 clamp(1.25rem, 1.8vw, 2rem);
+  display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;
+}
+.mb-card-header {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  padding: clamp(0.9rem, 1.2vh, 1.3rem) 0 clamp(0.5rem, 0.7vh, 0.8rem);
+  font-family: var(--font-mono); font-size: clamp(0.8rem, 0.85vw, 1rem); font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink);
+  border-bottom: 1px solid var(--color-border);
+}
+.mb-list { position: relative; display: flex; flex-direction: column; flex: 1; justify-content: space-evenly; min-height: 0; overflow: hidden; }
+
+/* row */
+.mb-row {
+  display: grid; grid-template-columns: 1fr auto auto; align-items: baseline;
+  gap: clamp(0.75rem, 1.4vw, 1.75rem); padding: clamp(0.75rem, 1.5vh, 1.4rem) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.mb-row:last-child { border-bottom: none; }
+.mb-row--departing { /* no motion by design; state carried via .mb-departing styling below */ }
+.mb-row:first-child {
+  border-left: 4px solid var(--color-amber-500);
+  padding-left: clamp(0.8rem, 1.2vw, 1.4rem);
+  margin-left: clamp(-1.25rem, -1.8vw, -2rem);
+}
+.mb-row:first-child .mb-headsign { font-weight: 800; }
+
+.mb-dest { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.6em; min-width: 0; }
+.mb-headsign {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 1.9vw, 2.4rem); font-weight: 500; letter-spacing: -0.01em; color: var(--color-ink);
+}
+.mb-milla {
+  font-family: var(--font-mono); font-size: clamp(0.7rem, 0.75vw, 0.85rem); font-weight: 600; letter-spacing: 0.04em;
+  color: var(--color-ink-muted); border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 0.2em 0.6em; white-space: nowrap;
+}
+
+/* state-weight-ladder: heaviest (boarding) -> lightest (further out) */
+.mb-state {
+  font-family: var(--font-mono); letter-spacing: 0.1em; color: var(--color-accent-text); white-space: nowrap;
+}
+.mb-row--now .mb-state { font-weight: 700; font-size: clamp(0.85rem, 0.9vw, 1.05rem); letter-spacing: 0.1em; }
+.mb-row--soon .mb-state { font-weight: 500; font-size: clamp(0.75rem, 0.8vw, 0.9rem); letter-spacing: 0.06em; }
+.mb-row--now .mb-eta { color: var(--color-accent-text); }
+
+/* non-estimated countdown rows: schedule/clock glyph before the minutes */
+.mb-sched-glyph {
+  font-size: 0.55em; margin-right: 0.35em; opacity: 0.8; font-family: var(--font-sans);
+}
+
+.mb-eta {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(1.7rem, 2.1vw, 2.6rem);
+  font-weight: 800; color: var(--color-ink); white-space: nowrap; display: inline-flex; align-items: baseline;
+}
+.mb-row--later .mb-eta,
+.mb-row--soon .mb-eta { font-weight: 600; }
+.mb-row--later:nth-of-type(n+2) .mb-eta { font-weight: 500; color: var(--color-ink-muted); }
+.mb-eta-unit { font-size: 0.42em; margin-left: 0.28em; color: var(--color-ink-muted); }
+
+.mb-departing {
+  grid-column: 2 / 4; justify-self: end; display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--font-mono); font-weight: 800; font-size: clamp(1.15rem, 1.35vw, 1.6rem); letter-spacing: 0.12em;
+  color: var(--color-accent-text);
+}
+.mb-departing-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-amber-500); animation: mb-pulse 1.6s ease-in-out infinite; }
+
+/* est-badge-only: green "estimado" pill, no bare dot, no schedule prefix */
+.mb-est {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: clamp(0.7rem, 0.75vw, 0.85rem); font-weight: 600; letter-spacing: 0.04em;
+  color: var(--color-ok); border: 1px solid rgba(53,201,140,0.35); background: rgba(53,201,140,0.08);
+  border-radius: 999px; padding: 0.3em 0.85em; white-space: nowrap;
+}
+.mb-est-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-ok); animation: mb-pulse 1.6s ease-in-out infinite; }
+
+/* footer — full-bleed blue gradient */
+.mb-footer {
+  text-align: center; color: rgba(255,255,255,0.85);
+  background: linear-gradient(to right, var(--color-blue-900), var(--color-blue-600));
+  margin: clamp(0.5rem, 1vh, 1rem) calc(-1 * clamp(1.5rem, 2.8vw, 3.5rem)) 0;
+  padding: clamp(0.6rem, 1vh, 1rem) clamp(1.5rem, 2.8vw, 3.5rem);
+  font-size: clamp(0.75rem, 0.8vw, 0.95rem);
+}
+</style>
+</head>
+<body>
+<div class="mb">
+  <header class="mb-header">
+    <div class="mb-route">
+      <span class="mb-logo">b</span>
+      <span class="mb-stop">Educación</span>
+    </div>
+    <div class="mb-clock">
+      <span class="mb-clock-time">22:40<span class="mb-clock-seconds">:07</span></span>
+      <div class="mb-clock-meta">
+        <span class="mb-clock-date"><span class="mb-clock-date-weekday">Domingo</span><span class="mb-clock-date-rest">23 de agosto</span></span>
+        <span class="mb-clock-refresh"><span class="mb-clock-refresh-dot"></span>Actualizaciones cada minuto</span>
+      </div>
+    </div>
+    <button class="mb-toggle" id="themeBtn" type="button" aria-label="Cambiar tema">☾</button>
+  </header>
+
+  <div class="mb-status">
+    <span class="mb-badge mb-badge--live"><span class="mb-badge-dot"></span>EN VIVO</span>
+    <span class="mb-badge mb-badge--demo">DEMO</span>
+  </div>
+
+  <div class="mb-card">
+    <div class="mb-card-header"><span>Destino</span><span>Próximas salidas</span></div>
+    <div class="mb-list">
+      <div class="mb-row mb-row--departing">
+        <div class="mb-dest"><span class="mb-headsign">Odontología</span></div>
+        <span class="mb-departing"><span class="mb-departing-dot"></span>SALIENDO</span>
+      </div>
+      <div class="mb-row mb-row--now">
+        <div class="mb-dest"><span class="mb-headsign">Odontología</span><span class="mb-milla">con milla</span></div>
+        <span class="mb-state">ABORDANDO</span>
+        <span class="mb-eta">ahora</span>
+      </div>
+      <div class="mb-row mb-row--soon">
+        <div class="mb-dest"><span class="mb-headsign">Artes Plásticas</span></div>
+        <span class="mb-state">PRÓXIMO</span>
+        <span class="mb-eta"><span class="mb-sched-glyph">🕐</span>3<span class="mb-eta-unit">min</span></span>
+      </div>
+      <div class="mb-row mb-row--later">
+        <div class="mb-dest"><span class="mb-headsign">Milla Universitaria</span></div>
+        <span class="mb-est"><span class="mb-est-dot"></span>estimado</span>
+        <span class="mb-eta">12<span class="mb-eta-unit">min</span></span>
+      </div>
+      <div class="mb-row mb-row--later">
+        <div class="mb-dest"><span class="mb-headsign">Educación (circular)</span></div>
+        <span></span>
+        <span class="mb-eta"><span class="mb-sched-glyph">🕐</span>1<span class="mb-eta-unit">h</span> 4<span class="mb-eta-unit">min</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-footer">Bus interno de la Universidad de Costa Rica — bus.ucr.ac.cr</div>
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('themeBtn');
+  var root = document.documentElement;
+  function apply(mode) {
+    if (mode === 'light') { root.setAttribute('data-theme', 'light'); btn.textContent = '☀'; }
+    else { root.removeAttribute('data-theme'); btn.textContent = '☾'; }
+  }
+  var saved = 'dark';
+  try { saved = localStorage.getItem('bucr-final-synth7-theme') || 'dark'; } catch (e) {}
+  apply(saved);
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    apply(next);
+    try { localStorage.setItem('bucr-final-synth7-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

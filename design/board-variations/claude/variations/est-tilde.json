@@ -1,0 +1,24 @@
+{
+  "tag": "est-tilde",
+  "category": "estimated",
+  "title": "Approximate tilde on the countdown",
+  "description": "Drop both the pill and the scheduled prefix. Mark an estimated row with a single green '~' immediately before the countdown ('~4 min') — the universal 'approximate' glyph. Lowest ink of the set; provenance travels with the one number a rider actually reads. Schedule-only rows show no tilde.",
+  "baseline_ref": "app/components/ArrivalRow.vue: .arrival-row__badge--estimated pill + .arrival-row__scheduled prefix on estimated rows",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__eta",
+      "intent": "Prefix the numeric countdown with an approximate marker only when the arrival is estimated.",
+      "detail": "Remove the .arrival-row__badge--estimated pill and the .arrival-row__scheduled span. Inside .arrival-row__eta, when arrival.estimated and etaMinutes > 0, render a leading <span class=\"arrival-row__tilde\">~</span> before the number (skip it for the 'ahora'/'SALIENDO' states, which have no number)."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__tilde",
+      "intent": "Tint the tilde with the live/ok token so it reads as a real-time cue, matching the weight of the number it precedes.",
+      "declarations": { "color": "var(--color-ok)", "font-weight": "800", "margin-right": "0.05em" }
+    }
+  ],
+  "composes": []
+}

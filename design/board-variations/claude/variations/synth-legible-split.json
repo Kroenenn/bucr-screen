@@ -1,0 +1,19 @@
+{
+  "tag": "synth-legible-split",
+  "category": "synthesis",
+  "title": "Synthesis — Claridad",
+  "description": "A whole-board proposal: two distinct type tiers (heavy stop name, lighter destinations), a quiet grey seconds detail on the clock, boarding-now re-mapped to green so the actionable row stands apart from mere attention, and a pluralized right column label.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue + app/composables/useKioskClock.ts",
+  "composes": ["type-stop-vs-dest-weight", "clock-secs-grey", "state-color-split", "label-plural"],
+  "changes": [
+    { "file": "app/pages/index.vue", "kind": "css", "selector": ".screen__stop-name", "intent": "Keep the header at top weight as the heaviest text on screen.", "declarations": { "font-weight": "800" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row__headsign", "intent": "Drop destination weight to a lighter tier below the header.", "declarations": { "font-weight": "600" } },
+    { "file": "app/composables/useKioskClock.ts", "kind": "logic", "selector": "useKioskClock", "intent": "Expose seconds alongside HH:MM.", "detail": "Add a `seconds` computed via now.value.toLocaleTimeString('es-CR', { second: '2-digit' }); keep `time` as HH:MM." },
+    { "file": "app/pages/index.vue", "kind": "markup", "selector": ".screen__clock-time", "intent": "Render seconds as a trailing subscript.", "detail": "Append `<span class=\"screen__clock-seconds\">{{ seconds }}</span>` inside .screen__clock-time, e.g. 22:40<span>:07</span>." },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".screen__clock-time", "intent": "Baseline-align so seconds can drop to a subscript.", "declarations": { "display": "inline-flex", "align-items": "baseline" } },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".screen__clock-seconds", "intent": "Small, faint seconds pinned to the baseline.", "declarations": { "font-size": "0.42em", "font-weight": "800", "color": "var(--color-ink-faint)", "align-self": "flex-end", "margin-left": "1px", "line-height": "1" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row--now .arrival-row__state", "intent": "ABORDANDO reads as actionable-now via the existing green live/ok token.", "declarations": { "color": "var(--color-ok)" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row--now .arrival-row__eta", "intent": "Match the 'ahora' eta to the same green.", "declarations": { "color": "var(--color-ok)" } },
+    { "file": "app/pages/index.vue", "kind": "markup", "selector": ".screen__board-header span:last-child", "intent": "Match the label to the multi-row content.", "detail": "Change the second header span text from 'Próxima salida' to 'Próximas salidas'." }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "tag": "state-chips",
+  "category": "states",
+  "title": "States as chips",
+  "description": "State labels render as chips (background/border) rather than plain mono text. ABORDANDO becomes a soft amber-tint filled chip, PRÓXIMO becomes a bordered outline chip, and SALIENDO becomes a solid-bordered amber-dot chip. Reinforces state as a distinct UI object rather than inline text, using only existing amber tones at different opacities.",
+  "baseline_ref": ".arrival-row__state and .arrival-row__departing render as plain inline mono text with no background/border",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state",
+      "intent": "ABORDANDO as a soft amber-tint filled chip.",
+      "declarations": {
+        "display": "inline-flex",
+        "align-items": "center",
+        "padding": "3px 9px",
+        "border-radius": "999px",
+        "background": "rgba(255, 210, 78, 0.14)",
+        "color": "var(--color-accent-text)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--soon .arrival-row__state",
+      "intent": "PRÓXIMO as a bordered outline chip, lighter weight than ABORDANDO's filled chip.",
+      "declarations": {
+        "display": "inline-flex",
+        "align-items": "center",
+        "padding": "3px 9px",
+        "border-radius": "999px",
+        "background": "transparent",
+        "border": "1px solid rgba(255, 210, 78, 0.5)",
+        "color": "var(--color-accent-text)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "intent": "SALIENDO as a solid amber-dot chip, the strongest of the three treatments.",
+      "declarations": {
+        "background": "rgba(255, 210, 78, 0.14)",
+        "border": "1px solid rgba(255, 210, 78, 0.5)",
+        "border-radius": "999px",
+        "padding": "3px 10px 3px 8px"
+      }
+    }
+  ],
+  "composes": []
+}

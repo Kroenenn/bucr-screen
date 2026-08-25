@@ -1,0 +1,16 @@
+{
+  "tag": "label-hacia",
+  "category": "labels",
+  "title": "Hacia",
+  "description": "«Hacia» en la columna izquierda en vez de «Destino»; lectura más direccional.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span (izquierdo)",
+      "detail": "Cambio de texto plano: hoy es «Destino» → «Hacia»."
+    }
+  ],
+  "composes": []
+}

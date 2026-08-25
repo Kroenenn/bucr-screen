@@ -1,0 +1,24 @@
+{
+  "tag": "type-dest-caps",
+  "category": "typography",
+  "title": "Uppercase destinations, sentence-case stop",
+  "description": "Destination headsigns are uppercased with slight positive letter-spacing (~0.02em) while the stop name stays sentence-case — case contrast now signals the header/row split independent of weight or size.",
+  "baseline_ref": "app/components/ArrivalRow.vue .arrival-row__headsign (currently sentence-case, no letter-spacing); app/pages/index.vue .screen__stop-name (sentence-case, unchanged)",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Uppercase destinations with light tracking so rows read as a distinct display register from the sentence-case header.",
+      "declarations": { "text-transform": "uppercase", "letter-spacing": "0.02em" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Leave the stop name in sentence case as the contrast anchor.",
+      "declarations": { "text-transform": "none" }
+    }
+  ],
+  "composes": []
+}

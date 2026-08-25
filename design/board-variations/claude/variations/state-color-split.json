@@ -1,0 +1,24 @@
+{
+  "tag": "state-color-split",
+  "category": "states",
+  "title": "Split color by actionability",
+  "description": "ABORDANDO and its 'ahora' eta re-map from amber to green (--color-ok), signaling it is actionable right now, the same way the live badge uses green. PRÓXIMO stays amber (attention, not yet actionable). SALIENDO stays amber and keeps blinking. Each color now carries one distinct meaning, still within the existing palette.",
+  "baseline_ref": ".arrival-row__state and .arrival-row--now .arrival-row__eta both use --color-accent-text (amber) today",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state",
+      "intent": "Give ABORDANDO its own actionable-now meaning distinct from PRÓXIMO's attention amber, reusing the existing green live/ok token.",
+      "declarations": { "color": "var(--color-ok)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__eta",
+      "intent": "Match the 'ahora' eta text to the same green as ABORDANDO for a consistent boarding-now signal.",
+      "declarations": { "color": "var(--color-ok)" }
+    }
+  ],
+  "composes": []
+}

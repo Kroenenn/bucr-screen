@@ -1,0 +1,38 @@
+{
+  "tag": "row-lead-accent",
+  "category": "rows",
+  "title": "Filete ámbar en la primera fila",
+  "description": "La fila del próximo bus lleva un borde izquierdo ámbar de 3px y tipografía ligeramente mayor.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type",
+      "declarations": {
+        "border-left": "3px solid var(--color-amber-500)",
+        "padding-left": "13px"
+      },
+      "detail": "Compensar el padding-left del resto de filas para mantener la rejilla."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type .arrival-row__headsign",
+      "declarations": {
+        "font-size": "1.6rem"
+      },
+      "detail": "Desde 1.35rem en la fila líder."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type .arrival-row__departing",
+      "declarations": {
+        "font-size": "1.2rem"
+      },
+      "detail": "Estado SALIENDO más prominente."
+    }
+  ],
+  "composes": []
+}

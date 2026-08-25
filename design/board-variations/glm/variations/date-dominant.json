@@ -1,0 +1,43 @@
+{
+  "tag": "date-dominant",
+  "category": "clock",
+  "title": "Fecha dominante",
+  "description": "La fecha gana peso y pasa a tinta plena; la hora se compacta.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "declarations": {
+        "font-size": "clamp(1.6rem,3vw,3.5rem)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "declarations": {
+        "font-size": "clamp(1.05rem,1.6vw,1.6rem)",
+        "color": "var(--color-ink)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-refresh",
+      "declarations": {
+        "font-size": "clamp(0.58rem,0.75vw,0.7rem)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "declarations": {
+        "font-size": "clamp(1.6rem,3vw,2.6rem)"
+      }
+    }
+  ],
+  "composes": []
+}

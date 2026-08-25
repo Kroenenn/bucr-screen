@@ -1,0 +1,31 @@
+{
+  "tag": "density-eta-dominant",
+  "category": "density",
+  "title": "ETA-dominant row",
+  "description": "The countdown number is what riders scan for, so it is enlarged to lead the row while the headsign shrinks slightly to make room for the visual hierarchy shift.",
+  "baseline_ref": ".arrival-row__eta clamp(2.2rem,12cqh,6rem)/800; .arrival-row__headsign clamp(1.6rem,9.5cqh,4.6rem)/700",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "intent": "Make the countdown the dominant visual element in the row",
+      "declarations": { "font-size": "clamp(2.6rem, 14cqh, 7rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "De-emphasize the destination name relative to the eta",
+      "declarations": { "font-size": "clamp(1.3rem, 8cqh, 3.8rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "intent": "Keep the SALIENDO label visually consistent with the bumped eta scale",
+      "declarations": { "font-size": "clamp(1.05rem, 6cqh, 2.6rem)" }
+    }
+  ],
+  "composes": []
+}

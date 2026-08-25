@@ -1,0 +1,28 @@
+{
+  "tag": "row-align-baseline",
+  "category": "rows",
+  "title": "Alineación a línea base",
+  "description": "Destino y ETA comparten línea base tipográfica en vez de centrado óptico.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "declarations": {
+        "align-items": "baseline"
+      },
+      "detail": "Cambia de center a baseline en la rejilla de la fila."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__right",
+      "declarations": {
+        "align-items": "baseline"
+      },
+      "detail": "El estado y el ETA también alinean por línea base."
+    }
+  ],
+  "composes": []
+}

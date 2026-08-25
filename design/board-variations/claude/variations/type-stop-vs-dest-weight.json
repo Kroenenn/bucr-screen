@@ -1,0 +1,24 @@
+{
+  "tag": "type-stop-vs-dest-weight",
+  "category": "typography",
+  "title": "Stop name vs. destination weight split",
+  "description": "Stop name stays at weight 800 while destination headsigns drop to 600, giving the header and row text two clearly distinct weight tiers instead of the current 800/700 near-match.",
+  "baseline_ref": "app/components/ArrivalRow.vue .arrival-row__headsign (700); app/pages/index.vue .screen__stop-name (800)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Keep the header at its existing top weight so it reads as the heaviest text on screen.",
+      "declarations": { "font-weight": "800" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Drop destination weight so rows read as a distinct, lighter tier below the stop-name header.",
+      "declarations": { "font-weight": "600" }
+    }
+  ],
+  "composes": []
+}

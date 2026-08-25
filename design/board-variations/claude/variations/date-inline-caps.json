@@ -1,0 +1,31 @@
+{
+  "tag": "date-inline-caps",
+  "category": "date",
+  "title": "Inline weekday chip",
+  "description": "Collapses the weekday into a small uppercased, letter-spaced, chip-bordered token (\"DOM\") set inline before the day/month, so \"Domingo\" reads as a compact badge-like marker rather than competing for line length with \"23 de agosto\".",
+  "baseline_ref": "app/pages/index.vue .screen__clock-date; app/composables/useKioskClock.ts date formatting",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "date formatting",
+      "intent": "Expose a 3-letter uppercase weekday abbreviation alongside the existing day/month string.",
+      "detail": "Add formattedWeekdayCaps derived from toLocaleDateString('es-CR', { weekday: 'short' }) uppercased and stripped of trailing punctuation ('dom.' → 'DOM'), used alongside the existing 'day: numeric, month: long' string ('23 de agosto')."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-date",
+      "intent": "Render the weekday as a small chip before the day/month text, inline.",
+      "detail": "<span class=\"screen__clock-date\"><span class=\"screen__clock-date-caps\">DOM</span>23 de agosto</span>, with .screen__clock-date set to display:inline-flex; align-items:center; gap:6px."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date-caps",
+      "intent": "Style the weekday as a compact, bordered, letter-spaced chip distinct from the rest of the date text.",
+      "declarations": { "font-family": "var(--font-mono)", "font-size": "0.75em", "font-weight": "700", "letter-spacing": "0.1em", "text-transform": "uppercase", "color": "var(--color-ink-muted)", "border": "1px solid var(--color-border)", "border-radius": "4px", "padding": "1px 4px" }
+    }
+  ],
+  "composes": []
+}

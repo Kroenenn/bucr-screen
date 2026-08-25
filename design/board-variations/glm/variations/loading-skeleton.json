@@ -1,0 +1,56 @@
+{
+  "tag": "loading-skeleton",
+  "category": "degraded",
+  "title": "Carga con esqueleto de filas",
+  "description": "Mientras carga, el título muestra «Cargando parada…» y en la zona de filas aparecen barras grises pulsantes que anticipan el layout final, con leyenda mono pequeña.",
+  "baseline_ref": "app/pages/index.vue (.screen__empty)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Placeholder del nombre de parada",
+      "detail": "Mientras stop === null, el h1 muestra «Cargando parada…» con clase de atenuación (.screen__loading .screen__stop-name)."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Esqueleto dentro de la tarjeta de llegadas",
+      "detail": ".screen__empty en modo carga con tres div.skel (80%, 60% y 100% de ancho) más caption «Cargando información de salidas…» en mono/uppercase."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".skel",
+      "declarations": {
+        "height": "38px",
+        "border-radius": "8px",
+        "background": "var(--color-surface-2)",
+        "animation": "pulse 1.8s ease-in-out infinite",
+        "margin-bottom": "10px"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty-caption",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-size": "0.72rem",
+        "letter-spacing": "0.1em",
+        "text-transform": "uppercase",
+        "color": "var(--color-ink-faint)",
+        "text-align": "center",
+        "padding": "14px 0"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__loading .screen__stop-name",
+      "declarations": {
+        "color": "var(--color-ink-faint)"
+      }
+    }
+  ],
+  "composes": []
+}

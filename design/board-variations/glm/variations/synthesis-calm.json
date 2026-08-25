@@ -1,0 +1,59 @@
+{
+  "tag": "synthesis-calm",
+  "category": "synthesis",
+  "title": "Síntesis C — Calma",
+  "description": "Tablero sereno: SALIENDO sin blink (solo el punto pulsa), filas separadas por blanco y meta del reloj en una línea.",
+  "baseline_ref": "compone: state-static, row-quiet, date-inline",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing",
+      "declarations": {
+        "animation": "none"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing .dot",
+      "declarations": {
+        "animation": "pulse 1.2s infinite"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "declarations": {
+        "border-bottom": "none",
+        "padding-top": "13px",
+        "padding-bottom": "13px"
+      },
+      "detail": "Subir el padding vertical para compensar la divisoria ausente."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-meta",
+      "declarations": {
+        "flex-direction": "row",
+        "align-items": "center",
+        "gap": "8px"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "declarations": {
+        "font-size": "0.72rem"
+      }
+    }
+  ],
+  "composes": [
+    "state-static",
+    "row-quiet",
+    "date-inline"
+  ]
+}

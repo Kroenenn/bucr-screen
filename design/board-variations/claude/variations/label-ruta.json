@@ -1,0 +1,17 @@
+{
+  "tag": "label-ruta",
+  "category": "labels",
+  "title": "\"Route\" left label (weaker)",
+  "description": "Left header label changes from \"Destino\" to \"Ruta\" (\"route\"). Weaker option: the rows underneath show headsigns (specific destination/via text per departure, including a circular route), not route identifiers or numbers, so \"Ruta\" is a less accurate description of the column's content than \"Destino\". Included for completeness, not recommended. Right label (\"Próxima salida\") is unchanged.",
+  "baseline_ref": "app/pages/index.vue .screen__board-header span (first span, currently \"Destino\")",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span:first-child",
+      "intent": "Explore an alternative left-column label; flagged as less accurate since the column holds headsigns, not route identifiers.",
+      "detail": "Change the static text of the first header span from \"Destino\" to \"Ruta\". No structural or style change. Weaker than baseline — recommend keeping \"Destino\" or using label-hacia instead."
+    }
+  ],
+  "composes": []
+}

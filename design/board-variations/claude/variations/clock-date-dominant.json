@@ -1,0 +1,28 @@
+{
+  "tag": "clock-date-dominant",
+  "category": "clock",
+  "title": "Date-emphasized clock",
+  "description": "Inverts the usual clock hierarchy: the time shrinks toward the size of a label while the date line grows and switches from muted to full ink weight, making the date the visually dominant piece of the header clock block. Purely a size/weight relationship within the clock, distinct from category D's date-forward layouts.",
+  "baseline_ref": ".screen__clock-time clamp(2.4rem,5.2vw,6rem)/ink; .screen__clock-date ink-muted, clamp(.75rem,1vw,.95rem)",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "intent": "Shrink the time so it no longer dominates the header block.",
+      "declarations": { "font-size": "clamp(1.4rem, 2.6vw, 2.2rem)" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "intent": "Grow the date and lift it from muted to full ink so it reads as the emphasized value, re-mapping its color token rather than inventing a new hue.",
+      "declarations": {
+        "font-size": "clamp(1.1rem, 1.8vw, 1.5rem)",
+        "font-weight": "700",
+        "color": "var(--color-ink)"
+      }
+    }
+  ],
+  "composes": []
+}

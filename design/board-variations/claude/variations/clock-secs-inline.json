@@ -1,0 +1,45 @@
+{
+  "tag": "clock-secs-inline",
+  "category": "clock",
+  "title": "Inline muted seconds",
+  "description": "Renders HH:MM:SS as one continuous mono time string, with the seconds set at mid-height (not subscripted) and only slightly smaller and muted, separated from the minutes by a thin, lighter-weight colon.",
+  "baseline_ref": ".screen__clock-time (no seconds today)",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "useKioskClock",
+      "intent": "Expose seconds via toLocaleTimeString so the template can compose HH:MM:SS.",
+      "detail": "Add a `seconds` value derived with now.value.toLocaleTimeString('es-CR', { second: '2-digit' }), updated on the same tick as the existing time/date refs, returned from the composable."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-time",
+      "intent": "Render a thin separator colon plus the seconds inline after HH:MM, mid-height rather than subscripted.",
+      "detail": "Inside .screen__clock-time, after the HH:MM text, add `<span class=\"screen__clock-colon-thin\">:</span><span class=\"screen__clock-seconds\">{{ seconds }}</span>`, e.g. `22:40<span class=\"screen__clock-colon-thin\">:</span><span class=\"screen__clock-seconds\">07</span>`."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "intent": "Center-align the inline parts so the seconds sit at mid-height with the minutes rather than dropping to a subscript baseline.",
+      "declarations": { "display": "inline-flex", "align-items": "center" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-colon-thin",
+      "intent": "A visually lighter separator distinguishing the seconds group from HH:MM without adding a new hue.",
+      "declarations": { "font-weight": "300", "color": "var(--color-ink-muted)", "margin": "0 1px" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-seconds",
+      "intent": "Slightly smaller than HH:MM but still legible and mid-height; muted (not faint) so it reads as a secondary but real value, not a decoration.",
+      "declarations": { "font-size": "0.6em", "font-weight": "700", "color": "var(--color-ink-muted)", "line-height": "1" }
+    }
+  ],
+  "composes": []
+}

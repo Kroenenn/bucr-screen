@@ -1,0 +1,31 @@
+{
+  "tag": "state-weight-ladder",
+  "category": "states",
+  "title": "Weight ladder, no new color",
+  "description": "All three states keep the same amber (--color-accent-text), but differentiate through weight, letter-spacing, and size instead: SALIENDO is heaviest (800/16px/0.12em), ABORDANDO medium (700/10px/0.1em), PRÓXIMO lightest (500/9px/0.06em). Establishes hierarchy purely via typography, staying strictly palette-legal.",
+  "baseline_ref": ".arrival-row__departing (800/15px), .arrival-row__state (700/10px, uniform across ABORDANDO and PRÓXIMO)",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "intent": "SALIENDO gets the heaviest treatment in the ladder — most urgent state.",
+      "declarations": { "font-weight": "800", "font-size": "16px", "letter-spacing": "0.12em" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state",
+      "intent": "ABORDANDO gets a medium weight/size, between SALIENDO and PRÓXIMO.",
+      "declarations": { "font-weight": "700", "font-size": "10px", "letter-spacing": "0.1em" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--soon .arrival-row__state",
+      "intent": "PRÓXIMO gets the lightest treatment — least urgent of the three attention states.",
+      "declarations": { "font-weight": "500", "font-size": "9px", "letter-spacing": "0.06em" }
+    }
+  ],
+  "composes": []
+}

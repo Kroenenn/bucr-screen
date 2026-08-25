@@ -1,0 +1,24 @@
+{
+  "tag": "density-stop-under-clock",
+  "category": "density",
+  "title": "Clock leads the header",
+  "description": "The stop name is shrunk relative to the clock so the current time is the dominant header element, useful for a kiosk context where riders orient by time first and stop identity second.",
+  "baseline_ref": ".screen__stop-name clamp(2.4rem,5vw,4.2rem)/800; .screen__clock-time mono clamp(2.4rem,5.2vw,6rem)/800",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Shrink the stop name so it no longer competes with the clock",
+      "declarations": { "font-size": "clamp(1.8rem, 3.4vw, 3rem)" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "intent": "Keep the clock at (or slightly above) its baseline size so it reads as the header's anchor",
+      "declarations": { "font-size": "clamp(2.6rem, 5.6vw, 6.4rem)" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,18 @@
+{
+  "tag": "motion-saliendo-pulse",
+  "category": "motion",
+  "title": "Gentler SALIENDO pulse",
+  "description": "EXPLORATORY — refines the SALIENDO row's current hard blink into a slower, shallower opacity pulse (1 -> 0.55 -> 1 over ~2.4s instead of a sharper on/off flash), so the departing state reads as calm attention rather than an alarm. Demonstrated live on row 1 of the mini-board.",
+  "baseline_ref": "app/pages/index.vue .arrival-row--departing, ArrivalRow.vue .arrival-row__departing dot",
+  "warning": "app/pages/index.vue deliberately uses a plain re-render, not TransitionGroup, because a promoted SALIENDO row (index 0) FLIP-animating over another row rendered two trips' text in the same space. Do not implement without solving that.",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row--departing",
+      "intent": "Replace the existing blink keyframe with a gentler, slower opacity pulse for the whole departing row and its dot.",
+      "detail": "Swap the current pulse animation for one with a shallower opacity floor (~0.55 vs current) and a longer duration (~2.4s vs current), eased in/out rather than stepped. Purely a timing/easing/amplitude change to an existing animation — no structural change to the row itself — but still classified as logic here because it touches the same row that is promoted to index 0 on departure, which is the exact collision described in the warning."
+    }
+  ],
+  "composes": []
+}

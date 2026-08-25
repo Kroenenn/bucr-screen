@@ -1,0 +1,24 @@
+{
+  "tag": "date-mono-tabular",
+  "category": "date",
+  "title": "Mono numeric date",
+  "description": "Recasts the date as a compact numeric \"23/08\" set in the same mono + tabular-nums treatment as the clock time, so the date's digits align to the same grid as the time's digits and read as one unified numeral system rather than a separate sans caption.",
+  "baseline_ref": "app/composables/useKioskClock.ts date formatting; app/pages/index.vue .screen__clock-date, .screen__clock-time",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "date formatting",
+      "intent": "Produce a numeric DD/MM date string instead of the weekday+month words.",
+      "detail": "Replace the { weekday: 'long', day: 'numeric', month: 'long' } formatter with a numeric one: toLocaleDateString('es-CR', { day: '2-digit', month: '2-digit' }) → '23/08'. Weekday word is dropped entirely in this variant."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "intent": "Match the date's numerals to the clock time's mono/tabular treatment so the two lines feel like one typographic family.",
+      "declarations": { "font-family": "var(--font-mono)", "font-variant-numeric": "tabular-nums", "font-size": "clamp(.8rem,1vw,1rem)", "letter-spacing": "0.01em" }
+    }
+  ],
+  "composes": []
+}

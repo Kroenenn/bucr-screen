@@ -1,0 +1,21 @@
+{
+  "tag": "date-mono",
+  "category": "date",
+  "title": "Fecha monoespaciada tabular",
+  "description": "La fecha adopta la familia mono tabular del reloj y sube a tinta plena, uniendo ambos bloques tipográficamente.",
+  "baseline_ref": "app/pages/index.vue + app/assets/css/main.css",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-variant-numeric": "tabular-nums",
+        "font-size": "0.8rem",
+        "color": "var(--color-ink)"
+      }
+    }
+  ],
+  "composes": []
+}

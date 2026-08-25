@@ -1,0 +1,46 @@
+{
+  "tag": "deg-loading",
+  "category": "degraded",
+  "title": "Initial loading state",
+  "description": "First paint before the feed has responded: the card shows a loading message in place of rows, and the stop-name slot shows a dimmed 'Cargando parada…' placeholder instead of the real stop name.",
+  "baseline_ref": "app/pages/index.vue .screen__empty, .screen__stop-name",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__empty",
+      "intent": "Show a loading message while the initial departures request is in flight.",
+      "detail": "Render `.screen__empty` containing a single paragraph 'Cargando información de salidas…' in place of `.arrival-list` until the first successful fetch resolves."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "logic",
+      "selector": ".screen__stop-name",
+      "intent": "Avoid showing a blank or stale stop name before the stop metadata has loaded.",
+      "detail": "While stop metadata is unresolved, render the text 'Cargando parada…' in `.screen__stop-name` instead of the real name, styled dimmer via a modifier class."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__stop-name--loading",
+      "intent": "Visually de-emphasize the placeholder stop name so it reads as pending, not as the actual value.",
+      "declarations": {
+        "color": "var(--color-ink-faint)",
+        "font-weight": "700"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty",
+      "intent": "Reuse the same centered empty-state treatment for the loading message.",
+      "declarations": {
+        "padding": "26px 0",
+        "color": "var(--color-ink-muted)",
+        "font-size": "15px",
+        "text-align": "center"
+      }
+    }
+  ],
+  "composes": []
+}

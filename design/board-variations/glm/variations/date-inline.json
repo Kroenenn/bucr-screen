@@ -1,0 +1,28 @@
+{
+  "tag": "date-inline",
+  "category": "date",
+  "title": "Fecha en línea con leyenda",
+  "description": "La fecha y la leyenda de actualización comparten una sola línea meta, compactando la columna del reloj.",
+  "baseline_ref": "app/pages/index.vue + app/composables/useKioskClock.ts",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-meta",
+      "declarations": {
+        "flex-direction": "row",
+        "align-items": "center",
+        "gap": "8px"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "declarations": {
+        "font-size": "0.72rem"
+      }
+    }
+  ],
+  "composes": []
+}

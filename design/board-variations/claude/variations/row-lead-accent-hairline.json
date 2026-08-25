@@ -1,0 +1,24 @@
+{
+  "tag": "row-lead-accent-hairline",
+  "category": "row-structure",
+  "title": "Subtle lead accent hairline",
+  "description": "A quieter alternative to full lead-row emphasis: only a 3px amber accent left-border plus a bolder headsign weight mark row 1 (the imminent/departing row) as the next bus, with no background fill or type-size change. Rendered tile shows the board WITH this emphasis applied.",
+  "baseline_ref": ".arrival-row:first-child plain row (same treatment as every other row); .arrival-row__headsign font-weight 700",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row:first-child",
+      "intent": "Add a thin accent border on the lead row only, keeping structure otherwise identical to other rows.",
+      "declarations": { "border-left": "3px solid var(--color-amber-500)", "padding-left": "11px", "margin-left": "-14px" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row:first-child .arrival-row__headsign",
+      "intent": "Bold the lead row's headsign to reinforce the accent border without resizing or adding a fill.",
+      "declarations": { "font-weight": "800" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,17 @@
+{
+  "tag": "est-badge-only",
+  "category": "estimated",
+  "title": "Estimado pill without the scheduled prefix",
+  "description": "Keep the green 'estimado' pill next to the headsign, but drop the '07:50 →' scheduled-time prefix in the eta cell. The live estimate is the number that matters; the superseded timetable time rarely helps a rider and the pill alone already communicates 'live, not scheduled'.",
+  "baseline_ref": "app/components/ArrivalRow.vue renders both .arrival-row__badge--estimated (pill) and .arrival-row__scheduled ('HH:mm →' prefix) on estimated rows today",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": "scheduledTimeDisplay computed",
+      "intent": "Stop rendering the scheduled clock prefix entirely, keeping only the estimado badge as the provenance signal.",
+      "detail": "Remove the .arrival-row__scheduled span from the template (the v-if=\"scheduledTimeDisplay\" block inside .arrival-row__eta). The scheduledTimeDisplay computed and .arrival-row__scheduled CSS become dead and can be deleted. The .arrival-row__badge--estimated pill is untouched."
+    }
+  ],
+  "composes": []
+}

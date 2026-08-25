@@ -1,0 +1,18 @@
+{
+  "tag": "palette-amber-warmer",
+  "category": "palette",
+  "title": "Warmer amber accent (speculative)",
+  "description": "SPECULATIVE — not recommended over the current palette; default remains to keep the existing amber. Re-defines the attention hue (--color-accent-text / --color-amber-500) as a slightly warmer, deeper amber/orange instead of the current lemon-yellow amber. Still unambiguously amber and still used only for attention states (PRÓXIMO, ABORDANDO/ahora, SALIENDO, the pulsing dot) — no new hue territory, just a warmer shade within amber.",
+  "baseline_ref": "app/assets/css/main.css :root --color-accent-text (#ffd24e) and --color-amber-500 (#ffc107)",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "token",
+      "selector": ":root",
+      "intent": "Shift the attention accent toward a warmer, deeper amber for a slightly less lemon/neon feel, while staying within the amber attention-only convention.",
+      "declarations": { "--color-accent-text": "#ffb734", "--color-amber-500": "#e8a317" },
+      "detail": "Dark theme values shown above (kiosk default). For light theme, the existing --color-accent-text override in :root[data-theme='light'] (#8c6600) should also warm slightly, e.g. #8a5c00 — kept close to current since light-theme accent text is already a dark ink-on-light tone, not a bright chip color. Speculative: default is to keep current amber (#ffd24e / #ffc107)."
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,21 @@
+{
+  "tag": "row-quiet",
+  "category": "rows",
+  "title": "Separación solo con espacio",
+  "description": "Elimina la divisoria y aumenta el padding vertical: separación por blanco.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "declarations": {
+        "border-bottom": "none",
+        "padding-top": "13px",
+        "padding-bottom": "13px"
+      },
+      "detail": "Subir el padding vertical para compensar la divisoria ausente."
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,39 @@
+{
+  "tag": "header-stacked-center",
+  "category": "header",
+  "title": "Ruta y reloj apilados al centro",
+  "description": "Nombre de parada y reloj apilados en una columna centrada; el toggle de tema queda anclado a la esquina superior derecha. Composición simétrica tipo cartelera.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__header",
+      "declarations": {
+        "grid-template-columns": "1fr",
+        "justify-items": "center",
+        "gap": "4px",
+        "position": "relative"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__theme-toggle",
+      "declarations": {
+        "position": "absolute",
+        "top": "0",
+        "right": "0"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock",
+      "declarations": {
+        "order": "2"
+      }
+    }
+  ],
+  "composes": []
+}

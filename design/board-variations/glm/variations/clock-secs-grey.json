@@ -1,0 +1,32 @@
+{
+  "tag": "clock-secs-grey",
+  "category": "clock",
+  "title": "Segundos en gris (subíndice)",
+  "description": "Segundos pequeños y tenues (--color-ink-faint) tras HH:MM, sin competir con la hora.",
+  "baseline_ref": "app/composables/useKioskClock.ts",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "intent": "Incluir segundos en la hora formateada",
+      "detail": "Formato es-CR con second:'2-digit' (hour12:false) y separar segundos: hora = HH:MM, secs = :ss; tick cada 1 s en lugar de cada minuto."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Añadir span de segundos dentro del reloj",
+      "detail": "<span class=\"screen__clock-time\">22:40<span class=\"screen__clock-secs\">:37</span></span>"
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-secs",
+      "declarations": {
+        "font-size": "0.42em",
+        "font-weight": "700",
+        "color": "var(--color-ink-faint)"
+      }
+    }
+  ],
+  "composes": []
+}

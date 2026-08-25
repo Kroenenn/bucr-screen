@@ -1,0 +1,38 @@
+{
+  "tag": "est-delta",
+  "category": "estimated",
+  "title": "Scheduled time plus signed delay",
+  "description": "Replace the pill with an explicit delay chip in the eta cell: the scheduled clock time and how many minutes later the live estimate lands — '07:50 +6'. Names the delay a rider is experiencing, in green. Because eta is floored at schedule, the delta is always >= 0 and never reads as an early departure.",
+  "baseline_ref": "app/components/ArrivalRow.vue: scheduledTimeDisplay renders 'HH:mm →'; Arrival carries eta and scheduledEta (seconds)",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": "new deltaDisplay computed",
+      "intent": "Derive the schedule clock string and the whole-minute lateness from the two timestamps already on the arrival.",
+      "detail": "Add a computed that, when arrival.estimated && scheduledEta != null && scheduledEta !== eta, returns { sched: formatted scheduledEta as HH:mm (es-CR, 24h), delta: Math.round((eta - scheduledEta) / 60) }. Returns null otherwise (falls back to a plain countdown)."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__eta",
+      "intent": "Show the delay chip before the countdown instead of the estimado pill.",
+      "detail": "Remove the .arrival-row__badge--estimated pill and the .arrival-row__scheduled span. When deltaDisplay is set, render <span class=\"arrival-row__delta\">{{ sched }}<b>+{{ delta }}</b></span> before the number."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__delta",
+      "intent": "Read as a small supporting annotation; the +N should stand out in the live/ok green.",
+      "declarations": { "font-family": "var(--font-mono)", "font-variant-numeric": "tabular-nums", "font-size": "0.36em", "font-weight": "600", "color": "var(--color-ink-muted)", "margin-right": "0.4em" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__delta b",
+      "intent": "Emphasise the lateness value in the live token.",
+      "declarations": { "color": "var(--color-ok)", "font-weight": "800", "margin-left": "0.35em" }
+    }
+  ],
+  "composes": []
+}

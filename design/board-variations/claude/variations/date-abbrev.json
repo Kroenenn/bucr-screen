@@ -1,0 +1,24 @@
+{
+  "tag": "date-abbrev",
+  "category": "date",
+  "title": "Abbreviated date",
+  "description": "Replaces the spelled-out weekday and month with es-CR short forms — \"Domingo, 23 de agosto\" becomes \"Dom 23 ago\". Reads faster at a glance and takes noticeably less horizontal space next to the clock.",
+  "baseline_ref": "app/composables/useKioskClock.ts date formatting; app/pages/index.vue .screen__clock-date",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "date formatting",
+      "intent": "Abbreviate weekday and month so the date reads tighter and quieter beside the time.",
+      "detail": "Change the Intl.DateTimeFormat/toLocaleDateString options from { weekday: 'long', day: 'numeric', month: 'long' } to { weekday: 'short', day: 'numeric', month: 'short' } (locale 'es-CR'), still capitalized. 'Domingo, 23 de agosto' → 'Dom 23 ago' (drop the comma to match the tighter, list-style feel)."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "intent": "Slightly reduce letter-spacing/size now that the string is shorter, keeping proportion with the time.",
+      "declarations": { "font-size": "clamp(.7rem,.9vw,.85rem)", "letter-spacing": "0.02em" }
+    }
+  ],
+  "composes": []
+}

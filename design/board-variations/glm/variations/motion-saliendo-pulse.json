@@ -1,0 +1,54 @@
+{
+  "tag": "motion-saliendo-pulse",
+  "category": "motion",
+  "title": "SALIENDO con barra pulsante",
+  "description": "EXPLORATORIO: reemplaza el blink de opacidad de la fila SALIENDO por una barra de acento ámbar a la izquierda que pulsa; la fila permanece estática. Demo ilustrativa.",
+  "baseline_ref": "app/assets/css/main.css",
+  "warning": "index.vue usa deliberadamente re-render plano y NO TransitionGroup: una fila SALIENDO promovida a índice 0 FLIP-animada superpuso el texto de dos viajes en el mismo espacio. Cualquier animación de entrada/reordenamiento debe resolver ese problema antes de implementarse. Aunque esta variante no anima el reordenamiento, cualquier cambio de motion debe validarse contra esa restricción.",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing",
+      "declarations": {
+        "animation": "none",
+        "position": "relative",
+        "padding-left": "20px"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing::before",
+      "declarations": {
+        "content": "\"\"",
+        "position": "absolute",
+        "left": "6px",
+        "top": "8px",
+        "bottom": "8px",
+        "width": "4px",
+        "border-radius": "2px",
+        "background": "var(--color-amber-500)",
+        "animation": "bar-pulse 1.6s infinite"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "declarations": {
+        "animation": "bar-pulse 1.6s infinite"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": "@keyframes bar-pulse",
+      "declarations": {
+        "0%, 100%": "opacity: 1",
+        "50%": "opacity: 0.3"
+      }
+    }
+  ],
+  "composes": []
+}

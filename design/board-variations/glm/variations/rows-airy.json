@@ -1,0 +1,26 @@
+{
+  "tag": "rows-airy",
+  "category": "density",
+  "title": "Filas aireadas",
+  "description": "Más respiración vertical: menos filas visibles, lectura más cómoda a distancia.",
+  "baseline_ref": "app/components/ArrivalRow.vue + app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "declarations": {
+        "padding": "3cqh 2.5cqi"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__board-header",
+      "declarations": {
+        "padding": "2cqh 2.5cqi"
+      }
+    }
+  ],
+  "composes": []
+}

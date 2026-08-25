@@ -1,0 +1,24 @@
+{
+  "tag": "est-strike-sched",
+  "category": "estimated",
+  "title": "Struck timetable, live countdown beside it",
+  "description": "Replace the pill with the scheduled clock time struck through, immediately before the live countdown: '07:50' (line-through) '4 min'. Makes 'the timetable said X, it is really running later' unmistakable — a natural fit for the floor-at-schedule / never-earlier rule, since eta is always >= scheduledEta.",
+  "baseline_ref": "app/components/ArrivalRow.vue: .arrival-row__scheduled renders 'HH:mm →' as a muted prefix; the estimado pill sits by the headsign",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__scheduled",
+      "intent": "Drop the '→' arrow and the pill; keep only the scheduled clock time, now struck through.",
+      "detail": "Remove the .arrival-row__badge--estimated pill. Keep the .arrival-row__scheduled span driven by scheduledTimeDisplay but render just the 'HH:mm' (no ' →'). The live countdown number stays as-is right after it."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__scheduled",
+      "intent": "Strike the superseded timetable time so it reads as 'no longer holds', keeping it muted against the live number.",
+      "declarations": { "text-decoration": "line-through", "text-decoration-color": "var(--color-ink-faint)", "margin-right": "0.3em" }
+    }
+  ],
+  "composes": []
+}

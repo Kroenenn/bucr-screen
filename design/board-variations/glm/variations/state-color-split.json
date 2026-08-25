@@ -1,0 +1,26 @@
+{
+  "tag": "state-color-split",
+  "category": "states",
+  "title": "Color por estado: ABORDANDO verde",
+  "description": "ABORDANDO se reasigna a --color-ok (acción «avance»); PRÓXIMO y SALIENDO conservan el ámbar de atención. Sin matices nuevos.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state",
+      "declarations": {
+        "color": "var(--color-ok)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__eta",
+      "declarations": {
+        "color": "var(--color-ok)"
+      }
+    }
+  ],
+  "composes": []
+}

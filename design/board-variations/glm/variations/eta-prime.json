@@ -1,0 +1,32 @@
+{
+  "tag": "eta-prime",
+  "category": "eta",
+  "title": "Minutos con primo (3′)",
+  "description": "Estilo europeo compacto: 3′, 12′, 1 h 4′; el sufijo primo sustituye la palabra «min» y reduce el ancho de la celda.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Formato con primo",
+      "detail": "etaText = etaMinutes===0?'ahora':etaMinutes>=60?`${h} h ${m}′`:`${etaMinutes}′`"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "El primo va dentro del span de ETA",
+      "detail": "<span class=\"arrival-row__eta\">3′</span> (sin arrival-row__eta-unit)"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta-unit",
+      "declarations": {
+        "display": "none"
+      }
+    }
+  ],
+  "composes": [
+    "eta-clock-under"
+  ]
+}

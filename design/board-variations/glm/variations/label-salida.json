@@ -1,0 +1,16 @@
+{
+  "tag": "label-salida",
+  "category": "labels",
+  "title": "Salida",
+  "description": "Rótulo corto y neutro para el encabezado derecho.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span (derecho)",
+      "detail": "Cambio de texto plano: hoy es «Próxima salida» → «Salida»."
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,20 @@
+{
+  "tag": "dest-uppercase",
+  "category": "typography",
+  "title": "Destinos en mayúsculas",
+  "description": "Destinos en MAYÚSCULAS con tracking .04em y tamaño algo menor: lectura tipo tablero de aeropuerto; la parada conserva su peso 800.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "text-transform": "uppercase",
+        "letter-spacing": "0.04em",
+        "font-size": "clamp(1.2rem,7cqh,3.2rem)"
+      }
+    }
+  ],
+  "composes": []
+}

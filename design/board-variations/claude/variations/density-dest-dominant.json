@@ -1,0 +1,24 @@
+{
+  "tag": "density-dest-dominant",
+  "category": "density",
+  "title": "Destination-dominant row",
+  "description": "The destination name leads instead of the countdown, useful when riders primarily scan for their stop by name rather than by urgency.",
+  "baseline_ref": ".arrival-row__headsign clamp(1.6rem,9.5cqh,4.6rem)/700; .arrival-row__eta clamp(2.2rem,12cqh,6rem)/800",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Make the destination name the dominant visual element in the row",
+      "declarations": { "font-size": "clamp(1.9rem, 11cqh, 5.4rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "intent": "Trim the countdown slightly so it reads as secondary information",
+      "declarations": { "font-size": "clamp(2rem, 10.5cqh, 5.4rem)" }
+    }
+  ],
+  "composes": []
+}

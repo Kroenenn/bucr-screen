@@ -1,0 +1,109 @@
+{
+  "tag": "synthesis-transit",
+  "category": "synthesis",
+  "title": "Síntesis B — Señalética de tránsito",
+  "description": "Hora programada + relativo inline, filete ámbar en la primera fila, día de semana enfatizado y destinos en mayúsculas.",
+  "baseline_ref": "compone: eta-clock-and-rel, row-lead-accent, date-weekday, dest-uppercase",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Derivar HH:MM y mantener el relativo",
+      "detail": "const sched = new Date(arrival.eta).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',hour12:false}); rel = etaMinutes===0?'ahora':etaMinutes>=60?`${h} h ${m} min`:`${etaMinutes} min`"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "Ambos valores en la celda derecha",
+      "detail": "<span class=\"arrival-row__sched\">{{sched}}</span> <span class=\"arrival-row__eta\">{{rel}}</span>"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-variant-numeric": "tabular-nums",
+        "font-size": "1.35rem",
+        "font-weight": "700",
+        "color": "var(--color-ink-muted)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched::after",
+      "declarations": {
+        "content": "\" ·\"",
+        "color": "var(--color-ink-faint)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type",
+      "declarations": {
+        "border-left": "3px solid var(--color-amber-500)",
+        "padding-left": "13px"
+      },
+      "detail": "Compensar el padding-left del resto de filas para mantener la rejilla."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type .arrival-row__headsign",
+      "declarations": {
+        "font-size": "1.6rem"
+      },
+      "detail": "Desde 1.35rem en la fila líder."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type .arrival-row__departing",
+      "declarations": {
+        "font-size": "1.2rem"
+      },
+      "detail": "Estado SALIENDO más prominente."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-date",
+      "detail": "Partir la cadena en dos spans: .date-weekday (nombre del día) y .date-rest (\", 23 de agosto\")."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date .date-weekday",
+      "declarations": {
+        "color": "var(--color-ink)",
+        "font-weight": "700"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date .date-rest",
+      "declarations": {
+        "color": "var(--color-ink-muted)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "text-transform": "uppercase",
+        "letter-spacing": "0.04em",
+        "font-size": "clamp(1.2rem,7cqh,3.2rem)"
+      }
+    }
+  ],
+  "composes": [
+    "eta-clock-and-rel",
+    "row-lead-accent",
+    "date-weekday",
+    "dest-uppercase"
+  ]
+}

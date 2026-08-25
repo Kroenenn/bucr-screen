@@ -1,0 +1,35 @@
+{
+  "tag": "header-clock-left",
+  "category": "header",
+  "title": "Reloj a la izquierda",
+  "description": "El reloj se coloca a la izquierda del nombre de la parada (grid auto 1fr auto con la ruta justificada a la derecha), priorizando la hora como referencia visual primaria.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__header",
+      "declarations": {
+        "grid-template-columns": "auto 1fr auto"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock",
+      "declarations": {
+        "order": "-1",
+        "justify-self": "start"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__route",
+      "declarations": {
+        "justify-self": "end"
+      }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,26 @@
+{
+  "tag": "clock-blink-colon",
+  "category": "clock",
+  "title": "Blinking colon heartbeat",
+  "description": "No seconds are added. Instead the existing HH:MM colon blinks on a 1s cadence (step function, 50% duty), a classic digital-clock \"alive\" cue that needs no new markup width.",
+  "baseline_ref": ".screen__clock-time (static, no seconds)",
+  "warning": "This is a CSS keyframe animation (opacity toggling on a fixed 1s cycle), not a TransitionGroup-driven list transition, so it is unaffected by the no-TransitionGroup constraint; noted for completeness per the motion-tile rule.",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-time",
+      "intent": "Isolate the colon in its own element so only it can be targeted by the blink animation, leaving the HH and MM digits static.",
+      "detail": "Change the HH:MM text inside .screen__clock-time from a plain string to `{{ hours }}<span class=\"screen__clock-colon\">:</span>{{ minutes }}`, e.g. `22<span class=\"screen__clock-colon\">:</span>40`."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "logic",
+      "selector": ".screen__clock-colon",
+      "intent": "Blink the colon once per second as a low-key indicator that the clock is ticking, without adding numeric seconds.",
+      "declarations": { "display": "inline-block", "animation": "clock-colon-blink 1s step-start infinite" },
+      "detail": "Add a `@keyframes clock-colon-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }` rule alongside the existing keyframes in main.css."
+    }
+  ],
+  "composes": []
+}

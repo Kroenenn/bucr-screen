@@ -1,0 +1,37 @@
+{
+  "tag": "stale-notice",
+  "category": "degraded",
+  "title": "Pista de datos obsoletos",
+  "description": "Filas normales, tablero sin atenuar, y una pista «actualizando…» junto al modo (variante quieta en ink-faint).",
+  "baseline_ref": "app/pages/index.vue (.screen__stale-hint)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Avisar que los datos mostrados podrían estar desactualizados",
+      "detail": "Añadir <span class='screen__stale-hint'>actualizando…</span> en .screen__status-bar junto al ModeBadge cuando la última actualización exitosa supere el intervalo esperado."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "logic",
+      "intent": "Detectar obsolescencia",
+      "detail": "Marcar stale = true cuando now - lastSuccessAt > refreshIntervalMs * 2; limpiar al recibir datos."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__stale-hint",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-size": "0.66rem",
+        "letter-spacing": "0.1em",
+        "color": "var(--color-ink-faint)",
+        "display": "inline-flex",
+        "align-items": "center",
+        "gap": "5px"
+      },
+      "intent": "Variante mostrada: quieta (ink-faint). Alternativa: var(--color-accent-text) si la obsolescencia debe requerir atención; se eligió la quieta porque el tablero sigue funcional y el ámbar podría leerse como falla del servicio."
+    }
+  ],
+  "composes": []
+}

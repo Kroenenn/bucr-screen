@@ -1,0 +1,20 @@
+{
+  "tag": "stop-caps-tracked",
+  "category": "typography",
+  "title": "Parada en mayúsculas con tracking amplio",
+  "description": "El nombre de la parada pasa a MAYÚSCULAS con letter-spacing .12em y tamaño reducido; los destinos permanecen en sentence case, creando contraste de caja.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "declarations": {
+        "text-transform": "uppercase",
+        "letter-spacing": "0.12em",
+        "font-size": "clamp(1.9rem,4vw,3.2rem)"
+      }
+    }
+  ],
+  "composes": []
+}

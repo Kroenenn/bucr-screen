@@ -1,0 +1,31 @@
+{
+  "tag": "clock-time-dominant",
+  "category": "clock",
+  "title": "Time as header hero",
+  "description": "Enlarges the clock time well beyond its current size so it reads as the dominant element of the header, while the date and refresh line shrink further to stay clearly subordinate.",
+  "baseline_ref": ".screen__clock-time clamp(2.4rem,5.2vw,6rem); .screen__clock-date; .screen__clock-refresh",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "intent": "Push the time noticeably larger than its current clamp ceiling so it visually anchors the header.",
+      "declarations": { "font-size": "clamp(3.2rem, 7vw, 8rem)" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "intent": "Shrink the date so the size gap between it and the now-larger time reads as an intentional hierarchy, not a layout accident.",
+      "declarations": { "font-size": "clamp(.65rem, .85vw, .8rem)" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-refresh",
+      "intent": "Shrink the refresh hint to match the reduced weight given to the meta column.",
+      "declarations": { "font-size": "clamp(.5rem, .65vw, .62rem)" }
+    }
+  ],
+  "composes": []
+}

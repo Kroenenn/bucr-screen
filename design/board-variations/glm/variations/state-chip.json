@@ -1,0 +1,41 @@
+{
+  "tag": "state-chip",
+  "category": "states",
+  "title": "Estados como chips delineados",
+  "description": "PRÓXIMO/ABORDANDO se convierten en chips outline; ABORDANDO añade relleno verde tenue y SALIENDO se enmarca en ámbar.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__state",
+      "declarations": {
+        "border": "1px solid currentColor",
+        "border-radius": "999px",
+        "padding": "2px 8px",
+        "font-size": "0.58rem"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state",
+      "declarations": {
+        "color": "var(--color-ok)",
+        "background": "rgba(53,201,140,0.12)"
+      },
+      "detail": "Relleno con alfa del verde existente (--color-ok); no es un matiz nuevo."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing .arrival-row__departing",
+      "declarations": {
+        "border": "1px solid var(--color-accent-text)",
+        "border-radius": "999px",
+        "padding": "2px 10px"
+      }
+    }
+  ],
+  "composes": []
+}

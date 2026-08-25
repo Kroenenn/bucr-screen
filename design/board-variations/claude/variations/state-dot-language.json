@@ -1,0 +1,46 @@
+{
+  "tag": "state-dot-language",
+  "category": "states",
+  "title": "Unified dot vocabulary",
+  "description": "ABORDANDO and PRÓXIMO gain small leading dots, matching SALIENDO's existing pulsing dot vocabulary: ABORDANDO gets a solid amber dot (state is live/current), PRÓXIMO gets an amber outline dot (state is upcoming, not yet current). Requires a small markup addition (a leading dot span inside .arrival-row__state) but no new color.",
+  "baseline_ref": ".arrival-row__departing already has a leading amber dot (.arrival-row__departing-dot); .arrival-row__state currently has no leading dot for ABORDANDO or PRÓXIMO",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__state",
+      "intent": "Add a leading dot span inside the state label so ABORDANDO and PRÓXIMO can carry the same dot vocabulary SALIENDO already uses.",
+      "detail": "Wrap state text with a new inner span, e.g. <span class=\"arrival-row__state-dot\"></span>ABORDANDO, conditionally styled solid vs outline depending on whether the row is --now or --soon."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state-dot",
+      "intent": "ABORDANDO's dot is solid amber — a live/current state, matching the filled style of SALIENDO's dot.",
+      "declarations": {
+        "width": "6px",
+        "height": "6px",
+        "border-radius": "50%",
+        "background": "var(--color-amber-500)",
+        "display": "inline-block",
+        "margin-right": "6px"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--soon .arrival-row__state-dot",
+      "intent": "PRÓXIMO's dot is an amber outline — upcoming but not yet current, visually lighter than ABORDANDO's solid dot.",
+      "declarations": {
+        "width": "6px",
+        "height": "6px",
+        "border-radius": "50%",
+        "background": "transparent",
+        "border": "1.5px solid var(--color-amber-500)",
+        "display": "inline-block",
+        "margin-right": "6px"
+      }
+    }
+  ],
+  "composes": []
+}

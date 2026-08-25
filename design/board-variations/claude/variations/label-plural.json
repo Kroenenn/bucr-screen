@@ -1,0 +1,17 @@
+{
+  "tag": "label-plural",
+  "category": "labels",
+  "title": "Pluralized right label",
+  "description": "Right header label changes from \"Próxima salida\" to \"Próximas salidas\" — the board always lists several upcoming departures at once, so the plural more accurately describes what the column shows. Left label (\"Destino\") is unchanged. Recommended.",
+  "baseline_ref": "app/pages/index.vue .screen__board-header span (second span, currently \"Próxima salida\")",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span:last-child",
+      "intent": "Match the label to the actual content: a list of multiple upcoming departures, not a single one.",
+      "detail": "Change the static text of the second header span from \"Próxima salida\" to \"Próximas salidas\". No structural or style change."
+    }
+  ],
+  "composes": []
+}

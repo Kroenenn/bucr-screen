@@ -1,0 +1,24 @@
+{
+  "tag": "row-cards",
+  "category": "row-structure",
+  "title": "Floating row cards",
+  "description": "Each arrival row becomes its own rounded surface-2 card with a gap between rows instead of a continuous list separated by dividers, giving each departure a more distinct, tappable-looking unit.",
+  "baseline_ref": ".arrival-list (relative container) and .arrival-row (border-bottom: 1px solid var(--color-border))",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-list",
+      "intent": "Stack row-cards with a visible gap instead of an unbroken list.",
+      "declarations": { "display": "flex", "flex-direction": "column", "gap": "8px", "padding": "8px 0" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "intent": "Give each row its own card surface, rounded corners, and remove the divider since separation is now via the gap and surface contrast.",
+      "declarations": { "background": "var(--color-surface-2)", "border-bottom": "none", "border-radius": "8px", "padding": "12px 14px", "margin": "0" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,31 @@
+{
+  "tag": "clock-secs-inline",
+  "category": "clock",
+  "title": "Segundos en línea",
+  "description": "Segundos a media altura sobre la base de la hora, aún discretos en gris muted.",
+  "baseline_ref": "app/composables/useKioskClock.ts",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "intent": "Incluir segundos en la hora formateada",
+      "detail": "Mismo enfoque que clock-secs-grey: second:'2-digit' con es-CR y tick de 1 s, separando el sufijo :ss."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Span de segundos inline en el reloj",
+      "detail": "Sufijo <span class=\"screen__clock-secs\">:37</span> dentro de .screen__clock-time, alineado a la base."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-secs",
+      "declarations": {
+        "font-size": "0.62em",
+        "color": "var(--color-ink-muted)"
+      }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,31 @@
+{
+  "tag": "eta-number-emphasis",
+  "category": "eta-format",
+  "title": "Bigger number, fainter unit",
+  "description": "Enlarges the leading digits of the countdown and shrinks/fades the unit label so the number itself dominates the scan. The now-row swaps 'ahora' for the boundary phrase '< 1 min', which is deliberately ambiguous between two readings: (a) a literal countdown floor — 'less than one minute remains' — for a system that always shows a number; or (b) 'ahora' itself re-expressed on the same numeric scale as the rows below it, so the whole column reads as one continuous unit rather than a label breaking the pattern. Either reading is a legitimate rationale for the same rendered text; which one applies depends on whether the underlying etaMinutes===0 state is treated as a true zero or as 'less than 1'.",
+  "baseline_ref": "app/components/ArrivalRow.vue eta formatting; .arrival-row__eta, .arrival-row__eta-unit",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "intent": "Make the number the dominant visual element of the row.",
+      "declarations": { "font-size": "clamp(2.6rem, 14cqh, 7rem)", "font-weight": "800" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta-unit",
+      "intent": "Push the unit further into the background relative to baseline's 0.45em/ink-muted so the number reads first.",
+      "declarations": { "font-size": "0.3em", "font-weight": "600", "opacity": "0.45", "margin-left": "0.3em" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta",
+      "intent": "Replace the 'ahora' label with a boundary phrase that reads as part of the same numeric scale as the rows below it.",
+      "detail": "When etaMinutes===0 (the now/ABORDANDO state), render .arrival-row__eta as '< 1' + .arrival-row__eta-unit('min') instead of the literal text 'ahora'. .arrival-row--now .arrival-row__eta keeps its accent-text color from baseline; SALIENDO/departing rows are unchanged."
+    }
+  ],
+  "composes": []
+}

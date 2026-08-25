@@ -1,0 +1,39 @@
+{
+  "tag": "header-toggle-inline",
+  "category": "header",
+  "title": "Toggle de tema integrado",
+  "description": "El toggle de tema se convierte en un botón compacto junto al reloj con gaps más ajustados; barra superior más densa.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__header",
+      "declarations": {
+        "gap": "6px"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock",
+      "declarations": {
+        "gap": "6px"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__theme-toggle",
+      "declarations": {
+        "font-size": "0.9rem",
+        "align-self": "center",
+        "background": "var(--color-surface-2)",
+        "border": "1px solid var(--color-border)",
+        "border-radius": "8px",
+        "padding": "5px 8px"
+      }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,18 @@
+{
+  "tag": "motion-row-fadein",
+  "category": "motion",
+  "title": "Rows fade in on poll",
+  "description": "EXPLORATORY — new rows would fade in and slide up slightly when they first appear after a poll cycle, instead of snapping into place instantly. Demonstrated on the mini-board as a looping fade+slide on a single row.",
+  "baseline_ref": "app/pages/index.vue arrival list re-render (plain v-for, no enter/leave transition)",
+  "warning": "app/pages/index.vue deliberately uses a plain re-render, not TransitionGroup, because a promoted SALIENDO row (index 0) FLIP-animating over another row rendered two trips' text in the same space. Do not implement without solving that.",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "logic",
+      "selector": ".arrival-list",
+      "intent": "On each poll response, diff incoming trips against the currently rendered list; any trip_id not previously present gets an 'entering' flag for one render cycle so its row can animate in independently of row 0's SALIENDO promotion.",
+      "detail": "Would require replacing the current plain v-for re-render with either a keyed transition group scoped to exclude index 0, or a manual class-toggle-on-mount approach per new row — neither is implemented today, and both need to be reconciled with the SALIENDO-promotion collision described in the warning above before any code is written."
+    }
+  ],
+  "composes": []
+}

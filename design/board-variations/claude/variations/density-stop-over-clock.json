@@ -1,0 +1,24 @@
+{
+  "tag": "density-stop-over-clock",
+  "category": "density",
+  "title": "Stop name leads the header",
+  "description": "The stop name is enlarged relative to the clock so place identity is the dominant header element, useful when the board serves multiple nearby stops and riders need to confirm location first.",
+  "baseline_ref": ".screen__stop-name clamp(2.4rem,5vw,4.2rem)/800; .screen__clock-time mono clamp(2.4rem,5.2vw,6rem)/800",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Enlarge the stop name so it leads the header",
+      "declarations": { "font-size": "clamp(2.8rem, 6vw, 5rem)" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "intent": "Trim the clock slightly so it reads as secondary to the stop name",
+      "declarations": { "font-size": "clamp(2rem, 4.4vw, 5rem)" }
+    }
+  ],
+  "composes": []
+}

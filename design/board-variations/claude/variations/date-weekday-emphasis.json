@@ -1,0 +1,38 @@
+{
+  "tag": "date-weekday-emphasis",
+  "category": "date",
+  "title": "Weekday emphasis stack",
+  "description": "Splits the date into two lines: the weekday alone, larger and inked, sits above the day-and-month in the existing small muted style. Gives \"Domingo\" its own visual weight as the primary orientation cue, with the numeric date as secondary detail.",
+  "baseline_ref": "app/pages/index.vue .screen__clock-date; app/composables/useKioskClock.ts date formatting",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "date formatting",
+      "intent": "Expose weekday and day/month as separate values instead of one combined string, so the template can lay them out as two lines.",
+      "detail": "Split the single formatted date string into formattedWeekday ('Domingo') and formattedDayMonth ('23 de agosto'), both still from Intl.DateTimeFormat('es-CR', ...) with capitalization applied, reusing the existing long weekday/month options."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-date",
+      "intent": "Render the date as a two-line stack: weekday on its own line, day/month beneath.",
+      "detail": "Wrap the two values in nested spans: <span class=\"screen__clock-date\"><span class=\"screen__clock-date-weekday\">{{ formattedWeekday }}</span><span class=\"screen__clock-date-rest\">{{ formattedDayMonth }}</span></span>, with .screen__clock-date set to display:flex; flex-direction:column."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date-weekday",
+      "intent": "Give the weekday primary visual weight — inked, heavier, slightly larger than the current muted date text.",
+      "declarations": { "color": "var(--color-ink)", "font-weight": "700", "font-size": "clamp(.85rem,1.1vw,1.05rem)", "line-height": "1.1" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date-rest",
+      "intent": "Keep the day/month as secondary, muted detail beneath the weekday.",
+      "declarations": { "color": "var(--color-ink-muted)", "font-size": "clamp(.65rem,.85vw,.8rem)", "line-height": "1.1" }
+    }
+  ],
+  "composes": []
+}

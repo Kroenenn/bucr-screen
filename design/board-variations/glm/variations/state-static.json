@@ -1,0 +1,26 @@
+{
+  "tag": "state-static",
+  "category": "states",
+  "title": "SALIENDO estático",
+  "description": "Se elimina el parpadeo de la fila; solo el punto ámbar pulsa más rápido (1.2s) como señal de actividad.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing",
+      "declarations": {
+        "animation": "none"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing .dot",
+      "declarations": {
+        "animation": "pulse 1.2s infinite"
+      }
+    }
+  ],
+  "composes": []
+}

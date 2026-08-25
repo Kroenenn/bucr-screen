@@ -1,0 +1,17 @@
+{
+  "tag": "type-dest-500-tight",
+  "category": "typography",
+  "title": "Lighter, tighter destinations",
+  "description": "Destination headsigns drop to weight 500 with tighter tracking (-0.02em), giving rows a lighter, more editorial voice that recedes further behind the bolder 800-weight stop name.",
+  "baseline_ref": "app/components/ArrivalRow.vue .arrival-row__headsign (currently 700 weight, -0.01em tracking)",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Lighten and tighten destination text so it reads as a quieter, editorial-style row voice beneath the heavier header.",
+      "declarations": { "font-weight": "500", "letter-spacing": "-0.02em" }
+    }
+  ],
+  "composes": []
+}

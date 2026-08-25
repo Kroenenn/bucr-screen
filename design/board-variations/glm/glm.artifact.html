@@ -1,0 +1,1884 @@
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--color-bg);color:var(--color-ink);font-family:var(--font-sans)}
+:root{--color-bg:#0b0f14;--color-surface:#121820;--color-surface-2:#1a2230;--color-border:rgba(255,255,255,0.08);--color-ink:#f4f6f8;--color-ink-muted:rgba(244,246,248,0.6);--color-ink-faint:rgba(244,246,248,0.35);--color-blue-400:#5ca1d6;--color-blue-600:#0b5ca8;--color-blue-900:#04233f;--color-amber-500:#ffc107;--color-accent-text:#ffd24e;--color-ok:#35c98c;--color-error:#ff6b6b;--font-sans:'Segoe UI','Helvetica Neue',Arial,system-ui,sans-serif;--font-mono:'Consolas','IBM Plex Mono',ui-monospace,monospace}
+.gallery{max-width:1500px;margin:0 auto;padding:28px}
+.gallery__intro{margin-bottom:10px}
+.gallery__intro h1{font-size:1.6rem;letter-spacing:-0.02em}
+.gallery__intro p{color:var(--color-ink-muted);font-size:.92rem;line-height:1.5;max-width:70ch;margin-top:8px}
+.gallery__intro code{font-family:var(--font-mono);font-size:.85em;color:var(--color-ink)}
+section{margin-top:44px}
+section>h2{font-size:1.3rem;margin-bottom:6px}
+section>.section-note{color:var(--color-ink-muted);font-size:.85rem;margin-bottom:16px;max-width:80ch;line-height:1.45}
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(470px,1fr));gap:22px}
+.tile{background:var(--color-surface);border:1px solid var(--color-border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.tile__tag{align-self:flex-start;font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.05em;color:var(--color-ink);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:6px;padding:3px 8px}
+.tile__desc{color:var(--color-ink-muted);font-size:.82rem;line-height:1.35}
+.tile__composes{font-family:var(--font-mono);font-size:.66rem;color:var(--color-ink-faint);line-height:1.5}
+.board{background:var(--color-bg);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.board__header{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px}
+.board__route{display:flex;align-items:center;gap:10px;min-width:0}
+.board__logo{flex:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--color-blue-600),var(--color-blue-900));color:#fff;font-weight:800;display:grid;place-items:center;font-size:19px}
+.board__stop-name{font-size:1.9rem;font-weight:800;letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board__clock{display:flex;align-items:center;gap:10px;justify-self:end}
+.board__clock-time{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:2.2rem;font-weight:800;color:var(--color-ink);line-height:1}
+.board__clock-meta{display:flex;flex-direction:column;gap:3px}
+.board__clock-date{color:var(--color-ink-muted);font-size:.78rem}
+.board__clock-refresh{color:var(--color-ink-faint);font-size:.64rem;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.board__theme-toggle{color:var(--color-ink-faint);font-size:1.1rem}
+.board__status-bar{display:flex;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.6rem;font-weight:700;letter-spacing:.08em;padding:3px 9px;border-radius:999px}
+.badge--live{color:var(--color-ok);border:1px solid var(--color-ok)}
+.badge--demo{color:var(--color-blue-400);border:1px solid var(--color-blue-400)}
+.dot{width:6px;height:6px;border-radius:50%;flex:none;animation:pulse 2s infinite}
+.dot--ok{background:var(--color-ok)}
+.dot--amber{background:var(--color-amber-500)}
+.board__card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px;overflow:hidden}
+.board__card-header{display:flex;justify-content:space-between;align-items:baseline;padding:9px 16px;border-bottom:1px solid var(--color-border)}
+.board__card-header span{font-family:var(--font-mono);font-size:.82rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink)}
+.arrival-list{display:flex;flex-direction:column}
+.arrival-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--color-border)}
+.arrival-row:last-child{border-bottom:none}
+.arrival-row__headsign{font-size:1.35rem;font-weight:700;color:var(--color-ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.arrival-row__badge{font-family:var(--font-mono);font-size:.64rem;color:var(--color-ink-muted);border:1px solid var(--color-border);padding:2px 8px;border-radius:999px;justify-self:end;white-space:nowrap}
+.arrival-row__right{display:flex;align-items:baseline;gap:10px;justify-self:end;white-space:nowrap}
+.arrival-row__state{font-family:var(--font-mono);font-weight:700;font-size:.7rem;letter-spacing:.14em;color:var(--color-accent-text)}
+.arrival-row__eta{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:1.85rem;font-weight:800;color:var(--color-ink);line-height:1}
+.arrival-row--now .arrival-row__eta{color:var(--color-accent-text)}
+.arrival-row__eta-unit{font-size:.45em;color:var(--color-ink-muted)}
+.arrival-row__departing{font-family:var(--font-mono);font-weight:800;font-size:1.05rem;color:var(--color-accent-text);display:flex;align-items:center;gap:8px}
+.arrival-row--departing{animation:blink 1.6s infinite}
+.board__footer{background:linear-gradient(90deg,var(--color-blue-600),var(--color-blue-900));border-radius:8px;padding:8px 16px;display:flex;justify-content:space-between;color:#fff;font-size:.72rem}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+</style>
+<div class="gallery">
+<div class="gallery__intro">
+<h1>bUCR — Variaciones de diseño del tablero de salidas</h1>
+<p>Galería de decisiones de diseño para el kiosco de la parada <strong>Educación</strong>. Cada tile es un mini-tablero con una sola variación aplicada sobre el diseño actual; el chip superior (<code>tag</code>) es el nombre del archivo <code>variations/&lt;tag&gt;.json</code> que la describe de forma aplicable. Los tiles <code>baseline</code> reproducen el diseño vigente como referencia. La sección <strong>M. Síntesis</strong> combina variaciones de varias categorías. Tema oscuro por defecto (el del kiosco).</p>
+</div>
+<style>/* A. Tipografía */
+.v-stop-vs-dest-weight .arrival-row__headsign{font-weight:600}
+.v-stop-caps-tracked .board__stop-name{text-transform:uppercase;letter-spacing:.12em;font-size:1.45rem}
+.v-dest-mono .arrival-row__headsign{font-family:var(--font-mono);font-size:1.15rem;font-weight:700}
+.v-stop-mono .board__stop-name{font-family:var(--font-mono);font-size:1.6rem;letter-spacing:0}
+.v-dest-weight-500 .arrival-row__headsign{font-weight:500}
+.v-dest-tight-tracking .arrival-row__headsign{letter-spacing:-0.03em}
+.v-dest-uppercase .arrival-row__headsign{text-transform:uppercase;font-size:1.15rem;letter-spacing:.04em}</style>
+<section id="cat-typography"><h2>A. Tipografía y jerarquía</h2><p class="section-note">Variaciones de peso, caja y familia tipográfica para diferenciar el nombre de la parada (cabecera) de los destinos (filas), manteniendo los tokens existentes.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">baseline</span>
+<p class="tile__desc">Referencia: parada 800 sans con tracking -0.02em; destinos 700 sans. Sin cambios.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">stop-vs-dest-weight</span>
+<p class="tile__desc">La parada conserva peso 800 y los destinos bajan a 600: jerarquía por peso puro.</p>
+
+<div class="board v-stop-vs-dest-weight">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">stop-caps-tracked</span>
+<p class="tile__desc">Parada en MAYÚSCULAS con tracking amplio; destinos quedan en sentence case.</p>
+
+<div class="board v-stop-caps-tracked">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">dest-mono</span>
+<p class="tile__desc">Destinos en monoespaciada (como los ETA); la cabecera sigue en sans.</p>
+
+<div class="board v-dest-mono">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">stop-mono</span>
+<p class="tile__desc">Nombre de parada en mono para alinearse con reloj y ETA; destinos sans.</p>
+
+<div class="board v-stop-mono">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">dest-weight-500</span>
+<p class="tile__desc">Destinos aún más ligeros (500): máximo contraste con la cabecera 800.</p>
+
+<div class="board v-dest-weight-500">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">dest-tight-tracking</span>
+<p class="tile__desc">Destinos con tracking -0.03em: bloque de texto más compacto y denso.</p>
+
+<div class="board v-dest-tight-tracking">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">dest-uppercase</span>
+<p class="tile__desc">Destinos en MAYÚSCULAS con tracking moderado: lectura tipo aeropuerto.</p>
+
+<div class="board v-dest-uppercase">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* B. Densidad */
+.v-eta-dominant .arrival-row__eta{font-size:2.5rem}
+.v-eta-dominant .arrival-row__departing{font-size:1.3rem}
+.v-eta-dominant .arrival-row__headsign{font-size:1.15rem}
+.v-headsign-dominant .arrival-row__headsign{font-size:1.7rem}
+.v-headsign-dominant .arrival-row__eta{font-size:1.35rem}
+.v-headsign-dominant .arrival-row__state{font-size:.6rem}
+.v-rows-compact .arrival-row{padding:5px 16px}
+.v-rows-compact .arrival-row__headsign{font-size:1.15rem}
+.v-rows-compact .arrival-row__eta{font-size:1.5rem}
+.v-rows-airy .arrival-row{padding:16px}
+.v-rows-airy .board__card-header{padding:14px 16px}
+</style>
+<section id="cat-density"><h2>B. Tamaño y densidad</h2><p class="section-note">Cuál columna domina visualmente (ETA vs destino), el ritmo vertical de las filas y la parada vs el reloj. Valores reales en contenedores cqh/cqi; aquí se ilustran a escala de galería.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">baseline</span>
+<p class="tile__desc">Referencia: proporciones actuales de la app real.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-dominant</span>
+<p class="tile__desc">El minuto manda: ETA más grande, destino reducido.</p>
+
+<div class="board v-eta-dominant">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">headsign-dominant</span>
+<p class="tile__desc">El destino manda: texto grande, ETA compacto.</p>
+
+<div class="board v-headsign-dominant">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">rows-compact</span>
+<p class="tile__desc">Densidad alta: filas ajustadas para ver más salidas.</p>
+
+<div class="board v-rows-compact">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">rows-airy</span>
+<p class="tile__desc">Más aire: padding generoso, menos filas visibles pero más legible a distancia.</p>
+
+<div class="board v-rows-airy">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* C. Reloj */
+.board__clock-time .clock-secs{font-size:.42em;font-weight:700}
+.v-clock-secs-grey .board__clock-time .clock-secs{color:var(--color-ink-faint)}
+.v-clock-secs-inline .board__clock-time .clock-secs{color:var(--color-ink-muted);font-size:.62em}
+.v-clock-blink-colon .board__clock-time .clock-colon{animation:blink 2s step-end infinite;display:inline-block}
+.v-clock-dominant .board__clock-time{font-size:2.9rem}
+.v-clock-dominant .board__clock-date{font-size:.68rem}
+.v-clock-dominant .board__stop-name{font-size:1.35rem}
+.v-date-dominant .board__clock-time{font-size:1.5rem}
+.v-date-dominant .board__clock-date{font-size:.95rem;color:var(--color-ink)}
+.v-date-dominant .board__clock-refresh{font-size:.6rem}
+.v-date-dominant .board__stop-name{font-size:1.35rem}</style>
+<section id="cat-clock"><h2>C. Reloj</h2><p class="section-note">Segundos discretos (petición explícita: pequeños Y en gris tenue), dos puntos parpadeantes y jerarquía hora vs fecha. La app real no muestra segundos hoy (useKioskClock.ts, es-CR HH:MM).</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">clock-secs-grey</span>
+<p class="tile__desc">Segundos como subíndice pequeño en gris tenue (--color-ink-faint).</p>
+
+<div class="board v-clock-secs-grey">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40<span class="clock-secs">:37</span></span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">clock-secs-inline</span>
+<p class="tile__desc">Segundos en línea, algo mayores pero aún en gris (--color-ink-muted).</p>
+
+<div class="board v-clock-secs-inline">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40<span class="clock-secs">:37</span></span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">clock-blink-colon</span>
+<p class="tile__desc">Dos puntos parpadeantes estilo reloj de estación.</p>
+
+<div class="board v-clock-blink-colon">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22<span class="clock-colon">:</span>40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">clock-dominant</span>
+<p class="tile__desc">La hora domina el encabezado; parada y fecha quedan secundarias.</p>
+
+<div class="board v-clock-dominant">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">date-dominant</span>
+<p class="tile__desc">La fecha crece y pasa a tinta plena; la hora se reduce.</p>
+
+<div class="board v-date-dominant">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* D. Fecha */
+.v-date-inline .board__clock-meta{flex-direction:row;align-items:center;gap:8px}
+.v-date-inline .board__clock-date{font-size:.72rem}
+.v-date-inline .board__clock-date::after{content:"·";color:var(--color-ink-faint);margin-left:8px}
+.v-date-abbr .board__clock-date{font-family:var(--font-mono);letter-spacing:.02em}
+.v-date-abbr .board__clock-date .date-full{display:none}
+.v-date-abbr .board__clock-date .date-short{display:inline}
+.date-short{display:none}
+.v-date-weekday .board__clock-date{display:flex;gap:6px}
+.v-date-weekday .date-weekday{color:var(--color-ink);font-weight:700}
+.v-date-weekday .date-rest{color:var(--color-ink-muted)}
+.v-date-relative .board__clock-date{color:var(--color-ink)}
+.v-date-relative .date-hoy{font-family:var(--font-mono);font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-text);border:1px solid var(--color-accent-text);border-radius:999px;padding:1px 7px;margin-right:6px}
+.v-date-mono .board__clock-date{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--color-ink)}
+.v-date-mono .board__clock-refresh{font-family:var(--font-mono)}
+</style>
+<section id="cat-date"><h2>D. Fecha</h2><p class="section-note">Variaciones sobre la línea de fecha bajo el reloj: jerarquía, formato abreviado y coherencia tipográfica con el reloj.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">date-inline</span>
+<p class="tile__desc">Fecha y leyenda de actualización en una sola línea, separadas por punto medio.</p>
+
+<div class="board v-date-inline">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">date-abbr</span>
+<p class="tile__desc">Formato abreviado «Dom 23 ago» en monoespaciada, más compacto para cabeceras estrechas.</p>
+
+<div class="board v-date-abbr">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date"><span class="date-short">Dom 23 ago</span><span class="date-full">Domingo, 23 de agosto</span></span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">date-weekday</span>
+<p class="tile__desc">Día de la semana en tinta plena y negrita; el resto de la fecha permanece atenuado.</p>
+
+<div class="board v-date-weekday">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date"><span class="date-weekday">Domingo</span><span class="date-rest">, 23 de agosto</span></span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">date-relative</span>
+<p class="tile__desc">Chip «HOY» en ámbar antepuesto a la fecha, reforzando el contexto temporal del tablero.</p>
+
+<div class="board v-date-relative">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date"><span class="date-hoy">HOY</span>Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">date-mono</span>
+<p class="tile__desc">Fecha en monoespaciada tabular con la misma familia del reloj, subiendo a tinta plena.</p>
+
+<div class="board v-date-mono">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* E. Estados */
+.v-state-color-split .arrival-row--now .arrival-row__state{color:var(--color-ok)}
+.v-state-color-split .arrival-row--now .arrival-row__eta{color:var(--color-ok)}
+.v-state-chip .arrival-row__state{border:1px solid currentColor;border-radius:999px;padding:2px 8px;font-size:.58rem}
+.v-state-chip .arrival-row--now .arrival-row__state{color:var(--color-ok);background:rgba(53,201,140,0.12)}
+.v-state-chip .arrival-row--departing .arrival-row__departing{border:1px solid var(--color-accent-text);border-radius:999px;padding:2px 10px}
+.v-state-static .arrival-row--departing{animation:none}
+.v-state-static .arrival-row--departing .dot{animation:pulse 1.2s infinite}
+.v-state-weight .arrival-row__state{color:var(--color-ink-muted);letter-spacing:.1em}
+.v-state-weight .arrival-row--now .arrival-row__state{font-weight:800;color:var(--color-ink)}
+.v-state-weight .arrival-row--soon .arrival-row__state{font-weight:600}
+.v-state-weight .arrival-row--now .arrival-row__eta{color:var(--color-ink)}
+.v-state-weight .arrival-row--departing{animation:none}
+.v-state-weight .arrival-row--departing .arrival-row__departing{color:var(--color-ink-muted);font-weight:800}
+.v-state-weight .arrival-row--departing .dot{background:var(--color-ink-faint)}</style>
+<section id="cat-states"><h2>E. Estados (Saliendo / Abordando / Próximo)</h2><p class="section-note">Hoy los tres estados comparten el ámbar de atención. Exploraciones de color por estado, chips y diferenciación por peso.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">baseline</span>
+<p class="tile__desc">Referencia: los tres estados en ámbar (--color-accent-text); SALIENDO parpadea.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">state-color-split</span>
+<p class="tile__desc">ABORDANDO pasa a verde «avance» (--color-ok); PRÓXIMO y SALIENDO conservan el ámbar.</p>
+
+<div class="board v-state-color-split">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">state-chip</span>
+<p class="tile__desc">Estados como chips delineados; ABORDANDO rellena su chip verde con fondo tenue.</p>
+
+<div class="board v-state-chip">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">state-static</span>
+<p class="tile__desc">SALIENDO sin parpadeo de fila: solo el punto ámbar pulsa; la fila queda estable.</p>
+
+<div class="board v-state-static">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">state-weight</span>
+<p class="tile__desc">Descolorido total: estados diferenciados solo por peso (800 vs 600) en tinta atenuada.</p>
+
+<div class="board v-state-weight">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* F. ETA — base para hora programada */
+.v-eta-clock-only .arrival-row__sched,.v-eta-clock-and-rel .arrival-row__sched,.v-eta-clock-under .arrival-row__sched,.v-eta-prime .arrival-row__sched{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--color-ink-muted);font-size:.95rem;font-weight:700;line-height:1}
+.v-eta-clock-only .arrival-row__sched{font-size:1.85rem;font-weight:800;color:var(--color-ink)}
+.v-eta-clock-only .arrival-row--now .arrival-row__sched{color:var(--color-accent-text)}
+.v-eta-clock-only .arrival-row--departing .arrival-row__sched{font-size:1.05rem;color:var(--color-ink-muted)}
+.v-eta-clock-and-rel .arrival-row__right{gap:12px}
+.v-eta-clock-and-rel .arrival-row__sched{font-size:1.35rem}
+.v-eta-clock-and-rel .arrival-row__sched::after{content:" ·";color:var(--color-ink-faint)}
+.v-eta-clock-under .arrival-row__right{flex-direction:column;align-items:flex-end;gap:2px}
+.v-eta-clock-under .arrival-row__sched{font-size:.8rem;letter-spacing:.05em}
+.v-eta-bare-number .board__card-header span:last-child{font-size:.7rem}
+.v-eta-bare-number .arrival-row__eta-unit{display:none}
+.v-eta-prime .arrival-row__eta-unit{display:none}
+.v-eta-prime .arrival-row__eta{color:var(--color-blue-400)}
+.v-eta-prime .arrival-row--now .arrival-row__eta{color:var(--color-accent-text)}
+.v-eta-now-variants .arrival-row__eta{font-size:1.35rem}
+.v-eta-now-variants .u-bound{font-size:.5em;color:var(--color-ink-muted);font-weight:700}</style>
+<section id="cat-eta"><h2>F. Formato del tiempo de salida</h2><p class="section-note">La fila actual solo muestra cuenta regresiva relativa. La señalética real de tránsito casi siempre incluye la hora programada (derivable de arrival.eta). Estas variantes exploran reemplazar, combinar y comprimir ese dato. Hora actual 22:40.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">baseline</span>
+<p class="tile__desc">Referencia: solo cuenta regresiva («ahora», «3 min», «1 h 4 min»), sin hora programada.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-clock-only</span>
+<p class="tile__desc">Se sustituye la cuenta regresiva por la hora programada HH:MM; el caso ≥60 min se vuelve trivial (23:44).</p>
+
+<div class="board v-eta-clock-only">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__sched">22:43</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__sched">22:52</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__sched">23:44</span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-clock-and-rel</span>
+<p class="tile__desc">Ambos datos inline: hora programada seguida de «· N min»; elimina la ambigüedad de retrasos.</p>
+
+<div class="board v-eta-clock-and-rel">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__sched">22:40</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__sched">22:43</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__sched">22:52</span><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__sched">23:44</span><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-clock-under</span>
+<p class="tile__desc">La cuenta regresiva permanece intacta; la hora programada se añade como línea secundaria debajo, en pequeño.</p>
+
+<div class="board v-eta-clock-under">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:43</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:52</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">23:44</span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-bare-number</span>
+<p class="tile__desc">Número desnudo con la unidad promovida a la cabecera de columna: «PRÓXIMA SALIDA (MIN)»; ≥60 se aplana a 64.</p>
+
+<div class="board v-eta-bare-number v-eta-clock-under">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida (min)</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">0</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:43</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:52</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">64 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">23:44</span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-prime</span>
+<p class="tile__desc">Estilo europeo con primo: 3′, 12′, 1 h 4′; el caso ≥60 puede colapsar a la hora programada al lado.</p>
+
+<div class="board v-eta-prime v-eta-clock-under">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3&prime;</span><span class="arrival-row__sched">22:43</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12&prime;</span><span class="arrival-row__sched">22:52</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4&prime;</span><span class="arrival-row__sched">23:44</span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">eta-now-variants</span>
+<p class="tile__desc">Tratamiento del límite: la fila ABORDANDO pasa de «ahora» a «&lt; 1 min», más precisión en la frontera.</p>
+
+<div class="board v-eta-now-variants v-eta-clock-under">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta"><span class="u-bound">&lt;</span> 1 <span class="u-bound">min</span></span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:43</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:52</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">23:44</span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* G. Filas */
+.v-row-zebra .arrival-row{border-bottom:none}
+.v-row-zebra .arrival-row:nth-child(even){background:var(--color-surface-2)}
+.v-row-cards .arrival-list{gap:6px;padding:6px;background:var(--color-bg)}
+.v-row-cards .arrival-row{border-bottom:none;background:var(--color-surface-2);border-radius:10px}
+.v-row-quiet .arrival-row{border-bottom:none;padding-top:13px;padding-bottom:13px}
+.v-row-lead-accent .arrival-list .arrival-row:first-child{border-left:3px solid var(--color-amber-500);padding-left:13px}
+.v-row-lead-accent .arrival-list .arrival-row:first-child .arrival-row__headsign{font-size:1.6rem}
+.v-row-lead-accent .arrival-list .arrival-row:first-child .arrival-row__departing{font-size:1.2rem}
+.v-row-lead-raised .arrival-list .arrival-row:first-child{background:var(--color-surface-2)}
+.v-row-align-baseline .arrival-row{align-items:baseline}
+.v-row-align-baseline .arrival-row__right{align-items:baseline}</style>
+<section id="cat-rows"><h2>G. Estructura de filas y énfasis del próximo bus</h2><p class="section-note">Cómo se separan las filas (hairline, cebra, tarjetas o solo espacio) y cómo se destaca la primera fila del próximo bus.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">baseline</span>
+<p class="tile__desc">Línea divisoria fina (hairline) entre filas; sin énfasis en la primera fila.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">row-zebra</span>
+<p class="tile__desc">Sin divisoria; filas alternas con relleno surface-2 (cebra).</p>
+
+<div class="board v-row-zebra">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">row-cards</span>
+<p class="tile__desc">Cada fila es una tarjeta flotante redondeada sobre fondo del board.</p>
+
+<div class="board v-row-cards">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">row-quiet</span>
+<p class="tile__desc">Sin divisoria ni relleno: separación solo con espacio vertical extra.</p>
+
+<div class="board v-row-quiet">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">row-lead-accent</span>
+<p class="tile__desc">Primera fila con filete ámbar de 3px a la izquierda y tipo ligeramente mayor.</p>
+
+<div class="board v-row-lead-accent">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">row-lead-raised</span>
+<p class="tile__desc">Primera fila elevada con relleno surface-2.</p>
+
+<div class="board v-row-lead-raised">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">row-align-baseline</span>
+<p class="tile__desc">Alineación tipográfica real: base del destino y del ETA sobre la misma línea base.</p>
+
+<div class="board v-row-align-baseline">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* H. Degradados — base bloques vacíos */
+.v-empty-baseline .board__empty,.v-empty-friendly .board__empty,.v-loading-skeleton .board__empty,.v-error-retry .board__empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:34px 16px;color:var(--color-ink-muted);font-size:1.05rem;font-weight:600}
+.v-empty-baseline .board__empty{padding:38px 16px;font-size:1.1rem}
+.v-empty-friendly .board__empty{padding:48px 16px;gap:10px}
+.v-empty-friendly .board__empty-glyph{font-size:2.2rem;line-height:1;color:var(--color-ink-faint)}
+.v-empty-friendly .board__empty-primary{font-size:1.25rem;font-weight:700;color:var(--color-ink)}
+.v-empty-friendly .board__empty-secondary{font-size:.85rem;font-weight:400;color:var(--color-ink-muted)}
+.v-loading-skeleton .board__stop-name{color:var(--color-ink-faint)}
+.v-loading-skeleton .board__empty{padding:16px;align-items:stretch;gap:0}
+.v-loading-skeleton .board__empty-caption{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-faint);text-align:center;padding:14px 0}
+.v-loading-skeleton .skel{height:38px;border-radius:8px;background:var(--color-surface-2);animation:pulse 1.8s ease-in-out infinite;margin-bottom:10px}
+.v-loading-skeleton .skel:last-of-type{margin-bottom:0}
+.v-loading-skeleton .skel--w60{width:60%}
+.v-loading-skeleton .skel--w80{width:80%}
+.v-stale-notice .screen__stale-hint{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;color:var(--color-ink-faint);display:inline-flex;align-items:center;gap:5px}
+.v-fallback-dot .board__clock-refresh{gap:5px}
+.v-fallback-dot .dot--static{background:var(--color-ink-faint);animation:none}
+.v-fallback-dot .board__clock-refresh-suffix{color:var(--color-ink-faint);font-size:.64rem}
+.v-error-retry .board__empty{padding:44px 16px;gap:8px}
+.v-error-retry .board__empty-primary{font-size:1.15rem;font-weight:700;color:var(--color-error)}
+.v-error-retry .board__empty-secondary{font-size:.85rem;font-weight:400;color:var(--color-ink-muted)}</style>
+<section id="cat-degraded"><h2>H. Estados vacíos y degradados</h2><p class="section-note">El tablero pasa tramos reales en estos estados: sin salidas, cargando, datos obsoletos, fallback a horario y error. Variantes para que cada estado se comunique sin alarmar.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">empty-baseline</span>
+<p class="tile__desc">Actual: mensaje plano «No hay más salidas programadas por hoy.» centrado.</p>
+
+<div class="board v-empty-baseline">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list"><div class="board__empty">No hay más salidas programadas por hoy.</div></div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">empty-friendly</span>
+<p class="tile__desc">Copy más cálido + pista de disponibilidad («primer bus de mañana 5:10») y glifo tenue.</p>
+
+<div class="board v-empty-friendly">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list"><div class="board__empty"><span class="board__empty-glyph">☾</span>
+<span class="board__empty-primary">No hay más salidas por hoy.</span>
+<span class="board__empty-secondary">El primer bus de mañana sale a las 5:10.</span></div></div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">loading-skeleton</span>
+<p class="tile__desc">Carga: «Cargando parada…» en el título y barras esqueleto pulsantes donde irán las filas.</p>
+
+<div class="board v-loading-skeleton">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name board__stop-name--faint">Cargando parada…</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list"><div class="board__empty"><div class="skel skel--w80"></div>
+<div class="skel skel--w60"></div>
+<div class="skel"></div>
+<div class="board__empty-caption">Cargando información de salidas…</div></div></div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">stale-notice</span>
+<p class="tile__desc">Filas normales + pista «actualizando…» en la barra de estado (variante quieta ink-faint, tablero sin atenuar).</p>
+
+<div class="board v-stale-notice">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--amber"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="screen__stale-hint">actualizando…</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">fallback-dot</span>
+<p class="tile__desc">Filas normales + punto estático tenue tras la leyenda y sufijo «horario programado» (EN VIVO se mantiene).</p>
+
+<div class="board v-fallback-dot">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto <span class="dot dot--static"></span><span class="board__clock-refresh-suffix">horario programado</span></span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">error-retry</span>
+<p class="tile__desc">Error en --color-error con línea secundaria «Reintentando automáticamente…», centrado.</p>
+
+<div class="board v-error-retry">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list"><div class="board__empty"><span class="board__empty-primary">No se pudo cargar la información de salidas.</span>
+<span class="board__empty-secondary">Reintentando automáticamente…</span></div></div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* I. Encabezado */
+.v-header-clock-left .board__header{grid-template-columns:auto 1fr auto}
+.v-header-clock-left .board__clock{order:-1;justify-self:start}
+.v-header-clock-left .board__route{justify-self:end}
+.v-header-clock-left .board__stop-name{font-size:1.6rem}
+.v-header-clock-left .board__clock-time{font-size:1.9rem}
+.v-header-stacked-center .board__header{grid-template-columns:1fr;justify-items:center;gap:4px;position:relative}
+.v-header-stacked-center .board__theme-toggle{position:absolute;top:0;right:0}
+.v-header-stacked-center .board__clock{order:2}
+.v-header-stacked-center .board__clock-time{font-size:1.7rem}
+.v-header-stacked-center .board__stop-name{font-size:1.55rem}
+.v-header-toggle-inline .board__header{gap:6px}
+.v-header-toggle-inline .board__clock{gap:6px}
+.v-header-toggle-inline .board__clock-time{font-size:1.9rem}
+.v-header-toggle-inline .board__theme-toggle{font-size:.9rem;align-self:center;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;padding:5px 8px}
+</style>
+<section id="cat-header"><h2>I. Composición del encabezado</h2><p class="section-note">Reordenamientos de la barra superior (ruta, reloj, toggle de tema) sin tocar la lista de llegadas. El grid base es 1fr auto auto.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">header-clock-left</span>
+<p class="tile__desc">El reloj pasa a la izquierda, antes del nombre de la parada; la ruta se justifica a la derecha.</p>
+
+<div class="board v-header-clock-left">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">header-stacked-center</span>
+<p class="tile__desc">Nombre de parada y reloj apilados en una columna centrada; el toggle anclado a la esquina superior derecha.</p>
+
+<div class="board v-header-stacked-center">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">header-toggle-inline</span>
+<p class="tile__desc">El toggle de tema se integra como botón compacto junto al reloj, con gaps más ajustados.</p>
+
+<div class="board v-header-toggle-inline">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* J. Movimiento (demo ilustrativa) */
+@keyframes v-row-fade-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.v-motion-row-fade .arrival-row--soon{animation:v-row-fade-in 1.4s ease-out infinite}
+@keyframes v-bar-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.v-motion-saliendo-pulse .arrival-row--departing{animation:none;position:relative;padding-left:20px}
+.v-motion-saliendo-pulse .arrival-row--departing::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:4px;border-radius:2px;background:var(--color-amber-500);animation:v-bar-pulse 1.6s infinite}
+.v-motion-saliendo-pulse .arrival-row__departing{animation:v-bar-pulse 1.6s infinite}
+</style>
+<section id="cat-motion"><h2>J. Movimiento (exploratorio)</h2><p class="section-note">EXPLORATORIO — no aprobar para implementación sin resolver el problema de TransitionGroup. index.vue usa deliberadamente re-render plano: una fila SALIENDO promovida a índice 0 con FLIP mostraba el texto de dos viajes superpuesto. Las animaciones aquí son demos ilustrativas.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">motion-row-fade</span>
+<p class="tile__desc">EXPLORATORIO. Filas nuevas tras cada sondeo entrarían con fade + slide suave (demo ilustrativa sobre la fila «PRÓXIMO»). Requiere TransitionGroup o equivalente; ver advertencia de FLIP.</p>
+
+<div class="board v-motion-row-fade">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">motion-saliendo-pulse</span>
+<p class="tile__desc">EXPLORATORIO. Reemplaza el blink de la fila SALIENDO por una barra de acento izquierda que pulsa; la fila permanece estática (demo ilustrativa).</p>
+
+<div class="board v-motion-saliendo-pulse">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* K. Rótulos */
+.v-label-plural .board__card-header span:last-child::after{content:"s"}</style>
+<section id="cat-labels"><h2>K. Rótulos de columnas</h2><p class="section-note">El encabezado de la tarjeta admite varias redacciones; el texto es un span plano en index.vue. Educación lee mejor como Destino / Próximas salidas.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">baseline</span>
+<p class="tile__desc">Referencia: «Destino» / «Próxima salida» (singular en el código hoy).</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">label-plural</span>
+<p class="tile__desc">«Próximas salidas» en plural, más fiel a una lista de varias filas.</p>
+
+<div class="board v-label-plural">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">label-sale-en</span>
+<p class="tile__desc">«Sale en»: verbo activo que anticipa la cuenta de minutos.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Sale en</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">label-salida</span>
+<p class="tile__desc">«Salida»: rótulo corto y neutro, ideal a escala de encabezado.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">label-hacia</span>
+<p class="tile__desc">«Hacia» en vez de «Destino»: más directo como encabezado de columna.</p>
+
+<div class="board">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Hacia</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<style>/* L. Paleta (especulativo) */
+.v-palette-accent-mint{--color-accent-text:#4ed9ab}
+.v-palette-accent-warm-orange{--color-accent-text:#ff9f4a}</style>
+<section id="cat-palette"><h2>L. Paleta (especulativo)</h2><p class="section-note">ESPECULATIVO — el supuesto por defecto es que los colores quedan fijos. Solo esta categoría permite proponer un matiz nuevo, restringido a --color-accent-text.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">palette-accent-mint</span>
+<p class="tile__desc">ESPECULATIVO. --color-accent-text pasa de #ffd24e a #4ed9ab (mint, familia de --color-ok). Más frío y «transit»; pierde la tradición ámbar de tablero.</p>
+
+<div class="board v-palette-accent-mint">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">palette-accent-warm-orange</span>
+<p class="tile__desc">ESPECULATIVO. --color-accent-text pasa a #ff9f4a (naranja cálido). Conserva el carácter ámbar con más energía; riesgo de confusión con error.</p>
+
+<div class="board v-palette-accent-warm-orange">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+<section id="cat-synthesis"><h2>M. Síntesis</h2><p class="section-note">Combinaciones de las mejores decisiones por categoría. Cada tile lista los tags que compone; el JSON correspondiente reúne todos los changes de sus componentes.</p>
+<div class="tile-grid">
+<div class="tile">
+<span class="tile__tag">synthesis-clarity</span>
+<p class="tile__desc"><strong>Síntesis A — Claridad.</strong> Jerarquía nítida: destinos a 600, segundos discretos en gris, ABORDANDO en verde «avance» y rótulo plural.</p>
+<p class="tile__composes">compone: stop-vs-dest-weight + clock-secs-grey + state-color-split + label-plural</p>
+<div class="board v-stop-vs-dest-weight v-clock-secs-grey v-state-color-split v-label-plural">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40<span class="clock-secs">:37</span></span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">synthesis-transit</span>
+<p class="tile__desc"><strong>Síntesis B — Señalética de tránsito.</strong> Hora programada + relativo inline, filete ámbar en la primera fila, día de semana enfatizado y destinos en mayúsculas.</p>
+<p class="tile__composes">compone: eta-clock-and-rel + row-lead-accent + date-weekday + dest-uppercase</p>
+<div class="board v-eta-clock-and-rel v-row-lead-accent v-date-weekday v-dest-uppercase">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date"><span class="date-weekday">Domingo</span><span class="date-rest">, 23 de agosto</span></span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__sched">22:40</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__sched">22:43</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__sched">22:52</span><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__sched">23:44</span><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">synthesis-calm</span>
+<p class="tile__desc"><strong>Síntesis C — Calma.</strong> Tablero sereno: SALIENDO sin blink (solo el punto pulsa), filas separadas por blanco y meta del reloj en una línea.</p>
+<p class="tile__composes">compone: state-static + row-quiet + date-inline</p>
+<div class="board v-state-static v-row-quiet v-date-inline">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+<div class="tile">
+<span class="tile__tag">synthesis-board</span>
+<p class="tile__desc"><strong>Síntesis D — Tablero clásico.</strong> Estética de tablero impreso: destinos en mono, hora programada bajo la cuenta y filas cebra.</p>
+<p class="tile__composes">compone: dest-mono + eta-clock-under + row-zebra</p>
+<div class="board v-dest-mono v-eta-clock-under v-row-zebra">
+<header class="board__header">
+<div class="board__route"><span class="board__logo">b</span><h1 class="board__stop-name">Educación</h1></div>
+<div class="board__clock"><span class="board__clock-time">22:40</span>
+<div class="board__clock-meta"><span class="board__clock-date">Domingo, 23 de agosto</span>
+<span class="board__clock-refresh"><span class="dot dot--ok"></span>Actualizaciones cada minuto</span></div></div>
+<span class="board__theme-toggle">☾</span>
+</header>
+<div class="board__status-bar"><span class="badge badge--live"><span class="dot"></span>EN VIVO</span><span class="badge badge--demo">DEMO</span></div>
+<div class="board__card">
+<div class="board__card-header"><span>Destino</span><span>Próxima salida</span></div>
+<div class="arrival-list">
+<div class="arrival-row arrival-row--departing"><span class="arrival-row__headsign">Odontología</span><span></span><span class="arrival-row__right"><span class="arrival-row__departing"><span class="dot dot--amber"></span>SALIENDO</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--now"><span class="arrival-row__headsign">Odontología</span><span class="arrival-row__badge">con milla</span><span class="arrival-row__right"><span class="arrival-row__state">ABORDANDO</span><span class="arrival-row__eta">ahora</span><span class="arrival-row__sched">22:40</span></span></div>
+<div class="arrival-row arrival-row--soon"><span class="arrival-row__headsign">Artes Plásticas</span><span></span><span class="arrival-row__right"><span class="arrival-row__state">PRÓXIMO</span><span class="arrival-row__eta">3 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:43</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Milla Universitaria</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">12 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">22:52</span></span></div>
+<div class="arrival-row"><span class="arrival-row__headsign">Educación (circular)</span><span></span><span class="arrival-row__right"><span class="arrival-row__eta">1 <span class="arrival-row__eta-unit">h</span> 4 <span class="arrival-row__eta-unit">min</span></span><span class="arrival-row__sched">23:44</span></span></div>
+</div>
+</div>
+<footer class="board__footer"><span>Ruta Interna bUCR</span><span>bus.ucr.ac.cr</span></footer>
+</div>
+</div>
+</div></section>
+</div>

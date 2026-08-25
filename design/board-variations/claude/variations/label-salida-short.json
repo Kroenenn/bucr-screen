@@ -1,0 +1,17 @@
+{
+  "tag": "label-salida-short",
+  "category": "labels",
+  "title": "Terse right label",
+  "description": "Right header label shortens from \"Próxima salida\" to just \"Salida\" — the terser option, trading some explicitness for header brevity, useful if the header needs to shrink at smaller sizes. Left label (\"Destino\") is unchanged.",
+  "baseline_ref": "app/pages/index.vue .screen__board-header span (second span, currently \"Próxima salida\")",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span:last-child",
+      "intent": "Shorten the header text for tighter layouts while keeping the meaning recognizable in context (a countdown column next to a destination list).",
+      "detail": "Change the static text of the second header span from \"Próxima salida\" to \"Salida\". No structural or style change."
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,18 @@
+{
+  "tag": "motion-eta-tick",
+  "category": "motion",
+  "title": "ETA cross-fade on tick",
+  "description": "EXPLORATORY — when a row's countdown number changes value on a poll (e.g. '3 min' -> '2 min'), the digit would cross-fade rather than snap. Demonstrated on the mini-board as a looping soft opacity fade on one ETA value, standing in for a value change.",
+  "baseline_ref": "app/pages/index.vue arrival list re-render, ArrivalRow.vue .arrival-row__eta",
+  "warning": "app/pages/index.vue deliberately uses a plain re-render, not TransitionGroup, because a promoted SALIENDO row (index 0) FLIP-animating over another row rendered two trips' text in the same space. Do not implement without solving that.",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta",
+      "intent": "Detect a change in the row's own eta value between polls (independent of row identity/position) and play a brief cross-fade on just the number, not the whole row.",
+      "detail": "Would need a watcher on the eta prop per row keyed by trip_id, toggling a short-lived CSS class to trigger the fade — deliberately scoped to avoid re-triggering row-level transitions, since the row-level transition path is exactly what's blocked by the warning above (index-0 SALIENDO promotion colliding with any FLIP/enter-leave transition on the list)."
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,25 @@
+{
+  "tag": "eta-clock-time",
+  "category": "eta-format",
+  "title": "Scheduled clock time",
+  "description": "Replaces the countdown with the scheduled clock time (e.g. 22:43 instead of 3 min) for rows in PRÓXIMO/later state — the format most real transit signage defaults to, since it survives a glance away from the screen better than a decaying number. \"ahora\" and \"SALIENDO\" are left unchanged since they aren't clock-derived.",
+  "baseline_ref": "app/components/ArrivalRow.vue eta formatting (etaMinutes → 'N min' / 'H h M min'); .arrival-row__eta, .arrival-row__eta-unit",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta",
+      "intent": "Show the absolute time the bus is scheduled to leave rather than a countdown, so the number stays meaningful even if the viewer looks away and back.",
+      "detail": "Add a derived, detail-only `scheduledTime` field: `scheduledTime = format(now + etaMinutes, 'HH:mm')` using the same toLocaleTimeString('es-CR', {hour:'2-digit', minute:'2-digit', hour12:false}) call already used for the header clock. For any row not in the now/departing state, render `scheduledTime` in place of the countdown text. Rows in 'ahora' (etaMinutes===0) or 'SALIENDO' (departing) keep their existing label text unchanged."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta-unit",
+      "intent": "A clock time has no min/h suffix, so the unit element renders nothing for these rows.",
+      "declarations": { "display": "none" },
+      "detail": "Only applies to rows now rendering scheduledTime; the unit span is simply omitted from the template for those rows rather than styled away, so this is a documentation note rather than a live override."
+    }
+  ],
+  "composes": []
+}

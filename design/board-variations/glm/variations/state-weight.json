@@ -1,0 +1,69 @@
+{
+  "tag": "state-weight",
+  "category": "states",
+  "title": "Diferenciación solo por peso",
+  "description": "Variante descolorida: ABORDANDO w800 en tinta plena, PRÓXIMO w600 en tinta atenuada, SALIENDO estático en atenuado con punto neutro. Sin ámbar en estados.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__state",
+      "declarations": {
+        "color": "var(--color-ink-muted)",
+        "letter-spacing": "0.1em"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__state",
+      "declarations": {
+        "font-weight": "800",
+        "color": "var(--color-ink)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--soon .arrival-row__state",
+      "declarations": {
+        "font-weight": "600"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__eta",
+      "declarations": {
+        "color": "var(--color-ink)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing",
+      "declarations": {
+        "animation": "none"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing .arrival-row__departing",
+      "declarations": {
+        "color": "var(--color-ink-muted)",
+        "font-weight": "800"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--departing .dot",
+      "declarations": {
+        "background": "var(--color-ink-faint)"
+      }
+    }
+  ],
+  "composes": []
+}

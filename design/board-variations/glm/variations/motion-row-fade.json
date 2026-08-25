@@ -1,0 +1,32 @@
+{
+  "tag": "motion-row-fade",
+  "category": "motion",
+  "title": "Entrada de filas con fade",
+  "description": "EXPLORATORIO: filas nuevas tras cada sondeo entran con fade + slide suave. La animación del tile es una demo ilustrativa sobre la fila PRÓXIMO, no el comportamiento real.",
+  "baseline_ref": "app/assets/css/main.css",
+  "warning": "index.vue usa deliberadamente re-render plano y NO TransitionGroup: una fila SALIENDO promovida a índice 0 FLIP-animada superpuso el texto de dos viajes en el mismo espacio. Cualquier animación de entrada/reordenamiento debe resolver ese problema antes de implementarse.",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": "@keyframes row-fade-in",
+      "declarations": {
+        "from": "opacity: 0; transform: translateY(-6px)",
+        "to": "opacity: 1; transform: none"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Clase condicional row--enter durante el ciclo de sondeo",
+      "detail": "Aplicar animation: row-fade-in 0.4s ease-out solo a filas nuevas (no a reordenamientos)."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "logic",
+      "intent": "Identificar filas nuevas por trip-id en cada poll",
+      "detail": "No usar TransitionGroup hasta resolver la superposición FLIP descrita en warning."
+    }
+  ],
+  "composes": []
+}

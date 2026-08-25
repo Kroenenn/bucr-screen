@@ -1,0 +1,18 @@
+{
+  "tag": "palette-accent-warm-orange",
+  "category": "palette",
+  "title": "Acento naranja cálido (especulativo)",
+  "description": "ESPECULATIVO — el default es mantener colores fijos. Cambia --color-accent-text a #ff9f4a; conserva el carácter ámbar con más energía, con riesgo de confusión con estados de error.",
+  "baseline_ref": "app/assets/css/main.css",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "token",
+      "selector": ":root",
+      "declarations": {
+        "--color-accent-text": "#ff9f4a"
+      }
+    }
+  ],
+  "composes": []
+}

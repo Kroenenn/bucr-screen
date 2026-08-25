@@ -1,0 +1,24 @@
+{
+  "tag": "row-center-align",
+  "category": "row-structure",
+  "title": "Center-aligned row content",
+  "description": "Row content aligns on the cross-axis (align-items: center) instead of the default text baseline, so the con-milla badge and the PRÓXIMO/ABORDANDO state label sit vertically centered against the headsign and eta rather than sharing their text baseline.",
+  "baseline_ref": ".arrival-row (grid 1fr auto auto; align-items: baseline) and .arrival-row__destination (align-items: baseline)",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "intent": "Switch row grid alignment from baseline to center so badge/state/eta line up on the vertical center of the row rather than the headsign's text baseline.",
+      "declarations": { "align-items": "center" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__destination",
+      "intent": "Center the con-milla badge against the headsign instead of baseline-aligning it, matching the row-level change.",
+      "declarations": { "align-items": "center" }
+    }
+  ],
+  "composes": []
+}

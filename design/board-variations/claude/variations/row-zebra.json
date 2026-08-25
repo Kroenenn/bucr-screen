@@ -1,0 +1,24 @@
+{
+  "tag": "row-zebra",
+  "category": "row-structure",
+  "title": "Zebra-striped rows",
+  "description": "Removes the hairline divider between arrival rows and instead alternates a subtle surface-2 fill on every other row, so rows are separated by contrast rather than a rule.",
+  "baseline_ref": ".arrival-row (border-bottom: 1px solid var(--color-border))",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "intent": "Drop the divider rule and give each row full-bleed horizontal padding so the alternating fill can extend edge-to-edge inside the card.",
+      "declarations": { "border-bottom": "none", "padding": "11px 14px", "margin": "0 -14px" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row:nth-child(even)",
+      "intent": "Alternate a subtle surface fill to visually separate consecutive rows without a rule.",
+      "declarations": { "background": "var(--color-surface-2)" }
+    }
+  ],
+  "composes": []
+}

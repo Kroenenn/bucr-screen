@@ -1,0 +1,21 @@
+{
+  "tag": "synth-signage",
+  "category": "synthesis",
+  "title": "Synthesis — Señalización estándar",
+  "description": "A whole-board proposal following real-transit signage conventions: the scheduled clock time under each countdown, the imminent departure lifted into a raised accent panel, a 'Hoy ·' relative date anchor, and a pluralized column label.",
+  "baseline_ref": "app/components/ArrivalRow.vue + app/pages/index.vue + app/composables/useKioskClock.ts + app/assets/css/main.css",
+  "composes": ["eta-both-stacked", "row-lead-emphasis", "date-relative", "label-plural"],
+  "changes": [
+    { "file": "app/components/ArrivalRow.vue", "kind": "logic", "selector": ".arrival-row__eta", "intent": "Derive the scheduled clock time to show beneath the countdown.", "detail": "Add a detail-only `scheduledTime = format(now + etaMinutes, 'HH:mm')` using the same toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',hour12:false}) as the header clock." },
+    { "file": "app/components/ArrivalRow.vue", "kind": "markup", "selector": ".arrival-row__eta", "intent": "Stack countdown over the muted clock time.", "detail": "Wrap .arrival-row__eta plus a new .arrival-row__eta-scheduled span inside a new .arrival-row__eta-group container. Rows in 'ahora'/'SALIENDO' render only their existing label, no stacked clock line. Hours format (1 h 4 min) stays as the top line." },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".arrival-row__eta-group", "intent": "Right-aligned two-line stack.", "declarations": { "display": "flex", "flex-direction": "column", "align-items": "flex-end", "gap": "2px" } },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".arrival-row__eta-scheduled", "intent": "Secondary supporting detail, not competing with the countdown.", "declarations": { "font-family": "var(--font-mono)", "font-variant-numeric": "tabular-nums", "font-size": "0.75rem", "font-weight": "600", "color": "var(--color-ink-muted)" } },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".arrival-row:first-child", "intent": "Raise the imminent-departure row into an accented panel.", "declarations": { "background": "var(--color-surface-2)", "border-left": "4px solid var(--color-amber-500)", "border-bottom": "none", "border-radius": "6px", "padding": "14px 14px 14px 12px", "margin": "0 -14px 4px" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row:first-child .arrival-row__headsign", "intent": "Enlarge the lead row's headsign so it reads first.", "declarations": { "font-size": "clamp(1.8rem, 10.5cqh, 5rem)" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row:first-child .arrival-row__departing", "intent": "Scale the SALIENDO label up with the lead row.", "declarations": { "font-size": "1.15em" } },
+    { "file": "app/composables/useKioskClock.ts", "kind": "logic", "selector": "date formatting", "intent": "Prefix the abbreviated date with a relative 'Hoy' anchor.", "detail": "Add a static 'Hoy' relativePrefix combined as `${relativePrefix} · ${abbrevDate}` where abbrevDate uses short weekday/month ('Dom 23 ago'), producing 'Hoy · Dom 23 ago'." },
+    { "file": "app/pages/index.vue", "kind": "markup", "selector": ".screen__clock-date", "intent": "Wrap the 'Hoy' prefix for emphasis.", "detail": "<span class=\"screen__clock-date\"><span class=\"screen__clock-date-rel\">Hoy</span> · Dom 23 ago</span>" },
+    { "file": "app/pages/index.vue", "kind": "css", "selector": ".screen__clock-date-rel", "intent": "Ink the relative cue against the muted date.", "declarations": { "color": "var(--color-ink)", "font-weight": "700" } },
+    { "file": "app/pages/index.vue", "kind": "markup", "selector": ".screen__board-header span:last-child", "intent": "Match the label to the multi-row content.", "detail": "Change the second header span text from 'Próxima salida' to 'Próximas salidas'." }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "tag": "est-live-tag",
+  "category": "estimated",
+  "title": "Reuse the EN VIVO vocabulary",
+  "description": "Instead of introducing the word 'estimado', trail the countdown with a small green '· en vivo' tag (dot + text), echoing the EN VIVO mode badge already on the board. Ties the row's provenance to language the rider has already parsed, rather than a second term. Schedule-only rows carry no tag.",
+  "baseline_ref": "app/components/ArrivalRow.vue: estimated rows use the 'estimado' pill; ModeBadge/status uses green 'EN VIVO' (--color-ok)",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__eta",
+      "intent": "Append a compact live tag after the number for estimated rows and remove the separate pill/prefix.",
+      "detail": "Remove the .arrival-row__badge--estimated pill and the .arrival-row__scheduled prefix. When arrival.estimated && etaMinutes > 0, append inside .arrival-row__eta a <span class=\"arrival-row__live\"><span class=\"arrival-row__live-dot\"></span>en vivo</span> after the unit."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__live",
+      "intent": "Small green trailing tag matching the EN VIVO token, subordinate to the countdown.",
+      "declarations": { "display": "inline-flex", "align-items": "center", "gap": "0.35em", "font-size": "0.32em", "font-weight": "700", "letter-spacing": "0.06em", "color": "var(--color-ok)", "margin-left": "0.5em" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__live-dot",
+      "intent": "Reuse the pulsing live dot language from .arrival-row__badge-dot.",
+      "declarations": { "width": "0.5em", "height": "0.5em", "border-radius": "50%", "background": "var(--color-ok)", "animation": "arrival-row-pulse 1.6s ease-in-out infinite" }
+    }
+  ],
+  "composes": []
+}

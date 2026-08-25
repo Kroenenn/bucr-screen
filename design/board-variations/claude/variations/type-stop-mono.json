@@ -1,0 +1,17 @@
+{
+  "tag": "type-stop-mono",
+  "category": "typography",
+  "title": "Mono stop name",
+  "description": "Stop name renders in the mono family (matching the clock digits) while destination headsigns stay sans — family contrast marks the header as a fixed readout distinct from the prose-like destination rows.",
+  "baseline_ref": "app/pages/index.vue .screen__stop-name (currently sans)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Give the stop name the same monospace treatment as the clock so header text visually pairs with the clock rather than the destination rows.",
+      "declarations": { "font-family": "var(--font-mono)" }
+    }
+  ],
+  "composes": []
+}

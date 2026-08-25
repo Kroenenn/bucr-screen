@@ -1,0 +1,31 @@
+{
+  "tag": "est-eta-green",
+  "category": "estimated",
+  "title": "Green countdown carries provenance",
+  "description": "No pill: the estimated countdown number itself renders in the live/ok green, while schedule-only rows stay ink. Colour alone signals provenance, decoded by a one-line key beneath the list. Cleanest per-row, but colour-only — pair with the key (or a redundant glyph) for colour-blind legibility.",
+  "baseline_ref": "app/components/ArrivalRow.vue: .arrival-row__eta is --color-ink for all rows; estimated rows carry a separate pill",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row",
+      "intent": "Expose the estimated flag on the row so the eta can be coloured by it, and remove the separate pill/prefix.",
+      "detail": "Add :class binding arrival.estimated && 'arrival-row--estimated' to the row. Remove the .arrival-row__badge--estimated pill and the .arrival-row__scheduled prefix span."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--estimated .arrival-row__eta",
+      "intent": "Colour the estimated countdown with the existing live/ok token so the number itself reads as real-time.",
+      "declarations": { "color": "var(--color-ok)" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-card",
+      "intent": "Add a small legend so the colour is decodable; only render it when at least one arrival is estimated.",
+      "detail": "Below the arrival list, when arrivals.some(a => a.estimated), render a muted key row: a green dot + 'Verde = salida estimada en tiempo real'. Reuse the --color-ok dot styling from .arrival-row__badge-dot."
+    }
+  ],
+  "composes": []
+}

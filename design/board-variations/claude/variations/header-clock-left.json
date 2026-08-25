@@ -1,0 +1,38 @@
+{
+  "tag": "header-clock-left",
+  "category": "header",
+  "title": "Clock on the left",
+  "description": "Reverses the header's grid order: the clock (time + date + refresh hint) sits on the left, route logo + stop name shift to the right, and the theme toggle stays in the far corner. Whole-arrangement swap, not a per-element restyle.",
+  "baseline_ref": "app/pages/index.vue .screen__header (grid 1fr auto auto: route | clock | toggle)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__header",
+      "intent": "Flip column sizing so the clock's auto-width column comes first and the route block takes the flexible remainder on the right.",
+      "declarations": { "grid-template-columns": "auto 1fr auto" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock",
+      "intent": "Reorder the clock to the visual left without touching markup order.",
+      "declarations": { "order": "-1" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__route",
+      "intent": "Push route/stop block to the right and right-align its contents against the new flexible column.",
+      "declarations": { "order": "1", "justify-content": "flex-end" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__theme-toggle",
+      "intent": "Keep the toggle last, now visually in the same far-right corner as before.",
+      "declarations": { "order": "2" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,31 @@
+{
+  "tag": "est-dot-only",
+  "category": "estimated",
+  "title": "Bare pulsing dot marks a live row",
+  "description": "Strip the word entirely: a single pulsing green dot immediately before the countdown marks a live-estimated row, like a recording light. The most signage-like, lowest-ink option. A bare dot is ambiguous on its own — only viable paired with a legend or an occasional labelled state.",
+  "baseline_ref": "app/components/ArrivalRow.vue: estimated rows use the 'estimado' pill + scheduled prefix",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__eta",
+      "intent": "Prefix the countdown with a lone live dot for estimated rows, dropping the pill and prefix.",
+      "detail": "Remove the .arrival-row__badge--estimated pill and the .arrival-row__scheduled span. When arrival.estimated && etaMinutes > 0, render a leading <span class=\"arrival-row__live-dot\"></span> before the number inside .arrival-row__eta."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__live-dot",
+      "intent": "Pulsing live dot, vertically centred against the large countdown.",
+      "declarations": { "align-self": "center", "width": "0.28em", "height": "0.28em", "border-radius": "50%", "background": "var(--color-ok)", "margin-right": "0.3em", "animation": "arrival-row-pulse 1.6s ease-in-out infinite" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-card",
+      "intent": "Provide the key the bare dot depends on; render only when a row is estimated.",
+      "detail": "When arrivals.some(a => a.estimated), render a muted legend under the list: a green dot + 'Salida estimada en tiempo real'."
+    }
+  ],
+  "composes": []
+}

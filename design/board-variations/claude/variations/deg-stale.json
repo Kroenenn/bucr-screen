@@ -1,0 +1,38 @@
+{
+  "tag": "deg-stale",
+  "category": "degraded",
+  "title": "Stale data, refresh in flight",
+  "description": "The last successful fetch is aging and a refresh is in progress: normal rows keep showing (nothing is hidden), the whole board dims slightly, and a quiet 'actualizando…' hint appears in the status bar next to the mode badges.",
+  "baseline_ref": "app/pages/index.vue .screen__stale-hint, .screen__status-bar",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__stale-hint",
+      "intent": "Signal that a background refresh is underway without interrupting the visible schedule.",
+      "detail": "Add `.screen__stale-hint` as a sibling of the mode badges inside `.screen__status-bar`, with the text 'actualizando…', shown only while a refresh request is in flight and the currently displayed data is older than the normal poll interval."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__stale-hint",
+      "intent": "Keep the hint unobtrusive — it's informational, not a warning.",
+      "declarations": {
+        "color": "var(--color-ink-faint)",
+        "font-size": "10px",
+        "font-style": "italic",
+        "margin-left": "2px"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen--stale",
+      "intent": "Give a subtle overall cue (slight dimming) that data may be a moment behind, applied to the whole board root.",
+      "declarations": {
+        "opacity": "0.85"
+      }
+    }
+  ],
+  "composes": []
+}

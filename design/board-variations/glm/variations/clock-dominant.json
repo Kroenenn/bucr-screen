@@ -1,0 +1,34 @@
+{
+  "tag": "clock-dominant",
+  "category": "clock",
+  "title": "Hora dominante",
+  "description": "La hora crece hasta el tope del clamp; parada y fecha pasan a segundo plano.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-time",
+      "declarations": {
+        "font-size": "clamp(3.2rem,8vw,9rem)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date",
+      "declarations": {
+        "font-size": "clamp(0.7rem,0.85vw,0.8rem)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "declarations": {
+        "font-size": "clamp(1.6rem,3vw,2.6rem)"
+      }
+    }
+  ],
+  "composes": []
+}

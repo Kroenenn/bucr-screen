@@ -1,0 +1,76 @@
+{
+  "tag": "synthesis-board",
+  "category": "synthesis",
+  "title": "Síntesis D — Tablero clásico",
+  "description": "Estética de tablero impreso: destinos en mono, hora programada bajo la cuenta y filas cebra.",
+  "baseline_ref": "compone: dest-mono, eta-clock-under, row-zebra",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-size": "clamp(1.2rem,7cqh,3.4rem)",
+        "font-weight": "700"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Derivar HH:MM programado desde arrival.eta",
+      "detail": "const sched = new Date(arrival.eta).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',hour12:false})"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "Línea secundaria debajo del ETA",
+      "detail": "<span class=\"arrival-row__right\"><span class=\"arrival-row__eta\">…</span><span class=\"arrival-row__sched\">{{sched}}</span></span>"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__right",
+      "declarations": {
+        "flex-direction": "column",
+        "align-items": "flex-end",
+        "gap": "2px"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-variant-numeric": "tabular-nums",
+        "font-size": "0.8rem",
+        "letter-spacing": "0.05em",
+        "color": "var(--color-ink-muted)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "declarations": {
+        "border-bottom": "none"
+      },
+      "detail": "Quitar el border-bottom del scoped CSS de ArrivalRow."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row:nth-child(even)",
+      "declarations": {
+        "background": "var(--color-surface-2)"
+      },
+      "detail": "Aplicar desde el contenedor .arrival-list."
+    }
+  ],
+  "composes": [
+    "dest-mono",
+    "eta-clock-under",
+    "row-zebra"
+  ]
+}

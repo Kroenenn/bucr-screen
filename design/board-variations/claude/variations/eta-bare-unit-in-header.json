@@ -1,0 +1,31 @@
+{
+  "tag": "eta-bare-unit-in-header",
+  "category": "eta-format",
+  "title": "Unit moved to column header",
+  "description": "Drops the per-row \"min\" and states the unit once in the column header instead: \"PRÓXIMA SALIDA (MIN)\". Handles the hours row gracefully by keeping \"1 h 4 min\" spelled out on that one row, since a bare number would be ambiguous once the value crosses into hours — the header's implied unit only covers the common case.",
+  "baseline_ref": "app/pages/index.vue board header (.screen__board-header span); app/components/ArrivalRow.vue eta formatting; .arrival-row__eta, .arrival-row__eta-unit",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span",
+      "intent": "State the unit once at the column level so it doesn't need repeating on every row.",
+      "detail": "Change the second header span's text from 'Próxima salida' to 'Próxima salida (min)'."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta",
+      "intent": "Rows under an hour no longer need to restate the unit the header already declares.",
+      "detail": "For rows under 60 minutes (excluding 'ahora'/'SALIENDO'), render only the bare number in .arrival-row__eta and omit .arrival-row__eta-unit entirely (e.g. 3, 12)."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta",
+      "intent": "The header's '(min)' doesn't apply once a value is in hours, so that row keeps explicit units to avoid misreading 1h4min as '1 min, 4 min' or similar.",
+      "detail": "The ≥60min branch is unchanged from baseline: renders '1' + .arrival-row__eta-unit('h') + '4' + .arrival-row__eta-unit('min'), fully spelled out regardless of the bare-unit rule applied to the other rows."
+    }
+  ],
+  "composes": []
+}

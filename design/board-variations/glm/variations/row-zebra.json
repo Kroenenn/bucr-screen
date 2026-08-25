@@ -1,0 +1,28 @@
+{
+  "tag": "row-zebra",
+  "category": "rows",
+  "title": "Filas cebra",
+  "description": "Alterna relleno surface-2 en filas pares y elimina la divisoria hairline.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "declarations": {
+        "border-bottom": "none"
+      },
+      "detail": "Quitar el border-bottom del scoped CSS de ArrivalRow."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row:nth-child(even)",
+      "declarations": {
+        "background": "var(--color-surface-2)"
+      },
+      "detail": "Aplicar desde el contenedor .arrival-list."
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,22 @@
+{
+  "tag": "synth-calm",
+  "category": "synthesis",
+  "title": "Synthesis — Tablero sereno",
+  "description": "A whole-board proposal that removes motion and rules: SALIENDO becomes a steady solid-amber chip instead of blinking, rows are separated by zebra fill rather than hairlines, type and padding open up, and the weekday leads a two-line date.",
+  "baseline_ref": "app/components/ArrivalRow.vue + app/assets/css/main.css + app/pages/index.vue + app/composables/useKioskClock.ts",
+  "composes": ["state-saliendo-static", "row-zebra", "density-airy", "date-weekday-emphasis"],
+  "warning": "Disables the existing blink keyframe animation on the departing row and dot. No TransitionGroup or transition-based motion is introduced or removed elsewhere, so this is safe under the no-TransitionGroup constraint.",
+  "changes": [
+    { "file": "app/components/ArrivalRow.vue", "kind": "logic", "selector": ".arrival-row--departing", "intent": "Stop the row blink so SALIENDO reads as steady.", "declarations": { "animation": "none" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row__departing", "intent": "Render SALIENDO as a solid static amber chip.", "declarations": { "background": "var(--color-amber-500)", "color": "var(--color-bg)", "border-radius": "999px", "padding": "3px 10px 3px 8px" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "logic", "selector": ".arrival-row__departing-dot", "intent": "Stop the dot pulse and recolor it to contrast the solid chip.", "declarations": { "animation": "none", "background": "var(--color-bg)" } },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".arrival-row", "intent": "Drop dividers; full-bleed padding so zebra fill runs edge-to-edge.", "declarations": { "border-bottom": "none", "padding": "clamp(0.85rem, 2.6cqh, 1.4rem) clamp(1rem, 2vw, 2rem)", "margin": "0 calc(-1 * clamp(1rem, 2vw, 2rem))" } },
+    { "file": "app/assets/css/main.css", "kind": "css", "selector": ".arrival-row:nth-child(even)", "intent": "Alternate a subtle fill to separate rows without a rule.", "declarations": { "background": "var(--color-surface-2)" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row__headsign", "intent": "Enlarge destinations for an airier rhythm.", "declarations": { "font-size": "clamp(1.75rem, 10.2cqh, 5rem)" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row__eta", "intent": "Enlarge the countdown to match.", "declarations": { "font-size": "clamp(2.4rem, 13cqh, 6.5rem)" } },
+    { "file": "app/composables/useKioskClock.ts", "kind": "logic", "selector": "date formatting", "intent": "Split weekday from day/month.", "detail": "Expose formattedWeekday ('Domingo') and formattedDayMonth ('23 de agosto') separately, both capitalized, from Intl.DateTimeFormat('es-CR', ...)." },
+    { "file": "app/pages/index.vue", "kind": "markup", "selector": ".screen__clock-date", "intent": "Two-line date stack.", "detail": "<span class=\"screen__clock-date\"><span class=\"screen__clock-date-weekday\">{{ formattedWeekday }}</span><span class=\"screen__clock-date-rest\">{{ formattedDayMonth }}</span></span> with .screen__clock-date set display:flex; flex-direction:column." },
+    { "file": "app/pages/index.vue", "kind": "css", "selector": ".screen__clock-date-weekday", "intent": "Weekday as primary, inked, heavier.", "declarations": { "color": "var(--color-ink)", "font-weight": "700", "font-size": "clamp(.85rem,1.1vw,1.05rem)", "line-height": "1.1" } },
+    { "file": "app/pages/index.vue", "kind": "css", "selector": ".screen__clock-date-rest", "intent": "Day/month as secondary muted detail.", "declarations": { "color": "var(--color-ink-muted)", "font-size": "clamp(.65rem,.85vw,.8rem)", "line-height": "1.1" } }
+  ]
+}

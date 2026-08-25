@@ -1,0 +1,38 @@
+{
+  "tag": "row-lead-emphasis",
+  "category": "row-structure",
+  "title": "Raised lead-row panel",
+  "description": "The next/imminent departure (row 1 — here the SALIENDO/departing row) is lifted into a distinct raised surface-2 panel with an amber accent left-border and slightly larger type, so the next bus can be found instantly without reading the whole list. Rendered tile shows the board WITH this emphasis applied.",
+  "baseline_ref": ".arrival-row:first-child plain row (same border-bottom treatment as every other row, .arrival-row__headsign clamp(1.6rem,9.5cqh,4.6rem)/700, .arrival-row__departing mono/800/accent-text)",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row:first-child",
+      "intent": "Raise the imminent-departure row into its own panel: surface-2 fill, amber accent left-border, rounded, no bottom divider, small negative margin to bleed to the card edges.",
+      "declarations": {
+        "background": "var(--color-surface-2)",
+        "border-left": "4px solid var(--color-amber-500)",
+        "border-bottom": "none",
+        "border-radius": "6px",
+        "padding": "14px 14px 14px 12px",
+        "margin": "0 -14px 4px"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row:first-child .arrival-row__headsign",
+      "intent": "Bump the lead row's headsign size slightly above the standard clamp so it reads first.",
+      "declarations": { "font-size": "clamp(1.8rem, 10.5cqh, 5rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row:first-child .arrival-row__departing",
+      "intent": "Scale the SALIENDO label up to match the enlarged lead row.",
+      "declarations": { "font-size": "1.15em" }
+    }
+  ],
+  "composes": []
+}

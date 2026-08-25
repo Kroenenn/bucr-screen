@@ -1,0 +1,43 @@
+{
+  "tag": "header-stacked",
+  "category": "header",
+  "title": "Stacked stop + clock",
+  "description": "Stop-name and clock stack vertically on the left as two lines, with the theme toggle vertically centered on the right — a two-line header instead of a single wide row.",
+  "baseline_ref": "app/pages/index.vue .screen__header (grid 1fr auto auto: route | clock | toggle)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__header",
+      "intent": "Switch to a two-row grid: left column holds route then clock stacked, right column holds the toggle spanning both rows.",
+      "declarations": {
+        "grid-template-columns": "1fr auto",
+        "grid-template-rows": "auto auto",
+        "row-gap": "4px",
+        "align-items": "center"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__route",
+      "intent": "Place route/stop on row 1, left column.",
+      "declarations": { "grid-column": "1", "grid-row": "1" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock",
+      "intent": "Place clock on row 2, directly under the stop name.",
+      "declarations": { "grid-column": "1", "grid-row": "2" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__theme-toggle",
+      "intent": "Span both rows on the right column and center vertically so it doesn't look tied to either line specifically.",
+      "declarations": { "grid-column": "2", "grid-row": "1 / 3", "align-self": "center" }
+    }
+  ],
+  "composes": []
+}

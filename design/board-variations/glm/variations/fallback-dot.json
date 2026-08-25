@@ -1,0 +1,36 @@
+{
+  "tag": "fallback-dot",
+  "category": "degraded",
+  "title": "Fallback a horario programado",
+  "description": "Sin datos en tiempo real se mantienen filas normales y EN VIVO; la señal es un punto estático ink-faint con sufijo «horario programado» tras la leyenda del reloj.",
+  "baseline_ref": "app/pages/index.vue (.screen__clock-refresh)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Señalar discretamente que los ETAs provienen del horario, no de tiempo real",
+      "detail": "Dentro de .screen__clock-refresh, tras «Actualizaciones cada minuto», añadir <span class='dot dot--static'></span><span class='screen__clock-refresh-suffix'>horario programado</span> cuando realtime esté caído."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".dot--static",
+      "declarations": {
+        "background": "var(--color-ink-faint)",
+        "animation": "none"
+      },
+      "intent": "Punto sin pulso: comunica «sin señal» sin urgencia ni nuevo matiz de color."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-refresh-suffix",
+      "declarations": {
+        "color": "var(--color-ink-faint)",
+        "font-size": "0.64rem"
+      },
+      "intent": "Sufijo opcional; puede omitirse dejando solo el punto si el espacio aprieta."
+    }
+  ],
+  "composes": []
+}

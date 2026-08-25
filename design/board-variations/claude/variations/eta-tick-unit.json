@@ -1,0 +1,31 @@
+{
+  "tag": "eta-tick-unit",
+  "category": "eta-format",
+  "title": "Tick-mark minutes",
+  "description": "Trades the spelled-out \"min\" for a terse apostrophe (3', 12') and compresses the hours row into \"1h04\" — a denser, timetable-style notation. The apostrophe and the hour digits both stay inside the existing eta/eta-unit elements, no new fields needed.",
+  "baseline_ref": "app/components/ArrivalRow.vue eta formatting ('N min' / 'H h M min'); .arrival-row__eta, .arrival-row__eta-unit",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta-unit",
+      "intent": "Swap the unit text for a compact tick mark on plain-minute rows.",
+      "detail": "For rows under 60 minutes (excluding 'ahora'), render .arrival-row__eta-unit content as \"'\" instead of \"min\" — e.g. 3' and 12'. No change to the numeric portion of .arrival-row__eta."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__eta",
+      "intent": "Compress the ≥60min format into a single terse token instead of two spaced numbers with two unit words.",
+      "detail": "For the hours branch, render as `${hours}` + .arrival-row__eta-unit(\"h\") + zero-padded `${String(minutes).padStart(2,'0')}` directly appended with no separating space and no second 'min' unit — i.e. \"1\" + unit\"h\" + \"04\", displaying as 1h04. This keeps the ≥60min case visually distinct from the sub-60 apostrophe format."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta-unit",
+      "intent": "The apostrophe should hug its number tighter than the word 'min' did.",
+      "declarations": { "margin-left": "0.02em" }
+    }
+  ],
+  "composes": []
+}

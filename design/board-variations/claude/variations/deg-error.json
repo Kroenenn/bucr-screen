@@ -1,0 +1,44 @@
+{
+  "tag": "deg-error",
+  "category": "degraded",
+  "title": "Feed request failed",
+  "description": "The departures request failed outright (not just stale): the card shows an explicit error message in --color-error with a small centered glyph, visually distinct from the neutral empty/loading states so operators can tell 'nothing scheduled' apart from 'something broke'.",
+  "baseline_ref": "app/pages/index.vue .screen__empty--error",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__empty--error",
+      "intent": "Distinguish a hard fetch failure from the neutral no-departures/loading empty states.",
+      "detail": "When the departures fetch fails (e.g. network error, non-2xx response) after retries are exhausted, render `.screen__empty.screen__empty--error` in place of `.arrival-list`, containing a small glyph (e.g. '⚠') followed by the message 'No se pudo cargar la información de salidas.'"
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty--error",
+      "intent": "Use the error token for both the glyph and message so the failure state is immediately legible, per the color rule (error = failure only).",
+      "declarations": {
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "gap": "6px",
+        "padding": "26px 0",
+        "color": "var(--color-error)",
+        "font-size": "15px",
+        "text-align": "center"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty-glyph",
+      "intent": "Give the error glyph slight visual weight above the message text without overpowering the card.",
+      "declarations": {
+        "font-size": "20px",
+        "color": "var(--color-error)",
+        "line-height": "1"
+      }
+    }
+  ],
+  "composes": []
+}

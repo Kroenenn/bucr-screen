@@ -1,0 +1,61 @@
+{
+  "tag": "empty-friendly",
+  "category": "degraded",
+  "title": "Vacío con pista de próximo servicio",
+  "description": "Copy más corto y cálido, glifo lunar tenue y línea secundaria con la hora del primer bus de mañana para que el vacío responda «¿y ahora qué?».",
+  "baseline_ref": "app/pages/index.vue (.screen__empty)",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Estructurar el mensaje vacío en tres niveles (glifo, primario, secundario)",
+      "detail": ".screen__empty con <span class='screen__empty-glyph'>☾</span>, <span class='screen__empty-primary'>No hay más salidas por hoy.</span> y <span class='screen__empty-secondary'>El primer bus de mañana sale a las 5:10.</span>"
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "logic",
+      "intent": "Calcular la hora de la primera salida del día siguiente",
+      "detail": "Consultar el horario programado (schedule) y mostrar la primera salida de la fecha siguiente en HH:MM; si no hay datos, omitir la línea secundaria."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty",
+      "declarations": {
+        "padding": "48px 16px",
+        "gap": "10px"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty-glyph",
+      "declarations": {
+        "font-size": "2.2rem",
+        "line-height": "1",
+        "color": "var(--color-ink-faint)"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty-primary",
+      "declarations": {
+        "font-size": "1.25rem",
+        "font-weight": "700",
+        "color": "var(--color-ink)"
+      }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__empty-secondary",
+      "declarations": {
+        "font-size": "0.85rem",
+        "font-weight": "400",
+        "color": "var(--color-ink-muted)"
+      }
+    }
+  ],
+  "composes": []
+}

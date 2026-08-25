@@ -1,0 +1,33 @@
+{
+  "tag": "date-weekday",
+  "category": "date",
+  "title": "Día de la semana enfatizado",
+  "description": "El día de la semana sube a tinta plena y negrita; el día del mes y el mes quedan atenuados.",
+  "baseline_ref": "app/pages/index.vue + app/composables/useKioskClock.ts",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-date",
+      "detail": "Partir la cadena en dos spans: .date-weekday (nombre del día) y .date-rest (\", 23 de agosto\")."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date .date-weekday",
+      "declarations": {
+        "color": "var(--color-ink)",
+        "font-weight": "700"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date .date-rest",
+      "declarations": {
+        "color": "var(--color-ink-muted)"
+      }
+    }
+  ],
+  "composes": []
+}

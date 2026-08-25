@@ -1,0 +1,24 @@
+{
+  "tag": "type-headsign-mono",
+  "category": "typography",
+  "title": "Mono destinations, sans stop name",
+  "description": "Destination headsigns switch to mono/tabular numerals so they sit visually flush with the mono ETA column; the stop name stays sans at weight 800. Mono becomes the board's \"data\" register (clock, ETAs, destinations) while sans is reserved for the place name.",
+  "baseline_ref": "app/components/ArrivalRow.vue .arrival-row__headsign (currently sans 700); app/pages/index.vue .screen__stop-name (sans 800, unchanged)",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Move destination text into the mono/tabular register shared with the clock and ETA columns, unifying rows around a data-table feel.",
+      "declarations": { "font-family": "var(--font-mono)", "font-variant-numeric": "tabular-nums" }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__stop-name",
+      "intent": "Keep the stop name sans and heavy so it stays the one piece of prose-register text on the header.",
+      "declarations": { "font-family": "var(--font-sans)", "font-weight": "800" }
+    }
+  ],
+  "composes": []
+}

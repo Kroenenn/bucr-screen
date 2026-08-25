@@ -1,0 +1,18 @@
+{
+  "tag": "stop-vs-dest-weight",
+  "category": "typography",
+  "title": "Peso: parada 800 / destinos 600",
+  "description": "Diferencia parada y destinos solo por peso: la cabecera mantiene 800 y las filas bajan a 600, dejando que el tamaño existente complete la jerarquía.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "font-weight": "600"
+      }
+    }
+  ],
+  "composes": []
+}

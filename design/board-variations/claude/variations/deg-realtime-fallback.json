@@ -1,0 +1,33 @@
+{
+  "tag": "deg-realtime-fallback",
+  "category": "degraded",
+  "title": "Quiet static-schedule fallback marker",
+  "description": "GTFS-RT (realtime) is unavailable and the board has quietly fallen back to the static schedule: rows still show normally, and a second faint pulsing dot is appended after the 'Actualizaciones cada minuto' caption as a low-key marker. EN VIVO stays green — this is a graceful degradation, not an error, so nothing should read as alarming.",
+  "baseline_ref": "app/pages/index.vue .screen__clock-refresh, .screen__clock-refresh-dot",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-refresh",
+      "intent": "Add a quiet, secondary marker indicating the board is running on the static schedule instead of realtime, without alarming the viewer.",
+      "detail": "When realtime data is unavailable and the app has fallen back to the static GTFS schedule, append a second `.screen__clock-refresh-dot` element after the 'Actualizaciones cada minuto' text (in addition to the existing leading dot). No text changes; `EN VIVO` badge remains green/unchanged."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".screen__clock-refresh-dot--fallback",
+      "intent": "Render the fallback marker dot with the same faint, quiet treatment as the existing refresh dot, offset in its pulse timing so it reads as a distinct signal on close inspection but not as an alert.",
+      "declarations": {
+        "width": "5px",
+        "height": "5px",
+        "border-radius": "50%",
+        "background": "var(--color-ink-faint)",
+        "animation": "mb-pulse 1.6s ease-in-out infinite",
+        "animation-delay": "0.8s",
+        "margin-left": "4px"
+      }
+    }
+  ],
+  "composes": [],
+  "warning": "Purely additive CSS/markup change (a second faint dot + delayed pulse) — no list reordering or item add/remove, so it does not trigger the app's no-TransitionGroup constraint."
+}

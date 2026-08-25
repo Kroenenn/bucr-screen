@@ -1,0 +1,39 @@
+{
+  "tag": "state-saliendo-static",
+  "category": "states",
+  "title": "SALIENDO stops blinking",
+  "description": "SALIENDO drops its pulsing animation for a static, solid-amber chip (amber background, dark text, matching amber dot rendered in the background color). Trades urgency-via-motion for a steadier board that still reads as the most emphasized state through solid fill rather than flashing.",
+  "baseline_ref": ".arrival-row--departing (whole row blinks via mb-pulse-equivalent animation) and .arrival-row__departing's pulsing amber dot",
+  "warning": "Removes the blink animation on the departing row/dot. No TransitionGroup or transition-based motion is introduced or removed elsewhere; this only disables an existing CSS keyframe animation, so it is safe under the no-TransitionGroup constraint.",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row--departing",
+      "intent": "Stop the row-level blink animation so SALIENDO reads as steady/solid instead of flashing.",
+      "declarations": { "animation": "none" },
+      "detail": "Removes the pulsing opacity animation currently applied to the whole departing row."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "intent": "Render SALIENDO as a solid, static amber chip instead of plain animated text.",
+      "declarations": {
+        "background": "var(--color-amber-500)",
+        "color": "var(--color-bg)",
+        "border-radius": "999px",
+        "padding": "3px 10px 3px 8px"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "selector": ".arrival-row__departing .arrival-row__departing-dot",
+      "intent": "Stop the dot's own pulse animation and recolor it to contrast against the now-solid amber chip background.",
+      "declarations": { "animation": "none", "background": "var(--color-bg)" },
+      "detail": "The dot no longer needs to pulse for attention since the chip itself is now a solid, always-visible amber fill."
+    }
+  ],
+  "composes": []
+}

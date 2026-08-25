@@ -1,0 +1,31 @@
+{
+  "tag": "date-abbr",
+  "category": "date",
+  "title": "Fecha abreviada «Dom 23 ago»",
+  "description": "Formato corto en monoespaciada para cabeceras estrechas; cae al formato largo si hay espacio.",
+  "baseline_ref": "app/pages/index.vue + app/composables/useKioskClock.ts",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "dateShort",
+      "detail": "Exponer segunda cadena formateada con {weekday:'short',day:'numeric',month:'short'} en es-CR → «Dom 23 ago»."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-date",
+      "detail": "Envolver la fecha en dos spans (.date-full/.date-short) y alternarlos por CSS según el ancho disponible."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date .date-short",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "letter-spacing": "0.02em"
+      }
+    }
+  ],
+  "composes": []
+}

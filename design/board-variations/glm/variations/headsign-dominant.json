@@ -1,0 +1,35 @@
+{
+  "tag": "headsign-dominant",
+  "category": "density",
+  "title": "Destino dominante",
+  "description": "El nombre del destino manda; el ETA queda compacto y secundario.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "font-size": "clamp(2rem,12cqh,5.8rem)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "declarations": {
+        "font-size": "clamp(1.6rem,8cqh,4rem)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__state",
+      "declarations": {
+        "font-size": "0.85em",
+        "letter-spacing": "0.1em"
+      }
+    }
+  ],
+  "composes": []
+}

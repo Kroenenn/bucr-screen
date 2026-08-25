@@ -1,0 +1,19 @@
+{
+  "tag": "row-lead-raised",
+  "category": "rows",
+  "title": "Primera fila elevada",
+  "description": "Relleno surface-2 en la primera fila, sin añadir color nuevo.",
+  "baseline_ref": "app/pages/index.vue",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".arrival-list .arrival-row:first-of-type",
+      "declarations": {
+        "background": "var(--color-surface-2)"
+      },
+      "detail": "Solo la primera fila; el resto conserva el fondo de la card."
+    }
+  ],
+  "composes": []
+}

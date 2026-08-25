@@ -1,0 +1,26 @@
+{
+  "tag": "palette-mono-accent",
+  "category": "palette",
+  "title": "Near-monochrome attention (speculative)",
+  "description": "SPECULATIVE — not recommended over the current palette; default remains to keep the existing amber. Most conservative palette option: retires hue from attention states entirely. --color-accent-text becomes bright ink (#ffffff, i.e. brighter than --color-ink) and --color-amber-500 becomes a near-white ink tone; attention (PRÓXIMO, ABORDANDO/ahora, SALIENDO, the pulsing dot) is instead communicated purely via extra font-weight/brightness against the dark surface, not color. Simplest to reason about accessibility-wise since it removes color as an attention signal, at the cost of losing the amber's quick-glance scannability.",
+  "baseline_ref": "app/assets/css/main.css :root --color-accent-text (#ffd24e) and --color-amber-500 (#ffc107); .arrival-row__state, .arrival-row__departing font-weight",
+  "changes": [
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "token",
+      "selector": ":root",
+      "intent": "Remove hue as an attention signal; rely on brightness + weight only, for the most conservative/legible dark-mode option.",
+      "declarations": { "--color-accent-text": "#ffffff", "--color-amber-500": "rgba(244, 246, 248, 0.85)" },
+      "detail": "Dark theme values shown above (kiosk default). For light theme, --color-accent-text would become the darkest ink shade (near #000 or reuse --color-ink at full opacity) rather than a colored value, per the same 'brightness + weight, no hue' principle. Speculative and the most conservative of the three L options: default is to keep current amber (#ffd24e / #ffc107)."
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__state, .arrival-row__departing, .arrival-row--now .arrival-row__eta",
+      "intent": "Compensate for the loss of hue contrast by adding weight, since brightness alone (without color) is a weaker attention cue.",
+      "declarations": { "font-weight": "800" },
+      "detail": "These selectors are already font-weight 700-800 at baseline; this variation ensures they are pinned to the heavier 800 across the board so the mono accent-text token change reads clearly as 'emphasized' rather than just 'lighter grey'."
+    }
+  ],
+  "composes": []
+}

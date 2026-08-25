@@ -1,0 +1,34 @@
+{
+  "tag": "eta-dominant",
+  "category": "density",
+  "title": "ETA dominante",
+  "description": "El minuto es el ancla visual: ETA máximo, destino reducido.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "declarations": {
+        "font-size": "clamp(2.8rem,15cqh,7.5rem)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "font-size": "clamp(1.3rem,7cqh,3.4rem)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__state, .arrival-row__badge",
+      "declarations": {
+        "font-size": "0.9em"
+      }
+    }
+  ],
+  "composes": []
+}

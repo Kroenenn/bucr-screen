@@ -1,0 +1,38 @@
+{
+  "tag": "density-airy",
+  "category": "density",
+  "title": "Airier rows, fewer visible arrivals",
+  "description": "Row padding opens up and type scales up slightly, trading how many arrivals fit on screen for a calmer, more legible board at a glance.",
+  "baseline_ref": ".arrival-row padding via row gap; .arrival-row__headsign; .arrival-row__eta; .arrival-row__departing",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "intent": "Increase vertical padding per row for a roomier, calmer board",
+      "declarations": { "padding-block": "clamp(0.85rem, 2.6cqh, 1.4rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Slightly enlarge destination text to match the airier row rhythm",
+      "declarations": { "font-size": "clamp(1.75rem, 10.2cqh, 5rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "intent": "Slightly enlarge the countdown to match the airier row rhythm",
+      "declarations": { "font-size": "clamp(2.4rem, 13cqh, 6.5rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "intent": "Scale the SALIENDO label up with the rest of the row",
+      "declarations": { "font-size": "clamp(1.2rem, 6.5cqh, 2.8rem)" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,31 @@
+{
+  "tag": "eta-both-stacked",
+  "category": "eta-format",
+  "title": "Countdown over clock time",
+  "description": "Keeps the countdown as the big inked number and adds the scheduled clock time as a small muted line stacked directly beneath it, so riders who want either reading get it without extra scanning. Hours format (1 h 4 min) keeps working as the top line.",
+  "baseline_ref": "app/components/ArrivalRow.vue eta formatting; .arrival-row__eta, .arrival-row__eta-unit",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__eta",
+      "intent": "Introduce a two-line group so the countdown and the derived clock time can render together without competing for the same baseline.",
+      "detail": "Wrap the existing .arrival-row__eta (and its .arrival-row__eta-unit children, unchanged) plus a new .arrival-row__eta-scheduled span inside a new .arrival-row__eta-group container. .arrival-row__eta-scheduled shows the same detail-only `scheduledTime` field described in eta-clock-time.json (derived as now + etaMinutes, formatted HH:mm). Rows in 'ahora'/'SALIENDO' state render only their existing label, no stacked clock line."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta-group",
+      "intent": "Stack the countdown above the muted clock time, right-aligned to match the eta column's existing alignment.",
+      "declarations": { "display": "flex", "flex-direction": "column", "align-items": "flex-end", "gap": "2px" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta-scheduled",
+      "intent": "Secondary line should read as supporting detail, not compete with the countdown.",
+      "declarations": { "font-family": "var(--font-mono)", "font-variant-numeric": "tabular-nums", "font-size": "0.75rem", "font-weight": "600", "color": "var(--color-ink-muted)" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,31 @@
+{
+  "tag": "eta-both-inline",
+  "category": "eta-format",
+  "title": "Clock time · countdown inline",
+  "description": "Puts both readings on one line — \"22:43 · 3 min\" — with the clock time muted and the countdown inked, so the row stays a single baseline instead of two. Hours format renders as \"23:44 · 1 h 4 min\".",
+  "baseline_ref": "app/components/ArrivalRow.vue eta formatting; .arrival-row__eta, .arrival-row__eta-unit",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "selector": ".arrival-row__eta",
+      "intent": "Prefix the countdown with the derived scheduled clock time and a separator, all inside the existing eta element so the row keeps a single grid cell and baseline.",
+      "detail": "Prepend a new .arrival-row__eta-scheduled span and a .arrival-row__eta-sep (' · ') span before the existing countdown number and .arrival-row__eta-unit inside .arrival-row__eta. scheduledTime is the same detail-only derived field as eta-clock-time.json. 'ahora'/'SALIENDO' rows are unchanged (no prefix)."
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta-scheduled",
+      "intent": "Clock time reads as context, not the headline figure.",
+      "declarations": { "font-size": "0.55em", "font-weight": "600", "font-variant-numeric": "tabular-nums", "color": "var(--color-ink-muted)" }
+    },
+    {
+      "file": "app/assets/css/main.css",
+      "kind": "css",
+      "selector": ".arrival-row__eta-sep",
+      "intent": "Visually separate the two readings without adding weight.",
+      "declarations": { "font-size": "0.55em", "color": "var(--color-ink-faint)", "margin": "0 0.05em" }
+    }
+  ],
+  "composes": []
+}

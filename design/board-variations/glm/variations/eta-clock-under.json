@@ -1,0 +1,44 @@
+{
+  "tag": "eta-clock-under",
+  "category": "eta",
+  "title": "Hora programada bajo la cuenta",
+  "description": "Conserva el ETA relativo intacto y añade la hora programada como línea secundaria pequeña debajo, sin competir por atención.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Derivar HH:MM programado desde arrival.eta",
+      "detail": "const sched = new Date(arrival.eta).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',hour12:false})"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "Línea secundaria debajo del ETA",
+      "detail": "<span class=\"arrival-row__right\"><span class=\"arrival-row__eta\">…</span><span class=\"arrival-row__sched\">{{sched}}</span></span>"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__right",
+      "declarations": {
+        "flex-direction": "column",
+        "align-items": "flex-end",
+        "gap": "2px"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-variant-numeric": "tabular-nums",
+        "font-size": "0.8rem",
+        "letter-spacing": "0.05em",
+        "color": "var(--color-ink-muted)"
+      }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,17 @@
+{
+  "tag": "synth-dense",
+  "category": "synthesis",
+  "title": "Synthesis — Denso informativo",
+  "description": "A whole-board proposal tuned for information density: uppercase destinations for a distinct display register, scheduled clock times in place of decaying countdowns, a unified leading-dot vocabulary across states, and a pluralized column label.",
+  "baseline_ref": "app/components/ArrivalRow.vue + app/pages/index.vue",
+  "composes": ["type-dest-caps", "eta-clock-time", "state-dot-language", "label-plural"],
+  "changes": [
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row__headsign", "intent": "Uppercase destinations with light tracking as a distinct register from the sentence-case header.", "declarations": { "text-transform": "uppercase", "letter-spacing": "0.02em" } },
+    { "file": "app/pages/index.vue", "kind": "css", "selector": ".screen__stop-name", "intent": "Keep the stop name sentence-case as the contrast anchor.", "declarations": { "text-transform": "none" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "logic", "selector": ".arrival-row__eta", "intent": "Show the scheduled clock time rather than a countdown for PRÓXIMO/later rows.", "detail": "Derive `scheduledTime = format(now + etaMinutes, 'HH:mm')` (same formatter as the header clock) and render it in place of the countdown for non-now/non-departing rows; the .arrival-row__eta-unit span is omitted for those rows. 'ahora'/'SALIENDO' keep their existing labels; the ≥60 min hours format still applies to any row shown as a countdown." },
+    { "file": "app/components/ArrivalRow.vue", "kind": "markup", "selector": ".arrival-row__state", "intent": "Add a leading dot to ABORDANDO and PRÓXIMO matching SALIENDO's dot vocabulary.", "detail": "Prepend <span class=\"arrival-row__state-dot\"></span> inside .arrival-row__state." },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row--now .arrival-row__state-dot", "intent": "ABORDANDO dot is solid amber (live/current).", "declarations": { "width": "6px", "height": "6px", "border-radius": "50%", "background": "var(--color-amber-500)", "display": "inline-block", "margin-right": "6px" } },
+    { "file": "app/components/ArrivalRow.vue", "kind": "css", "selector": ".arrival-row--soon .arrival-row__state-dot", "intent": "PRÓXIMO dot is an amber outline (upcoming, not yet current).", "declarations": { "width": "6px", "height": "6px", "border-radius": "50%", "background": "transparent", "border": "1.5px solid var(--color-amber-500)", "display": "inline-block", "margin-right": "6px" } },
+    { "file": "app/pages/index.vue", "kind": "markup", "selector": ".screen__board-header span:last-child", "intent": "Match the label to the multi-row content.", "detail": "Change the second header span text from 'Próxima salida' to 'Próximas salidas'." }
+  ]
+}

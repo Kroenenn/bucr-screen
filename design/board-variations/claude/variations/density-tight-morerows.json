@@ -1,0 +1,52 @@
+{
+  "tag": "density-tight-morerows",
+  "category": "density",
+  "title": "Tighter rows, more visible arrivals",
+  "description": "Row padding is compressed and the type scale trimmed a hair across the board, letting more arrival rows fit in the same vertical space at the cost of a slightly denser read.",
+  "baseline_ref": ".arrival-row padding via row gap; .arrival-row__headsign; .arrival-row__eta; .arrival-row__state; .arrival-row__badge; .arrival-row__departing",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row",
+      "intent": "Reduce vertical padding per row so more rows fit on screen",
+      "declarations": { "padding-block": "clamp(0.4rem, 1.2cqh, 0.7rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "intent": "Slightly shrink destination text to match the tighter row rhythm",
+      "declarations": { "font-size": "clamp(1.4rem, 8.5cqh, 4.1rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__eta",
+      "intent": "Slightly shrink the countdown to match the tighter row rhythm",
+      "declarations": { "font-size": "clamp(1.9rem, 10.5cqh, 5.3rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__state",
+      "intent": "Scale the PRÓXIMO/ABORDANDO label down with the rest of the row",
+      "declarations": { "font-size": "clamp(0.85rem, 1.5vw, 1.3rem)" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__badge",
+      "intent": "Scale the con-milla pill down with the rest of the row",
+      "declarations": { "font-size": "clamp(0.7rem, 1.2vw, 1rem)", "padding": "0.1em 0.55em" }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__departing",
+      "intent": "Scale the SALIENDO label down with the rest of the row",
+      "declarations": { "font-size": "clamp(1.1rem, 5.5cqh, 2.3rem)" }
+    }
+  ],
+  "composes": []
+}

@@ -1,0 +1,17 @@
+{
+  "tag": "label-sale-en",
+  "category": "labels",
+  "title": "Verb-phrase right label",
+  "description": "Right header label changes from \"Próxima salida\" to \"Sale en\" — a verb phrase that reads naturally against the countdown values beneath it (e.g. \"Sale en 12 min\"), shifting the column from a noun label to an implied sentence fragment. Left label (\"Destino\") is unchanged.",
+  "baseline_ref": "app/pages/index.vue .screen__board-header span (second span, currently \"Próxima salida\")",
+  "changes": [
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__board-header span:last-child",
+      "intent": "Pair the header wording with the ETA cells below it so the column reads as a sentence continuation rather than a standalone noun label.",
+      "detail": "Change the static text of the second header span from \"Próxima salida\" to \"Sale en\". No structural or style change."
+    }
+  ],
+  "composes": []
+}

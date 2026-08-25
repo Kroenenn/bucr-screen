@@ -1,0 +1,31 @@
+{
+  "tag": "date-relative",
+  "category": "date",
+  "title": "Relative-today prefix",
+  "description": "Prepends an inked \"Hoy · \" before the abbreviated date — \"Hoy · Dom 23 ago\" — giving riders an immediate relative anchor (today) ahead of the absolute date, useful on a kiosk that's always displaying \"now\".",
+  "baseline_ref": "app/composables/useKioskClock.ts date formatting; app/pages/index.vue .screen__clock-date",
+  "changes": [
+    {
+      "file": "app/composables/useKioskClock.ts",
+      "kind": "logic",
+      "selector": "date formatting",
+      "intent": "Compute a relative-day prefix ('Hoy') and combine it with the abbreviated date string.",
+      "detail": "Add a computed relativePrefix that is always 'Hoy' for the kiosk's local today (the composable has no notion of other days, so this is a static label rather than a diffed date, ready to extend to 'Mañana' if the board ever shows forecasted dates). Combine as `${relativePrefix} · ${formattedAbbrevDate}` using the same short weekday/month formatting as date-abbrev ('Dom 23 ago'), producing 'Hoy · Dom 23 ago'."
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "selector": ".screen__clock-date",
+      "intent": "Wrap the 'Hoy' prefix in its own span so it can be styled with more visual weight than the rest of the date.",
+      "detail": "<span class=\"screen__clock-date\"><span class=\"screen__clock-date-rel\">Hoy</span> · Dom 23 ago</span>"
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "css",
+      "selector": ".screen__clock-date-rel",
+      "intent": "Make the relative cue read as inked/emphasized against the otherwise muted date line.",
+      "declarations": { "color": "var(--color-ink)", "font-weight": "700" }
+    }
+  ],
+  "composes": ["date-abbrev"]
+}

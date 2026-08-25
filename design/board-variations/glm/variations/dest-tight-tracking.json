@@ -1,0 +1,18 @@
+{
+  "tag": "dest-tight-tracking",
+  "category": "typography",
+  "title": "Tracking cerrado en destinos",
+  "description": "Letter-spacing -0.03em en destinos: bloque de texto más compacto, más cercano al look de tablero de salidas impreso.",
+  "baseline_ref": "app/pages/index.vue + app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__headsign",
+      "declarations": {
+        "letter-spacing": "-0.03em"
+      }
+    }
+  ],
+  "composes": []
+}

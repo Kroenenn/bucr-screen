@@ -1,0 +1,48 @@
+{
+  "tag": "eta-clock-only",
+  "category": "eta",
+  "title": "Solo hora programada",
+  "description": "Reemplaza la cuenta regresiva relativa por la hora programada HH:MM derivada de arrival.eta; el caso ≥60 min se muestra naturalmente como 23:44.",
+  "baseline_ref": "app/components/ArrivalRow.vue",
+  "changes": [
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "logic",
+      "intent": "Derivar HH:MM programado desde arrival.eta",
+      "detail": "const sched = new Date(arrival.eta).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',hour12:false})"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "markup",
+      "intent": "Sustituir el ETA relativo por la hora programada",
+      "detail": "<span class=\"arrival-row__eta arrival-row__sched\">{{ sched }}</span>; para etaMinutes===0 mantener la hora"
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row__sched",
+      "declarations": {
+        "font-family": "var(--font-mono)",
+        "font-variant-numeric": "tabular-nums",
+        "font-size": "clamp(2.2rem,12cqh,6rem)",
+        "font-weight": "800",
+        "color": "var(--color-ink)"
+      }
+    },
+    {
+      "file": "app/components/ArrivalRow.vue",
+      "kind": "css",
+      "selector": ".arrival-row--now .arrival-row__sched",
+      "declarations": {
+        "color": "var(--color-accent-text)"
+      }
+    },
+    {
+      "file": "app/pages/index.vue",
+      "kind": "markup",
+      "intent": "Cabecera de columna acorde",
+      "detail": "<span>Salida programada</span>"
+    }
+  ],
+  "composes": []
+}
