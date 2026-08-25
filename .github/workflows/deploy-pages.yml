@@ -1,0 +1,68 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [feat/presentation-iframe]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: presentation
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Install node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: presentation/pnpm-lock.yaml
+
+      - name: Install dependencies
+        # --ignore-workspace: presentation/ is deliberately NOT a member of
+        # the repo's pnpm workspace (see pnpm-workspace.yaml at the repo
+        # root), so it must be installed as its own standalone project —
+        # otherwise pnpm resolves the workspace root instead and this
+        # package's own deps never get installed.
+        run: pnpm install --ignore-workspace --frozen-lockfile
+
+      - name: Build slides
+        run: pnpm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: presentation/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

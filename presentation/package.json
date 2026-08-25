@@ -1,0 +1,19 @@
+{
+  "name": "bucr-screen-presentation",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Slidev deck embedding the live bUCR departure board, deployed to GitHub Pages.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build --base /bucr-screen/",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.7.0",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "vue": "^3.5.13"
+  }
+}

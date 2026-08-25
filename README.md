@@ -206,6 +206,15 @@ tests/                   Vitest
 deploy/raspberry-pi/     kiosk setup docs + systemd units
 ```
 
+## Presentation
+
+A standalone Slidev deck that embeds this live departure board in an
+iframe (with a screenshot fallback) lives in
+[`presentation/`](./presentation/README.md). It has its own
+dependencies and is excluded from the Docker build context — see
+`presentation/README.md` for how to run it and how it deploys to
+GitHub Pages at https://kroenenn.github.io/bucr-screen/.
+
 ## License
 
 Apache-2.0 — see [LICENSE](./LICENSE).
