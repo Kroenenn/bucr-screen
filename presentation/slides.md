@@ -80,7 +80,7 @@ layout: default
 <script setup>
 // ⚠️ SINGLE PLACE TO EDIT — swap this for the real Tailscale Funnel URL.
 // See presentation/README.md for instructions.
-const BOARD_URL = 'https://simovi84.CHANGEME.ts.net'
+const BOARD_URL = 'https://simovi84.tail16eef6.ts.net'
 </script>
 
 <!--
