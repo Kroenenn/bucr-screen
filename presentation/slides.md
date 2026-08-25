@@ -80,7 +80,7 @@ layout: default
 <script setup>
 // ⚠️ SINGLE PLACE TO EDIT — swap this for the real Tailscale Funnel URL.
 // See presentation/README.md for instructions.
-const BOARD_URL = 'https://occupation-stainless-recommendation-disturbed.trycloudflare.com'
+const BOARD_URL = 'https://simovi84.tail16eef6.ts.net'
 </script>
 
 <!--
