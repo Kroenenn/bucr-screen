@@ -96,14 +96,28 @@ const showSchedGlyph = computed(() =>
 .arrival-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  align-items: baseline;
+  align-items: center;
   gap: clamp(1rem, 3cqi, 2rem);
-  padding: clamp(0.5rem, 4cqh, 2.1rem) 0;
-  border-bottom: 1px solid var(--color-border);
+  /* Full-bleed so the zebra stripe fills the card edge-to-edge: the negative
+     margin cancels .screen__board-card's own horizontal padding (index.vue),
+     the matching padding puts the content back where it was. No border-bottom —
+     the alternating zebra fill carries row separation instead. */
+  margin: 0 calc(-1 * var(--board-card-pad));
+  padding: clamp(0.5rem, 4cqh, 2.1rem) var(--board-card-pad);
 }
 
-.arrival-row:last-child {
-  border-bottom: none;
+/* Lead row (next departure) stays the base surface — its amber accent bar,
+   not a stripe, marks it as next up — so the alternating fill starts on the
+   second row. */
+.arrival-row:nth-child(even) {
+  background: var(--color-surface-2);
+}
+
+/* Thin amber left bar on the lead row; left padding reduced by the border
+   width so the content doesn't shift relative to the other rows. */
+.arrival-row:first-child {
+  border-left: 4px solid var(--color-amber-500);
+  padding-left: calc(var(--board-card-pad) - 4px);
 }
 
 /* The whole row blinks during the departing grace period — not just the
@@ -115,17 +129,24 @@ const showSchedGlyph = computed(() =>
 
 .arrival-row__destination {
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap;
   gap: 0.6em;
   min-width: 0;
 }
 
+/* type-headsign-mono: destinations in the mono register at a light weight;
+   only the lead row (next departure) reads heavy, matching its amber accent. */
 .arrival-row__headsign {
+  font-family: var(--font-mono);
   font-size: clamp(1.6rem, 9.5cqh, 4.6rem);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--color-ink);
+}
+
+.arrival-row:first-child .arrival-row__headsign {
+  font-weight: 800;
 }
 
 /* Neutral/subtle on purpose — informational, not an attention color like
@@ -166,6 +187,8 @@ const showSchedGlyph = computed(() =>
   animation: arrival-row-pulse 1.6s ease-in-out infinite;
 }
 
+/* state-weight-ladder: states are separated by weight only (no new colors) —
+   ABORDANDO (now) heaviest, PRÓXIMO (soon) lighter. */
 .arrival-row__state {
   font-family: var(--font-mono);
   font-size: clamp(0.85rem, 3.4cqh, 1.6rem);
@@ -174,8 +197,23 @@ const showSchedGlyph = computed(() =>
   color: var(--color-accent-text);
 }
 
+.arrival-row--soon .arrival-row__state {
+  font-weight: 500;
+}
+
 .arrival-row--now .arrival-row__eta {
   color: var(--color-accent-text);
+}
+
+/* eta weight ladder mirrors the state ladder: PRÓXIMO gets a mid bump,
+   further-out rows are lightest and muted. */
+.arrival-row--soon .arrival-row__eta {
+  font-weight: 600;
+}
+
+.arrival-row--later .arrival-row__eta {
+  font-weight: 500;
+  color: var(--color-ink-muted);
 }
 
 /* scheduled-minutes glyph: only rendered when showSchedGlyph is true (a
