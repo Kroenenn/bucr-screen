@@ -5,8 +5,6 @@ const props = defineProps<{
   arrival: Arrival
 }>()
 
-const { isSynth7Zebra } = useBoardVariant()
-
 const state = computed(() => {
   // "ABORDANDO" (boarding), not "arriving": this screen only shows boardable
   // departures, so "arriving" would read as a bus pulling *into* the stop —
@@ -25,30 +23,16 @@ const etaDisplay = computed(() => {
   return { hours: Math.floor(m / 60), minutes: m % 60 }
 })
 
-// Only worth showing "08:00 → ~08:07" when there's an actual gap to explain
-// (a matched-but-on-time feeder leaves scheduledEta === eta, where the
-// arrow would just repeat the same clock time for no reason) — and only
-// once the row is already flagged `estimated`, per §11's "floor at
-// schedule, never earlier than timetable" rule (scheduledEta is always
-// <= eta, so this never reads as an early departure).
-const scheduledTimeDisplay = computed(() => {
-  // est-badge-only: under the synth7-zebra variant the green "estimado" pill
-  // is the only estimated marker — suppress the "HH:MM →" prefix rather than
-  // showing both.
-  if (isSynth7Zebra.value) return null
-  if (!props.arrival.estimated) return null
-  const { scheduledEta, eta } = props.arrival
-  if (scheduledEta == null || scheduledEta === eta) return null
-  return new Date(scheduledEta * 1000).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })
-})
+// est-badge-only: the green "estimado" pill is the sole estimated-data
+// marker on this board, so the older "HH:MM → ~HH:MM" scheduled prefix is
+// intentionally not shown.
 
 // 🕐 scheduled-minutes glyph: non-estimated countdown rows with a numeric
 // minutes value (not departing, not "ahora"/boarding, not estimated) get a
 // small clock glyph before the number — estimated rows show the green pill
 // instead, so the two markers never coexist on the same row.
 const showSchedGlyph = computed(() =>
-  isSynth7Zebra.value
-  && !props.arrival.departing
+  !props.arrival.departing
   && !props.arrival.estimated
   && props.arrival.etaMinutes > 0
 )
@@ -87,10 +71,6 @@ const showSchedGlyph = computed(() =>
         class="arrival-row__state"
       >{{ state.label }}</span>
       <span class="arrival-row__eta">
-        <span
-          v-if="scheduledTimeDisplay"
-          class="arrival-row__scheduled"
-        >{{ scheduledTimeDisplay }} →</span>
         <span
           v-if="showSchedGlyph"
           class="arrival-row__sched-glyph"
@@ -194,26 +174,13 @@ const showSchedGlyph = computed(() =>
   color: var(--color-accent-text);
 }
 
-/* Sits inside the eta cell, before the number — small and muted so the
-   estimated time (the number people actually need) stays the visual
-   focus. Never earlier than this scheduled time (§11), so the arrow only
-   ever reads as "pushed later", matching the SALIENDO/late framing
-   elsewhere on the board. */
-.arrival-row__scheduled {
-  font-size: 0.32em;
-  font-weight: 600;
-  color: var(--color-ink-muted);
-  margin-right: 0.35em;
-  white-space: nowrap;
-}
-
 .arrival-row--now .arrival-row__eta {
   color: var(--color-accent-text);
 }
 
-/* scheduled-minutes glyph: only ever rendered when showSchedGlyph is true
-   (synth7-zebra variant, non-estimated countdown row), so no data-board
-   gating needed — the element doesn't exist on the default board. */
+/* scheduled-minutes glyph: only rendered when showSchedGlyph is true (a
+   non-estimated countdown row), so the element simply doesn't exist on
+   estimated/departing rows. */
 .arrival-row__sched-glyph {
   font-size: 0.5em;
   margin-right: 0.35em;

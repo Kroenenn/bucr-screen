@@ -18,9 +18,9 @@ export function useKioskClock() {
   const time = computed(() =>
     now.value.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })
   )
-  // Two-digit seconds off the same tick — only consumed by the
-  // clock-secs-gray variant treatment (index.vue, gated on useBoardVariant),
-  // the default board's `time` above never includes them.
+  // Two-digit seconds off the same tick, rendered as the faint :SS after the
+  // HH:MM clock (see index.vue's .screen__clock-seconds). `time` above stays
+  // HH:MM-only so callers that want the bare clock aren't forced to strip them.
   const seconds = computed(() => now.value.getSeconds().toString().padStart(2, '0'))
   // Keyed on the calendar day, not on `now` directly: the displayed date
   // changes once a day, so depending on the raw tick would re-run
@@ -34,10 +34,10 @@ export function useKioskClock() {
     return raw.charAt(0).toUpperCase() + raw.slice(1)
   })
   // Same string as `date`, split into its weekday and the "23 de agosto"
-  // remainder — only consumed by the date-weekday-emphasis variant treatment,
-  // which styles the two parts differently. Derived from `date` (not
-  // recomputed independently) so the leading-capital rule and formatting
-  // stay in exactly one place.
+  // remainder — the header (index.vue) styles the two parts differently on
+  // the single tracked date line. Derived from `date` (not recomputed
+  // independently) so the leading-capital rule and formatting stay in exactly
+  // one place.
   const dateParts = computed(() => {
     const [weekday, ...rest] = date.value.split(' ')
     return { weekday: weekday ?? '', rest: rest.join(' ') }

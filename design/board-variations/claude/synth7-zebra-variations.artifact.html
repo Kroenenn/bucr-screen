@@ -1,0 +1,412 @@
+<style>
+/* ===== TOKENS (copied from final-synth-7-zebra.html) ===== */
+:root {
+  --color-bg: #0b0f14;
+  --color-surface: #121820;
+  --color-surface-2: #1a2230;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-ink: #f4f6f8;
+  --color-ink-muted: rgba(244, 246, 248, 0.6);
+  --color-ink-faint: rgba(244, 246, 248, 0.35);
+  --color-blue-400: #5ca1d6;
+  --color-blue-600: #0b5ca8;
+  --color-blue-900: #04233f;
+  --color-amber-500: #ffc107;
+  --color-accent-text: #ffd24e;
+  --color-ok: #35c98c;
+  --color-error: #ff6b6b;
+  --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, system-ui, sans-serif;
+  --font-mono: 'Consolas', 'IBM Plex Mono', ui-monospace, monospace;
+}
+:root[data-theme='light'] {
+  --color-bg: #f3f6f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #fafaf9;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-ink: #0e1116;
+  --color-ink-muted: rgba(14, 17, 22, 0.6);
+  --color-ink-faint: rgba(14, 17, 22, 0.35);
+  --color-accent-text: #8c6600;
+  --color-error: #c0392b;
+  --color-ok: #1b8a5a;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--color-bg);
+}
+body {
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  padding: clamp(1.25rem, 2.5vw, 2.5rem);
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+@keyframes mb-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ===== page chrome ===== */
+.page-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem); flex-wrap: wrap;
+}
+.page-title { font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; letter-spacing: -0.01em; margin: 0 0 0.3em; }
+.page-sub { color: var(--color-ink-muted); font-size: 0.95rem; margin: 0; max-width: 62ch; line-height: 1.5; }
+.theme-toggle {
+  font-size: 1rem; color: var(--color-ink-faint); opacity: 0.7; cursor: pointer;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 0.5em 0.9em; font-family: inherit; flex-shrink: 0;
+}
+
+.section-heading {
+  font-size: clamp(0.85rem, 1vw, 1rem); font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--color-ink-muted); margin: clamp(2rem, 3vw, 3rem) 0 clamp(0.9rem, 1.4vw, 1.2rem);
+  padding-bottom: 0.5em; border-bottom: 1px solid var(--color-border);
+}
+.section-heading:first-of-type { margin-top: 0; }
+
+.tile-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+/* ===== tile shell — mimics .mb card look at reduced scale ===== */
+.tile {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: 14px; overflow: hidden; display: flex; flex-direction: column;
+}
+.tile-label {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--color-ink-faint); padding: 0.7em 1em; border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+.tile-body {
+  padding: clamp(1.1rem, 1.8vw, 1.5rem) clamp(1rem, 1.6vw, 1.4rem);
+  overflow-x: auto;
+  background: var(--color-bg);
+}
+.mini-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-width: 260px;
+}
+.mini-route { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.mini-logo {
+  height: 2.1rem; width: 2.1rem; flex-shrink: 0; border-radius: 50%;
+  background: var(--color-blue-600); color: #fff; font-weight: 800;
+  display: grid; place-items: center; font-size: 1rem;
+}
+.mini-clock { display: flex; align-items: center; gap: 0.6rem; }
+
+/* baseline stop-name style (used as the neutral anchor in clock/date sections) */
+.mini-stop { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
+
+/* baseline date style (used as the neutral anchor in clock/stopname sections) */
+.mini-date { display: flex; flex-direction: column; gap: 1px; line-height: 1.15; }
+.mini-date-weekday { color: var(--color-ink); font-weight: 700; font-size: 0.8rem; }
+.mini-date-rest { color: var(--color-ink-muted); font-size: 0.68rem; }
+
+/* baseline clock style (used as the neutral anchor in date/stopname sections) */
+.mini-clock-time {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 1.9rem; font-weight: 800; line-height: 1; color: var(--color-ink);
+  display: inline-flex; align-items: baseline;
+}
+.mini-clock-seconds { font-size: 0.4em; font-weight: 800; color: var(--color-ink-faint); margin-left: 2px; }
+
+/* =========================================================
+   SECTION 1 — CLOCK TREATMENTS
+   ========================================================= */
+
+/* clock-mono-tabular: base style, heavy mono tabular-nums (control) */
+.clock-mono-tabular .mini-clock-time {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; font-size: 2rem;
+}
+
+/* clock-proportional-light: proportional sans, light weight, airy tracking */
+.clock-proportional-light .mini-clock-time {
+  font-family: var(--font-sans); font-weight: 300; font-size: 2.1rem; letter-spacing: 0.01em;
+  font-variant-numeric: normal;
+}
+.clock-proportional-light .mini-clock-seconds { font-weight: 300; }
+
+/* clock-superscript-seconds: seconds as tiny raised grey superscript */
+.clock-superscript-seconds .mini-clock-time { font-weight: 700; }
+.clock-superscript-seconds .mini-clock-seconds {
+  position: relative; top: -0.9em; font-size: 0.34em; margin-left: 3px; color: var(--color-ink-faint);
+}
+
+/* clock-condensed-tracked: condensed-feel via negative tracking + heavy weight, no seconds */
+.clock-condensed-tracked .mini-clock-time {
+  font-family: var(--font-mono); font-weight: 800; font-size: 2.1rem; letter-spacing: -0.06em;
+}
+
+/* clock-airy-caps: wide letter-spacing, medium weight, small caps meta label above */
+.clock-airy-caps .mini-clock-wrap { display: flex; flex-direction: column; gap: 0.25em; align-items: flex-end; }
+.clock-airy-caps .clock-eyebrow {
+  font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em;
+  color: var(--color-ink-faint); text-transform: uppercase;
+}
+.clock-airy-caps .mini-clock-time {
+  font-family: var(--font-sans); font-weight: 500; font-size: 1.9rem; letter-spacing: 0.08em;
+}
+
+/* clock-flip-segment: flat CSS "split-flap" style tiles, no images */
+.clock-flip-segment .flip-row { display: inline-flex; gap: 0.28em; align-items: center; }
+.clock-flip-segment .flip-cell {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800;
+  font-size: 1.5rem; line-height: 1; color: var(--color-ink);
+  background: var(--color-surface-2); border: 1px solid var(--color-border);
+  border-radius: 4px; padding: 0.25em 0.32em; min-width: 1em; text-align: center;
+  position: relative; box-shadow: inset 0 -1px 0 var(--color-border);
+}
+.clock-flip-segment .flip-cell::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--color-bg); opacity: 0.6;
+}
+.clock-flip-segment .flip-colon { font-family: var(--font-mono); font-weight: 800; font-size: 1.3rem; color: var(--color-ink-faint); }
+
+/* =========================================================
+   SECTION 2 — DATE TREATMENTS
+   ========================================================= */
+
+/* date-weekday-stack: bold weekday line over smaller full date, two-line stack (baseline direction, enlarged) */
+.date-weekday-stack .mini-date-weekday { font-size: 1rem; font-weight: 800; }
+.date-weekday-stack .mini-date-rest { font-size: 0.78rem; }
+
+/* date-relative-hoy: "hoy, domingo" relative framing */
+.date-relative-hoy .mini-date-weekday { font-size: 0.78rem; font-weight: 700; }
+.date-relative-hoy .date-relative-lead { color: var(--color-ink-faint); font-weight: 500; text-transform: lowercase; }
+
+/* date-uppercase-tracked: all-caps, wide tracking, single line, muted */
+.date-uppercase-tracked .mini-date { flex-direction: row; gap: 0.5em; align-items: baseline; }
+.date-uppercase-tracked .mini-date-weekday,
+.date-uppercase-tracked .mini-date-rest {
+  text-transform: uppercase; letter-spacing: 0.16em; font-family: var(--font-mono);
+}
+.date-uppercase-tracked .mini-date-weekday { font-size: 0.68rem; color: var(--color-ink-muted); font-weight: 700; }
+.date-uppercase-tracked .mini-date-rest { font-size: 0.62rem; color: var(--color-ink-faint); font-weight: 600; }
+
+/* date-muted-compact: small, quiet, single line, de-emphasized entirely */
+.date-muted-compact .mini-date { flex-direction: row; gap: 0.4em; opacity: 0.65; }
+.date-muted-compact .mini-date-weekday { font-size: 0.66rem; font-weight: 600; color: var(--color-ink-muted); }
+.date-muted-compact .mini-date-rest { font-size: 0.66rem; }
+
+/* date-full-formal: full es-CR long form, prominent, no weekday split */
+.date-full-formal .mini-date { flex-direction: row; }
+.date-full-formal .date-full-line { font-size: 0.82rem; font-weight: 600; color: var(--color-ink); }
+.date-full-formal .date-full-line em { font-style: normal; color: var(--color-ink-muted); font-weight: 500; }
+
+/* =========================================================
+   SECTION 3 — STOP NAME TREATMENTS
+   ========================================================= */
+
+/* stopname-dominant: stop name much bigger than clock, clock shrinks + demotes */
+.stopname-dominant .mini-stop { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.03em; }
+.stopname-dominant .mini-clock-time { font-size: 1.3rem; font-weight: 700; }
+
+/* stopname-two-line: stop name as two-line stack (building / area), heavy top line */
+.stopname-two-line .mini-stop-stack { display: flex; flex-direction: column; gap: 0.05em; line-height: 1.05; }
+.stopname-two-line .stop-line-1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+.stopname-two-line .stop-line-2 { font-size: 0.85rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.02em; }
+
+/* stopname-tracked-caps: uppercase wide-tracked stop name, restrained size, balances against a strong clock */
+.stopname-tracked-caps .mini-stop {
+  font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.stopname-tracked-caps .mini-clock-time { font-size: 2.1rem; font-weight: 800; }
+
+.mini-toggle-space { width: 0; }
+</style>
+
+<div class="page-head">
+  <div>
+    <h1 class="page-title">synth7-zebra — exploración de variaciones</h1>
+    <p class="page-sub">Cada mosaico aplica un solo tratamiento tipográfico sobre el mismo encabezado base (synth7-zebra). Mismos tokens de color, misma pila de fuentes del sistema — solo cambia tipografía y composición.</p>
+  </div>
+  <button class="theme-toggle" id="themeBtn" type="button" aria-label="Cambiar tema">☾ tema</button>
+</div>
+
+<h2 class="section-heading">Reloj</h2>
+<div class="tile-grid">
+
+  <div class="tile clock-mono-tabular">
+    <div class="tile-label">clock-mono-tabular</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Educación</span></div>
+        <span class="mini-clock-time">22:40<span class="mini-clock-seconds">:07</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile clock-proportional-light">
+    <div class="tile-label">clock-proportional-light</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Educación</span></div>
+        <span class="mini-clock-time">22:40<span class="mini-clock-seconds">:07</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile clock-superscript-seconds">
+    <div class="tile-label">clock-superscript-seconds</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Educación</span></div>
+        <span class="mini-clock-time">22:40<span class="mini-clock-seconds">07</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile clock-condensed-tracked">
+    <div class="tile-label">clock-condensed-tracked</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Educación</span></div>
+        <span class="mini-clock-time">22:40</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile clock-airy-caps">
+    <div class="tile-label">clock-airy-caps</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Educación</span></div>
+        <div class="mini-clock-wrap">
+          <span class="clock-eyebrow">Hora actual</span>
+          <span class="mini-clock-time">22:40</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile clock-flip-segment">
+    <div class="tile-label">clock-flip-segment</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Educación</span></div>
+        <span class="flip-row">
+          <span class="flip-cell">2</span><span class="flip-cell">2</span>
+          <span class="flip-colon">:</span>
+          <span class="flip-cell">4</span><span class="flip-cell">0</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<h2 class="section-heading">Fecha</h2>
+<div class="tile-grid">
+
+  <div class="tile date-weekday-stack">
+    <div class="tile-label">date-weekday-stack</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <span class="mini-clock-time">22:40</span>
+        <span class="mini-date"><span class="mini-date-weekday">Domingo</span><span class="mini-date-rest">23 de agosto</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile date-relative-hoy">
+    <div class="tile-label">date-relative-hoy</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <span class="mini-clock-time">22:40</span>
+        <span class="mini-date"><span class="mini-date-weekday"><span class="date-relative-lead">hoy, </span>domingo</span><span class="mini-date-rest">23 de agosto</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile date-uppercase-tracked">
+    <div class="tile-label">date-uppercase-tracked</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <span class="mini-clock-time">22:40</span>
+        <span class="mini-date"><span class="mini-date-weekday">domingo</span><span class="mini-date-rest">23 ago</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile date-muted-compact">
+    <div class="tile-label">date-muted-compact</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <span class="mini-clock-time">22:40</span>
+        <span class="mini-date"><span class="mini-date-weekday">dom</span><span class="mini-date-rest">23/08</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile date-full-formal">
+    <div class="tile-label">date-full-formal</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <span class="mini-clock-time">22:40</span>
+        <span class="mini-date"><span class="date-full-line">domingo, <em>23 de agosto de 2026</em></span></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<h2 class="section-heading">Nombre de parada</h2>
+<div class="tile-grid">
+
+  <div class="tile stopname-dominant">
+    <div class="tile-label">stopname-dominant</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Estación UCR</span></div>
+        <span class="mini-clock-time">22:40</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile stopname-two-line">
+    <div class="tile-label">stopname-two-line</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route">
+          <span class="mini-logo">b</span>
+          <span class="mini-stop-stack"><span class="stop-line-1">Estación UCR</span><span class="stop-line-2">San Pedro</span></span>
+        </div>
+        <span class="mini-clock-time">22:40</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile stopname-tracked-caps">
+    <div class="tile-label">stopname-tracked-caps</div>
+    <div class="tile-body">
+      <div class="mini-header">
+        <div class="mini-route"><span class="mini-logo">b</span><span class="mini-stop">Estación UCR</span></div>
+        <span class="mini-clock-time">22:40</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('themeBtn');
+  var root = document.documentElement;
+  function apply(mode) {
+    if (mode === 'light') { root.setAttribute('data-theme', 'light'); btn.textContent = '☀ tema'; }
+    else { root.removeAttribute('data-theme'); btn.textContent = '☾ tema'; }
+  }
+  var saved = 'dark';
+  try { saved = localStorage.getItem('bucr-synth7zebra-variations-theme') || 'dark'; } catch (e) {}
+  apply(saved);
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    apply(next);
+    try { localStorage.setItem('bucr-synth7zebra-variations-theme', next); } catch (e) {}
+  });
+})();
+</script>

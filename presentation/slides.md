@@ -80,10 +80,9 @@ layout: default
 <script setup>
 // ⚠️ SINGLE PLACE TO EDIT — swap this for the real Tailscale Funnel URL.
 // See presentation/README.md for instructions.
-// `?board=synth7-zebra` opts into the synth7-zebra visual variant
-// (useBoardVariant.ts) so the deck's embed shows that look without
-// disturbing the running kiosk board, which stays on its default render.
-const BOARD_URL = 'https://simovi84.tail16eef6.ts.net/?board=synth7-zebra'
+// The synth7-zebra look is now the kiosk's default board, so no `?board=`
+// query param is needed — the embed and the running kiosk render identically.
+const BOARD_URL = 'https://simovi84.tail16eef6.ts.net/'
 </script>
 
 <!--

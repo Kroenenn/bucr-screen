@@ -1,12 +1,7 @@
 <script setup lang="ts">
 const { public: publicConfig } = useRuntimeConfig()
 const { data, error, lastSuccessAt } = useArrivals()
-const { now, time, date, seconds, dateParts } = useKioskClock()
-const { isSynth7Zebra } = useBoardVariant()
-
-// label-plural: "Próximas salidas" only under the synth7-zebra variant — the
-// default board keeps the existing singular "Próxima salida" untouched.
-const arrivalsColumnLabel = computed(() => (isSynth7Zebra.value ? 'Próximas salidas' : 'Próxima salida'))
+const { now, time, seconds, dateParts } = useKioskClock()
 
 // Depends on `now` (the 1s clock tick), not a bare Date.now(): a plain
 // Date.now() call isn't a reactive dependency, so this computed would only
@@ -75,22 +70,14 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
       <div class="screen__clock">
         <span class="screen__clock-time">
           {{ time }}<span
-            v-if="isSynth7Zebra"
             class="screen__clock-seconds"
           >:{{ seconds }}</span>
         </span>
         <div class="screen__clock-meta">
-          <span
-            v-if="isSynth7Zebra"
-            class="screen__clock-date"
-          >
+          <span class="screen__clock-date">
             <span class="screen__clock-date-weekday">{{ dateParts.weekday }}</span>
             <span class="screen__clock-date-rest">{{ dateParts.rest }}</span>
           </span>
-          <span
-            v-else
-            class="screen__clock-date"
-          >{{ date }}</span>
           <span class="screen__clock-refresh">
             <span class="screen__clock-refresh-dot" />
             Actualizaciones cada minuto
@@ -132,7 +119,7 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
           class="screen__board-header"
         >
           <span>Destino</span>
-          <span>{{ arrivalsColumnLabel }}</span>
+          <span>Próximas salidas</span>
         </div>
 
         <div
@@ -224,11 +211,14 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
   display: block;
 }
 
+/* stopname-tracked-caps: uppercase, wide tracking, kept at the same weight/
+   size so it balances against the clock rather than dominating it. */
 .screen__stop-name {
   margin: 0;
   font-size: clamp(2.4rem, 5vw, 4.2rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   line-height: 1;
 }
 
@@ -238,11 +228,15 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
   gap: 0.6em;
 }
 
+/* clock-proportional-light: proportional sans at a light weight with airy
+   tracking, in place of the heavy mono/tabular treatment — reads as a calmer,
+   more editorial clock. */
 .screen__clock-time {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-sans);
+  font-variant-numeric: normal;
   font-size: clamp(2.4rem, 5.2vw, 6rem);
-  font-weight: 800;
+  font-weight: 300;
+  letter-spacing: 0.01em;
   line-height: 1;
   color: var(--color-ink);
 }
@@ -253,34 +247,39 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
   gap: 0.15rem;
 }
 
+/* date-uppercase-tracked: weekday + "23 de agosto" on one line, all-caps,
+   mono, wide tracking — a signage/label register rather than running text. */
 .screen__clock-date {
-  color: var(--color-ink-muted);
-  font-size: clamp(0.75rem, 1vw, 0.95rem);
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.95vw, 0.9rem);
   line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
 }
 
-/* clock-secs-gray: only ever rendered when isSynth7Zebra is true, so no
-   data-board gating needed here — the element simply doesn't exist on the
-   default board. */
+/* clock-secs-gray: faint :SS trailing the HH:MM, at the same light weight as
+   the clock so it reads as a quiet secondary detail. */
 .screen__clock-seconds {
   font-size: 0.4em;
-  font-weight: 800;
+  font-weight: 300;
   color: var(--color-ink-faint);
   margin-left: 2px;
 }
 
-/* date-weekday-emphasis: weekday reads at full ink/weight, the "23 de
-   agosto" remainder stays muted — same split as .screen__clock-date already
-   uses for the whole string, just applied per-part. */
+/* date-uppercase-tracked: weekday carries slightly more weight/ink than the
+   day-month remainder, both inline on the single tracked line. */
 .screen__clock-date-weekday {
-  display: block;
-  color: var(--color-ink);
+  color: var(--color-ink-muted);
   font-weight: 700;
 }
 
 .screen__clock-date-rest {
-  display: block;
-  color: var(--color-ink-muted);
+  color: var(--color-ink-faint);
+  font-weight: 600;
 }
 
 .screen__clock-refresh {
