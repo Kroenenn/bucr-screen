@@ -255,7 +255,7 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
   align-items: baseline;
   gap: 0.5em;
   font-family: var(--font-mono);
-  font-size: clamp(0.7rem, 0.95vw, 0.9rem);
+  font-size: clamp(0.95rem, 1.5vw, 1.4rem);
   line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: 0.16em;
