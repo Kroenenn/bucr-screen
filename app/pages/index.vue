@@ -75,7 +75,7 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
         </span>
         <div class="screen__clock-meta">
           <span class="screen__clock-date">
-            <span class="screen__clock-date-weekday">{{ dateParts.weekday }},</span>
+            <span class="screen__clock-date-weekday">{{ dateParts.weekday }}</span>
             <span class="screen__clock-date-rest">{{ dateParts.rest }}</span>
           </span>
           <span class="screen__clock-refresh">
@@ -247,17 +247,16 @@ const agencyUrlDisplay = computed(() => data.value?.agencyUrl.replace(/^https?:\
   gap: 0.15rem;
 }
 
-/* date-uppercase-tracked: weekday over "23 de agosto" on two right-aligned
-   lines, all-caps, mono, wide tracking — a signage/label register. */
+/* date-uppercase-tracked: weekday + "23 de agosto" on one line, all-caps,
+   mono, wide tracking — a signage/label register rather than running text. */
 .screen__clock-date {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-  gap: 0.1em;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.5em;
   font-family: var(--font-mono);
   font-size: clamp(0.95rem, 1.5vw, 1.4rem);
-  line-height: 1.15;
+  line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: 0.16em;
 }
